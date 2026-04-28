@@ -1,0 +1,33 @@
+# Local editor and tool state
+.vscode/
+.idea/
+.grapuco/
+
+# Environment files
+.env
+.env.*
+!.env.example
+!**/.env.example
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Dependencies and build outputs
+node_modules/
+.next/
+out/
+build/
+dist/
+target/
+*.tsbuildinfo
+
+# Runtime uploads
+backend/uploads/
+
+# OS files
+.DS_Store
+Thumbs.db

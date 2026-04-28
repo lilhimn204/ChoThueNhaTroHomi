@@ -1,0 +1,14 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+
+app:
+  cookie:
+    secure: ${COOKIE_SECURE:true}
+
+logging:
+  level:
+    com.trotot.backend: INFO
+    org.springframework.security: WARN

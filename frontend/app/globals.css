@@ -1,0 +1,415 @@
+@import "tailwindcss";
+
+/* ── Light Theme (default) ──────────────────────────────────────── */
+
+:root {
+  /* Core surfaces */
+  --color-background: #f6f8fb;
+  --color-surface: #ffffff;
+  --color-surface-soft: #eef3f8;
+  --color-surface-elevated: #ffffff;
+
+  /* Borders */
+  --color-border-soft: #e8eef5;
+  --color-border-strong: #d3deea;
+  --color-border-card: rgba(255, 255, 255, 0.8);
+
+  /* Text */
+  --color-text-strong: #102a43;
+  --color-text-muted: #627d98;
+
+  /* Brand palette */
+  --color-brand-50: #edf7f9;
+  --color-brand-100: #d7eef2;
+  --color-brand-500: #1f7a8c;
+  --color-brand-700: #0f4c5c;
+  --color-brand-800: #0b3b47;
+  --color-brand-900: #082c35;
+  --color-brand-950: #041820;
+  --color-brand-contrast: #ffffff;
+
+  /* Accent palette */
+  --color-accent-500: #e59f3a;
+  --color-accent-600: #d28e29;
+  --color-accent-700: #b97617;
+  --color-warm-text: #041820;
+
+  /* Semantic status */
+  --color-success-600: #137333;
+  --color-danger-500: #d14343;
+  --color-danger-600: #b42318;
+
+  /* Badge / Alert / Stat tint tokens (light: soft pastel bg + dark text) */
+  --badge-brand-bg: color-mix(in srgb, var(--color-brand-700) 12%, white);
+  --badge-brand-text: var(--color-brand-800);
+  --badge-success-bg: color-mix(in srgb, var(--color-success-600) 12%, white);
+  --badge-success-text: #0d5526;
+  --badge-warning-bg: color-mix(in srgb, var(--color-accent-500) 18%, white);
+  --badge-warning-text: var(--color-accent-700);
+  --badge-danger-bg: color-mix(in srgb, var(--color-danger-600) 10%, white);
+  --badge-danger-text: #a11d10;
+  --badge-muted-bg: var(--color-surface-soft);
+  --badge-muted-text: var(--color-text-muted);
+
+  --alert-info-bg: color-mix(in srgb, var(--color-brand-700) 6%, white);
+  --alert-info-border: color-mix(in srgb, var(--color-brand-700) 16%, white);
+  --alert-info-text: var(--color-brand-800);
+  --alert-success-bg: color-mix(in srgb, var(--color-success-600) 8%, white);
+  --alert-success-border: color-mix(in srgb, var(--color-success-600) 18%, white);
+  --alert-success-text: #0d5526;
+  --alert-warning-bg: color-mix(in srgb, var(--color-accent-500) 12%, white);
+  --alert-warning-border: color-mix(in srgb, var(--color-accent-500) 28%, white);
+  --alert-warning-text: #8a5a0a;
+  --alert-danger-bg: color-mix(in srgb, var(--color-danger-600) 10%, white);
+  --alert-danger-border: color-mix(in srgb, var(--color-danger-600) 20%, white);
+  --alert-danger-text: #a11d10;
+
+  --stat-brand-bg: var(--color-brand-50);
+  --stat-brand-text: var(--color-brand-800);
+  --stat-success-bg: color-mix(in srgb, var(--color-success-600) 10%, white);
+  --stat-success-text: #0d5526;
+  --stat-warning-bg: color-mix(in srgb, var(--color-accent-500) 15%, white);
+  --stat-warning-text: #8a5a0a;
+  --stat-neutral-bg: var(--color-surface-soft);
+  --stat-neutral-text: var(--color-text-strong);
+
+  /* Form */
+  --color-input-bg: #ffffff;
+  --color-focus-ring: color-mix(in srgb, var(--color-brand-500) 20%, white);
+  --color-focus-ring-danger: color-mix(in srgb, var(--color-danger-500) 18%, white);
+
+  /* Shadows */
+  --shadow-card: 0 14px 34px rgba(16, 42, 67, 0.08);
+  --shadow-card-hover: 0 18px 44px rgba(16, 42, 67, 0.12);
+  --shadow-focus: 0 0 0 4px color-mix(in srgb, var(--color-brand-500) 18%, transparent);
+  --shadow-button: 0 10px 22px rgba(15, 76, 92, 0.16);
+  --shadow-button-hover: 0 14px 28px rgba(15, 76, 92, 0.22);
+
+  /* Layout surfaces */
+  --color-header-bg: rgba(255, 255, 255, 0.85);
+  --color-header-border: rgba(255, 255, 255, 0.6);
+  --color-footer-bg: rgba(255, 255, 255, 0.9);
+  --color-footer-border: rgba(255, 255, 255, 0.7);
+
+  /* Decorative */
+  --gradient-hero-1: rgba(15, 76, 92, 0.12);
+  --gradient-hero-2: rgba(229, 159, 58, 0.12);
+  --gradient-body-1: rgba(15, 76, 92, 0.08);
+  --gradient-body-start: #fbfcfe;
+  --selection-bg: rgba(31, 122, 140, 0.18);
+  --pattern-grid-color: rgba(99, 125, 152, 0.08);
+
+  /* Skeleton */
+  --skeleton-from: var(--color-surface-soft);
+  --skeleton-via: #f8fbff;
+  --skeleton-to: var(--color-surface-soft);
+}
+
+/* ── Dark Theme ─────────────────────────────────────────────────── */
+
+[data-theme="dark"] {
+  /* Core surfaces */
+  --color-background: #0c1017;
+  --color-surface: #151d2b;
+  --color-surface-soft: #1a2435;
+  --color-surface-elevated: #1e2a3c;
+
+  /* Borders */
+  --color-border-soft: #243244;
+  --color-border-strong: #3a5068;
+  --color-border-card: rgba(36, 50, 68, 0.6);
+
+  /* Text — bright for AA contrast on dark bg */
+  --color-text-strong: #e8eef5;
+  --color-text-muted: #94adc4;
+
+  /* Brand palette — lighter for contrast on dark */
+  --color-brand-50: #0e2630;
+  --color-brand-100: #122e3a;
+  --color-brand-500: #34a0b4;
+  --color-brand-700: #5cc0d0;
+  --color-brand-800: #7ed4e0;
+  --color-brand-900: #b5eaf0;
+  --color-brand-950: #041820;
+  --color-brand-contrast: #041820;
+
+  /* Accent */
+  --color-accent-500: #f0b04a;
+  --color-accent-600: #e5a030;
+  --color-accent-700: #f0b858;
+  --color-warm-text: #041820;
+
+  /* Semantic status */
+  --color-success-600: #34d058;
+  --color-danger-500: #ef5350;
+  --color-danger-600: #f44336;
+
+  /* Badge / Alert / Stat tokens (dark: deep tinted bg + light text) */
+  --badge-brand-bg: rgba(52, 160, 180, 0.22);
+  --badge-brand-text: #7ed4e0;
+  --badge-success-bg: rgba(52, 208, 88, 0.20);
+  --badge-success-text: #6ee68f;
+  --badge-warning-bg: rgba(240, 176, 74, 0.20);
+  --badge-warning-text: #f5cc78;
+  --badge-danger-bg: rgba(239, 83, 80, 0.20);
+  --badge-danger-text: #f49896;
+  --badge-muted-bg: rgba(26, 36, 53, 0.85);
+  --badge-muted-text: #b0c4d8;
+
+  --alert-info-bg: rgba(52, 160, 180, 0.10);
+  --alert-info-border: rgba(52, 160, 180, 0.25);
+  --alert-info-text: #7ed4e0;
+  --alert-success-bg: rgba(52, 208, 88, 0.10);
+  --alert-success-border: rgba(52, 208, 88, 0.22);
+  --alert-success-text: #6ee68f;
+  --alert-warning-bg: rgba(240, 176, 74, 0.10);
+  --alert-warning-border: rgba(240, 176, 74, 0.22);
+  --alert-warning-text: #f5cc78;
+  --alert-danger-bg: rgba(239, 83, 80, 0.10);
+  --alert-danger-border: rgba(239, 83, 80, 0.22);
+  --alert-danger-text: #f49896;
+
+  --stat-brand-bg: rgba(52, 160, 180, 0.12);
+  --stat-brand-text: #7ed4e0;
+  --stat-success-bg: rgba(52, 208, 88, 0.12);
+  --stat-success-text: #6ee68f;
+  --stat-warning-bg: rgba(240, 176, 74, 0.12);
+  --stat-warning-text: #f5cc78;
+  --stat-neutral-bg: var(--color-surface-soft);
+  --stat-neutral-text: var(--color-text-strong);
+
+  /* Form */
+  --color-input-bg: var(--color-surface-soft);
+  --color-focus-ring: rgba(52, 160, 180, 0.25);
+  --color-focus-ring-danger: rgba(239, 83, 80, 0.25);
+
+  /* Shadows — deeper for dark */
+  --shadow-card: 0 14px 34px rgba(0, 0, 0, 0.32);
+  --shadow-card-hover: 0 18px 44px rgba(0, 0, 0, 0.40);
+  --shadow-focus: 0 0 0 4px rgba(52, 160, 180, 0.22);
+  --shadow-button: 0 10px 24px rgba(0, 0, 0, 0.28);
+  --shadow-button-hover: 0 14px 32px rgba(0, 0, 0, 0.36);
+
+  /* Layout surfaces */
+  --color-header-bg: rgba(21, 29, 43, 0.92);
+  --color-header-border: rgba(36, 50, 68, 0.5);
+  --color-footer-bg: rgba(21, 29, 43, 0.95);
+  --color-footer-border: rgba(36, 50, 68, 0.5);
+
+  /* Decorative */
+  --gradient-hero-1: rgba(52, 160, 180, 0.08);
+  --gradient-hero-2: rgba(240, 176, 74, 0.06);
+  --gradient-body-1: rgba(52, 160, 180, 0.04);
+  --gradient-body-start: #0c1017;
+  --selection-bg: rgba(52, 160, 180, 0.28);
+  --pattern-grid-color: rgba(139, 164, 190, 0.05);
+
+  /* Skeleton */
+  --skeleton-from: #1a2435;
+  --skeleton-via: #1e2a3c;
+  --skeleton-to: #1a2435;
+
+  color-scheme: dark;
+}
+
+/* ── Tailwind v4 theme bridge ───────────────────────────────────── */
+
+@theme inline {
+  --font-sans: var(--font-body);
+  --font-heading: var(--font-heading);
+  --color-background: var(--color-background);
+  --color-surface: var(--color-surface);
+  --color-surface-soft: var(--color-surface-soft);
+  --color-border-soft: var(--color-border-soft);
+  --color-border-strong: var(--color-border-strong);
+  --color-text-strong: var(--color-text-strong);
+  --color-text-muted: var(--color-text-muted);
+}
+
+/* ── Base resets ────────────────────────────────────────────────── */
+
+* {
+  border-color: var(--color-border-soft);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background:
+    radial-gradient(circle at top, var(--gradient-body-1), transparent 28rem),
+    linear-gradient(180deg, var(--gradient-body-start) 0%, var(--color-background) 16rem);
+  color: var(--color-text-strong);
+  font-family: var(--font-body), sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading), sans-serif;
+}
+
+a, button, input, textarea, select {
+  transition:
+    color 0.2s ease,
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+::selection {
+  background: var(--selection-bg);
+}
+
+/* ── Utility classes ────────────────────────────────────────────── */
+
+.container-shell {
+  width: min(1180px, calc(100% - 2rem));
+  margin-inline: auto;
+}
+
+.surface-panel {
+  background: rgba(255, 255, 255, 0.84);
+  backdrop-filter: blur(14px);
+}
+
+[data-theme="dark"] .surface-panel {
+  background: rgba(21, 29, 43, 0.84);
+}
+
+.pattern-grid {
+  background-image:
+    linear-gradient(var(--pattern-grid-color) 1px, transparent 1px),
+    linear-gradient(90deg, var(--pattern-grid-color) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+.text-balance {
+  text-wrap: balance;
+}
+
+/* ── Dark-mode global overrides ─────────────────────────────────── */
+/* These catch all hardcoded Tailwind white-based classes across the app */
+
+[data-theme="dark"] .bg-white {
+  background-color: var(--color-surface);
+}
+
+[data-theme="dark"] .bg-white\/80,
+[data-theme="dark"] .bg-white\/84,
+[data-theme="dark"] .bg-white\/85,
+[data-theme="dark"] .bg-white\/90 {
+  background-color: rgba(21, 29, 43, 0.88);
+}
+
+[data-theme="dark"] .bg-white\/8,
+[data-theme="dark"] .bg-white\/10,
+[data-theme="dark"] .bg-white\/\[0\.06\],
+[data-theme="dark"] .bg-white\/\[0\.08\] {
+  background-color: rgba(255, 255, 255, 0.06);
+}
+
+[data-theme="dark"] .border-white\/60,
+[data-theme="dark"] .border-white\/70,
+[data-theme="dark"] .border-white\/80 {
+  border-color: var(--color-border-card);
+}
+
+/* Forms — ensure all inputs/selects are readable */
+[data-theme="dark"] input,
+[data-theme="dark"] textarea,
+[data-theme="dark"] select {
+  background-color: var(--color-input-bg);
+  color: var(--color-text-strong);
+  border-color: var(--color-border-strong);
+}
+
+[data-theme="dark"] input::placeholder,
+[data-theme="dark"] textarea::placeholder {
+  color: var(--color-text-muted);
+}
+
+/* option elements inside select need explicit dark bg */
+[data-theme="dark"] option {
+  background-color: var(--color-surface);
+  color: var(--color-text-strong);
+}
+
+/* Scrollbar styling for dark mode */
+[data-theme="dark"] ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+[data-theme="dark"] ::-webkit-scrollbar-track {
+  background: var(--color-surface);
+}
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: var(--color-border-strong);
+  border-radius: 4px;
+}
+
+/* ── Animations for Toast & Dialog ──────────────────────────────── */
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.3s ease-out;
+}
+
+.animate-scale-in {
+  animation: scale-in 0.2s ease-out;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.15s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+  }
+}
