@@ -66,10 +66,10 @@ export function RoomsPageClient() {
 
   if (lookupsLoading && !districts.length && !amenities.length) {
     return (
-      <section className="container-shell py-8">
-        <div className="grid gap-6 xl:grid-cols-[300px_minmax(0,1fr)]">
+      <section className="container-shell py-6 sm:py-8">
+        <div className="grid gap-4 sm:gap-6 xl:grid-cols-[300px_minmax(0,1fr)]">
           <LoadingSkeleton className="hidden h-[32rem] rounded-[30px] xl:block" />
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             <LoadingSkeleton className="h-20 rounded-[28px]" />
             <LoadingSkeleton className="h-24 rounded-[28px]" />
             <RoomsGridSkeleton />
@@ -101,7 +101,7 @@ export function RoomsPageClient() {
               onOpenFilters={openMobileFilters}
             />
 
-            <div className="flex flex-col gap-3 rounded-[28px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-col gap-3 rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] sm:flex-row sm:items-center sm:justify-between sm:rounded-[28px]">
               <div>
                 <h2 className="text-xl font-semibold text-[var(--color-text-strong)]">
                   Danh sách phòng trọ
@@ -131,7 +131,7 @@ export function RoomsPageClient() {
               <RoomsGridSkeleton />
             ) : rooms.length ? (
               <>
-                <div className="grid gap-5 md:grid-cols-2 2xl:grid-cols-3">
+                <div className="grid gap-4 sm:gap-5 md:grid-cols-2 2xl:grid-cols-3">
                   {rooms.map((room) => (
                     <RoomCard
                       key={room.id}
@@ -182,11 +182,11 @@ export function RoomsPageClient() {
 
 export function RoomsGridSkeleton() {
   return (
-    <div className="grid gap-5 md:grid-cols-2 2xl:grid-cols-3">
+    <div className="grid gap-4 sm:gap-5 md:grid-cols-2 2xl:grid-cols-3">
       {Array.from({ length: 6 }).map((_, index) => (
         <div
           key={index}
-          className="overflow-hidden rounded-[30px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[var(--shadow-card-hover)]"
+          className="overflow-hidden rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[var(--shadow-card-hover)] sm:rounded-[30px]"
         >
           <LoadingSkeleton className="h-52 w-full rounded-[24px]" />
           <div className="mt-4 space-y-3">

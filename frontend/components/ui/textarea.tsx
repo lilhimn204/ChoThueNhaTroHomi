@@ -26,7 +26,7 @@ export function Textarea({
       <textarea
         id={textareaId}
         className={cn(
-          "min-h-28 rounded-3xl border border-[var(--color-border-strong)] bg-[var(--color-input-bg)] px-4 py-3 text-sm text-[var(--color-text-strong)] shadow-sm outline-none transition-all duration-200 placeholder:text-[var(--color-text-muted)] hover:border-[var(--color-brand-500)] focus:-translate-y-0.5 focus:border-[var(--color-brand-500)] focus:shadow-[var(--shadow-focus)] focus:ring-2 focus:ring-[var(--color-focus-ring)]",
+          "min-h-28 w-full max-w-full rounded-3xl border border-[var(--color-border-strong)] bg-[var(--color-input-bg)] px-4 py-3 text-base text-[var(--color-text-strong)] shadow-sm outline-none transition-all duration-200 placeholder:text-[var(--color-text-muted)] hover:border-[var(--color-brand-500)] focus:-translate-y-0.5 focus:border-[var(--color-brand-500)] focus:shadow-[var(--shadow-focus)] focus:ring-2 focus:ring-[var(--color-focus-ring)] sm:text-sm",
           error &&
             "border-[var(--color-danger-500)] focus:border-[var(--color-danger-500)] focus:ring-[var(--color-focus-ring-danger)]",
           className,

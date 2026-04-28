@@ -72,7 +72,7 @@ export function FilterSidebar({
   };
 
   return (
-    <aside className="rounded-[30px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-5 shadow-[var(--shadow-card)]">
+    <aside className="rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] sm:rounded-[30px] sm:p-5">
       <div className="flex items-center justify-between gap-3">
         <h3 className="text-lg font-semibold text-[var(--color-text-strong)]">
           {title}
@@ -86,7 +86,7 @@ export function FilterSidebar({
         </button>
       </div>
 
-      <div className="mt-5 space-y-5">
+      <div className="mt-5 space-y-4 sm:space-y-5">
         <Select
           label="Khu vực"
           options={[
@@ -158,7 +158,7 @@ export function FilterSidebar({
                   key={amenity.id}
                   type="button"
                   onClick={() => toggleAmenity(String(amenity.id))}
-                  className={`rounded-full px-3 py-2 text-sm font-medium ${
+                  className={`min-h-10 rounded-full px-3 py-2 text-sm font-medium transition-all duration-200 active:scale-[0.98] ${
                     active
                       ? "bg-[var(--color-brand-700)] text-[var(--color-brand-contrast)]"
                       : "bg-[var(--color-surface-soft)] text-[var(--color-text-muted)] hover:bg-[var(--color-border-soft)]"

@@ -233,10 +233,13 @@
 }
 
 html {
+  overflow-x: clip;
   scroll-behavior: smooth;
 }
 
 body {
+  min-height: 100dvh;
+  overflow-x: clip;
   background:
     radial-gradient(circle at top, var(--gradient-body-1), transparent 28rem),
     linear-gradient(180deg, var(--gradient-body-start) 0%, var(--color-background) 16rem);
@@ -263,6 +266,13 @@ a {
   -webkit-tap-highlight-color: transparent;
 }
 
+img,
+svg,
+video,
+canvas {
+  max-width: 100%;
+}
+
 ::selection {
   background: var(--selection-bg);
 }
@@ -270,7 +280,7 @@ a {
 /* ── Utility classes ────────────────────────────────────────────── */
 
 .container-shell {
-  width: min(1180px, calc(100% - 2rem));
+  width: min(1180px, calc(100% - clamp(1.5rem, 6vw, 2rem)));
   margin-inline: auto;
 }
 

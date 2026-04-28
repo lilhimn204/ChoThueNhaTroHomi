@@ -290,7 +290,86 @@ function SavedRoomComparison({
         <Badge tone="brand">{rooms.length}/3 phòng</Badge>
       </div>
 
-      <div className="overflow-x-auto">
+      <div className="grid gap-3 p-3 md:hidden">
+        {rooms.map((room) => {
+          const priceHighlighted = room.price === bestPrice;
+          const areaHighlighted = room.area === largestArea;
+
+          return (
+            <article
+              key={room.roomId}
+              className="rounded-[20px] border border-[var(--color-border-soft)] bg-[var(--color-surface-soft)] p-4 shadow-sm"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <h3 className="line-clamp-2 text-sm font-semibold text-[var(--color-text-strong)]">
+                  {room.title}
+                </h3>
+                <button
+                  type="button"
+                  onClick={() => onRemove(room.roomId)}
+                  aria-label="Bỏ khỏi bảng so sánh"
+                  className="flex size-8 shrink-0 items-center justify-center rounded-full text-[var(--color-text-muted)] transition-all duration-200 hover:bg-[var(--color-surface)] hover:text-[var(--color-text-strong)] active:scale-95"
+                >
+                  <X className="size-4" />
+                </button>
+              </div>
+
+              <dl className="mt-4 grid gap-3 text-sm">
+                <div className="flex items-center justify-between gap-3">
+                  <dt className="text-[var(--color-text-muted)]">Giá thuê</dt>
+                  <dd
+                    className={
+                      priceHighlighted
+                        ? "rounded-full bg-[var(--color-brand-50)] px-2.5 py-1 font-semibold text-[var(--color-brand-700)]"
+                        : "font-medium text-[var(--color-text-strong)]"
+                    }
+                  >
+                    {formatCompactCurrency(room.price)}
+                  </dd>
+                </div>
+                <div className="flex items-center justify-between gap-3">
+                  <dt className="text-[var(--color-text-muted)]">Diện tích</dt>
+                  <dd
+                    className={
+                      areaHighlighted
+                        ? "rounded-full bg-[var(--color-brand-50)] px-2.5 py-1 font-semibold text-[var(--color-brand-700)]"
+                        : "font-medium text-[var(--color-text-strong)]"
+                    }
+                  >
+                    {formatArea(room.area)}
+                  </dd>
+                </div>
+                <div className="flex items-start justify-between gap-3">
+                  <dt className="text-[var(--color-text-muted)]">Khu vực</dt>
+                  <dd className="text-right font-medium text-[var(--color-text-strong)]">
+                    {room.districtName}
+                  </dd>
+                </div>
+                <div className="grid gap-1">
+                  <dt className="text-[var(--color-text-muted)]">Địa chỉ</dt>
+                  <dd className="font-medium leading-6 text-[var(--color-text-strong)]">
+                    {room.address}
+                  </dd>
+                </div>
+                <div className="flex items-center justify-between gap-3">
+                  <dt className="text-[var(--color-text-muted)]">Trạng thái</dt>
+                  <dd className="font-medium text-[var(--color-text-strong)]">
+                    {roomStatusMeta[room.status].label}
+                  </dd>
+                </div>
+                <div className="flex items-center justify-between gap-3">
+                  <dt className="text-[var(--color-text-muted)]">Ngày lưu</dt>
+                  <dd className="font-medium text-[var(--color-text-strong)]">
+                    {formatDate(room.savedAt)}
+                  </dd>
+                </div>
+              </dl>
+            </article>
+          );
+        })}
+      </div>
+
+      <div className="hidden overflow-x-auto md:block">
         <table className="min-w-[760px] w-full text-left text-sm">
           <thead className="bg-[var(--color-surface-muted)] text-[var(--color-text-muted)]">
             <tr>

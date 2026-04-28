@@ -21,23 +21,25 @@ export function Pagination({
   };
 
   return (
-    <div className="flex items-center justify-between gap-4 rounded-3xl border border-[var(--color-border-soft)] bg-[var(--color-surface)] px-4 py-3 shadow-[var(--shadow-card)]">
+    <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2 rounded-3xl border border-[var(--color-border-soft)] bg-[var(--color-surface)] px-3 py-3 shadow-[var(--shadow-card)] sm:gap-4 sm:px-4">
       <Button
         variant="ghost"
         size="sm"
+        className="w-full justify-center"
         leadingIcon={<ChevronLeft className="size-4" />}
         disabled={currentPage <= 1}
         onClick={() => handlePageChange(currentPage - 1)}
       >
         Trước
       </Button>
-      <p className="text-sm text-[var(--color-text-muted)]">
+      <p className="whitespace-nowrap text-center text-sm text-[var(--color-text-muted)]">
         Trang <span className="font-semibold text-[var(--color-text-strong)]">{currentPage}</span> /{" "}
         {totalPages}
       </p>
       <Button
         variant="ghost"
         size="sm"
+        className="w-full justify-center"
         trailingIcon={<ChevronRight className="size-4" />}
         disabled={currentPage >= totalPages}
         onClick={() => handlePageChange(currentPage + 1)}

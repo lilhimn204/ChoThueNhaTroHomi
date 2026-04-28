@@ -69,18 +69,18 @@ export function RoomReportCard({ roomId }: { roomId: number }) {
   };
 
   return (
-    <div className="rounded-[32px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)]">
+    <div className="rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px] sm:p-6">
       <div className="space-y-2">
         <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[var(--color-brand-700)]">
           Bao cao tin dang
         </p>
-        <h3 className="text-2xl font-semibold text-[var(--color-text-strong)]">
+        <h3 className="text-xl font-semibold text-[var(--color-text-strong)] sm:text-2xl">
           Tin dang co van de?
         </h3>
       </div>
 
       {status !== "authenticated" ? (
-        <div className="mt-6 space-y-4 rounded-[28px] bg-[var(--color-surface-soft)] p-5">
+        <div className="mt-4 space-y-4 rounded-[22px] bg-[var(--color-surface-soft)] p-4 sm:mt-6 sm:rounded-[28px] sm:p-5">
           <p className="text-sm leading-7 text-[var(--color-text-muted)]">
             Dang nhap de gui bao cao va giup admin xac minh chat luong tin dang.
           </p>
@@ -91,7 +91,7 @@ export function RoomReportCard({ roomId }: { roomId: number }) {
           </Link>
         </div>
       ) : (
-        <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
+        <form className="mt-4 space-y-4 sm:mt-6" onSubmit={handleSubmit}>
           {successMessage ? (
             <Alert tone="success" title="Da ghi nhan bao cao" description={successMessage} />
           ) : null}

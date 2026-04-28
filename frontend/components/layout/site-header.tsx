@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Menu, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { NotificationBell } from "@/components/layout/notification-bell";
@@ -34,22 +34,35 @@ export function SiteHeader() {
     router.push("/");
   };
 
+  useEffect(() => {
+    if (!mobileOpen) {
+      return;
+    }
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [mobileOpen]);
+
   return (
-    <header className="sticky top-0 z-50 border-b border-[var(--color-header-border)] bg-[var(--color-header-bg)] shadow-sm backdrop-blur-xl transition-shadow duration-300">
-      <div className="container-shell flex h-18 items-center justify-between gap-6">
-        <Link href="/" className="group flex items-center gap-3">
+    <header className="sticky top-0 z-50 border-b border-[var(--color-header-border)] bg-[var(--color-header-bg)] pt-[env(safe-area-inset-top)] shadow-sm backdrop-blur-xl transition-shadow duration-300">
+      <div className="container-shell flex h-16 items-center justify-between gap-3 sm:h-18 sm:gap-6">
+        <Link href="/" className="group flex min-w-0 items-center gap-3">
           <Image
             src="/logo.png"
             alt="Homi logo"
             width={44}
             height={44}
-            className="rounded-2xl shadow-[var(--shadow-card)] transition duration-300 group-hover:-translate-y-0.5 group-hover:shadow-[var(--shadow-card-hover)]"
+            className="size-11 shrink-0 rounded-2xl shadow-[var(--shadow-card)] transition duration-300 group-hover:-translate-y-0.5 group-hover:shadow-[var(--shadow-card-hover)]"
           />
-          <div>
-            <p className="font-heading text-lg font-semibold text-[var(--color-text-strong)]">
+          <div className="min-w-0">
+            <p className="truncate font-heading text-lg font-semibold text-[var(--color-text-strong)]">
               {siteConfig.name}
             </p>
-            <p className="text-xs text-[var(--color-text-muted)]">
+            <p className="hidden text-xs text-[var(--color-text-muted)] sm:block">
               Tìm phòng Hà Nội
             </p>
           </div>
@@ -124,11 +137,14 @@ export function SiteHeader() {
       </div>
 
       {mobileOpen ? (
-        <div className="animate-slide-up border-t border-[var(--color-border-soft)] bg-[var(--color-surface)] shadow-[var(--shadow-card)] lg:hidden">
-          <div className="container-shell flex flex-col gap-2 py-4">
+        <div className="animate-slide-up max-h-[calc(100dvh_-_4rem_-_env(safe-area-inset-top))] overflow-y-auto overscroll-contain border-t border-[var(--color-border-soft)] bg-[var(--color-surface)] shadow-[var(--shadow-card)] lg:hidden">
+          <div className="container-shell flex flex-col gap-2 pb-[calc(1rem_+_env(safe-area-inset-bottom))] pt-4">
             <div className="flex items-center justify-between">
               <p className="text-sm font-medium text-[var(--color-text-muted)]">Giao diện</p>
-              <ThemeToggle />
+              <div className="flex items-center gap-2">
+                <ThemeToggle />
+                <NotificationBell />
+              </div>
             </div>
 
             {publicNavigation.map((item) => (
@@ -146,7 +162,7 @@ export function SiteHeader() {
                 {item.label}
               </Link>
             ))}
-            <div className="mt-2 grid grid-cols-2 gap-3">
+            <div className="mt-2 grid grid-cols-1 gap-3 sm:grid-cols-2">
               <Link href={hostHref} onClick={() => setMobileOpen(false)}>
                 <Button className="w-full" variant="warm">
                   Đăng tin

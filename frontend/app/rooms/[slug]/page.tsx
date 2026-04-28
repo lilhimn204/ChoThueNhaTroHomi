@@ -48,10 +48,13 @@ export async function generateMetadata({
     };
   }
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://thuenhahomi.id.vn";
   const priceText = new Intl.NumberFormat("vi-VN").format(room.price);
   const title = `${room.title} | Homi`;
   const description = `${room.title} tại ${room.address}, ${room.districtName}. Giá ${priceText}đ/tháng, diện tích ${room.area}m². ${room.description.slice(0, 120)}`;
+  const previewImage = room.thumbnail
+    ? new URL(room.thumbnail, siteUrl).toString()
+    : `${siteUrl}/og-image.png`;
 
   return {
     title,
@@ -64,9 +67,13 @@ export async function generateMetadata({
       description,
       type: "website",
       url: `${siteUrl}/rooms/${slug}`,
-      images: room.thumbnail
-        ? [{ url: room.thumbnail, width: 800, height: 600, alt: room.title }]
-        : undefined,
+      images: [{ url: previewImage, width: 1200, height: 630, alt: room.title }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [previewImage],
     },
   };
 }
@@ -92,7 +99,7 @@ export default async function RoomDetailPage({
  * Helps search engines understand the room listing content.
  */
 function RoomJsonLd({ room, slug }: { room: Room; slug: string }) {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://thuenhahomi.id.vn";
 
   const jsonLd = {
     "@context": "https://schema.org",

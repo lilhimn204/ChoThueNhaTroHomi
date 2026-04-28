@@ -34,7 +34,7 @@ export function Select({
         <select
           id={selectId}
           className={cn(
-            "h-12 w-full appearance-none rounded-2xl border border-[var(--color-border-strong)] bg-[var(--color-input-bg)] px-4 pr-10 text-sm text-[var(--color-text-strong)] shadow-sm outline-none transition-all duration-200 hover:border-[var(--color-brand-500)] focus:-translate-y-0.5 focus:border-[var(--color-brand-500)] focus:shadow-[var(--shadow-focus)] focus:ring-2 focus:ring-[var(--color-focus-ring)]",
+            "h-12 w-full max-w-full appearance-none rounded-2xl border border-[var(--color-border-strong)] bg-[var(--color-input-bg)] px-4 pr-10 text-base text-[var(--color-text-strong)] shadow-sm outline-none transition-all duration-200 hover:border-[var(--color-brand-500)] focus:-translate-y-0.5 focus:border-[var(--color-brand-500)] focus:shadow-[var(--shadow-focus)] focus:ring-2 focus:ring-[var(--color-focus-ring)] sm:text-sm",
             className,
           )}
           {...props}

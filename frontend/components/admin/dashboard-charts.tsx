@@ -52,7 +52,7 @@ export function DashboardCharts() {
 
   if (loading) {
     return (
-      <div className="grid gap-6 xl:grid-cols-3">
+      <div className="grid min-w-0 gap-5 xl:grid-cols-3">
         <LoadingSkeleton className="h-80 rounded-[28px]" />
         <LoadingSkeleton className="h-80 rounded-[28px]" />
         <LoadingSkeleton className="h-80 rounded-[28px]" />
@@ -63,7 +63,7 @@ export function DashboardCharts() {
   if (!charts) return null;
 
   return (
-    <div className="grid gap-6 xl:grid-cols-3">
+    <div className="grid min-w-0 gap-5 xl:grid-cols-3">
       {/* Bar Chart — Rooms by District */}
       <ChartCard title="Phòng theo quận/huyện">
         {charts.roomsByDistrict.length === 0 ? (
@@ -200,7 +200,7 @@ export function DashboardCharts() {
 
 function ChartCard({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="group rounded-[28px] border border-[var(--color-border-soft)] bg-[var(--color-surface)] p-5 shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:-translate-y-1 hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)]">
+    <div className="group min-w-0 rounded-[24px] border border-[var(--color-border-soft)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:-translate-y-1 hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[28px] sm:p-5">
       <h3 className="mb-4 text-base font-semibold text-[var(--color-text-strong)]">{title}</h3>
       {children}
     </div>

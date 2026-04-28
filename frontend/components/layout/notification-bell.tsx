@@ -119,7 +119,7 @@ export function NotificationBell() {
       <button
         type="button"
         aria-label={`Thông báo${unreadCount > 0 ? ` (${unreadCount} mới)` : ""}`}
-        className="relative inline-flex size-10 items-center justify-center rounded-xl border border-[var(--color-border-soft)] bg-[var(--color-surface)] text-[var(--color-text-muted)] transition-colors hover:bg-[var(--color-surface-soft)] hover:text-[var(--color-text-strong)]"
+        className="relative inline-flex size-11 items-center justify-center rounded-xl border border-[var(--color-border-soft)] bg-[var(--color-surface)] text-[var(--color-text-muted)] transition-colors hover:bg-[var(--color-surface-soft)] hover:text-[var(--color-text-strong)]"
         onClick={handleToggle}
       >
         <Bell className="size-[18px]" />
@@ -131,7 +131,7 @@ export function NotificationBell() {
       </button>
 
       {open ? (
-        <div className="absolute right-0 top-full z-50 mt-2 w-80 overflow-hidden rounded-2xl border border-[var(--color-border-soft)] bg-[var(--color-surface)] shadow-xl sm:w-96">
+        <div className="absolute right-0 top-full z-50 mt-2 w-[min(calc(100vw_-_2rem),22rem)] overflow-hidden rounded-2xl border border-[var(--color-border-soft)] bg-[var(--color-surface)] shadow-xl sm:w-96">
           <div className="flex items-center justify-between border-b border-[var(--color-border-soft)] px-4 py-3">
             <h3 className="text-sm font-semibold text-[var(--color-text-strong)]">
               Thông báo

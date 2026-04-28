@@ -32,7 +32,7 @@ export const metadata: Metadata = {
       { url: "/favicon.png", type: "image/png", sizes: "1254x1254" },
     ],
     shortcut: "/favicon.ico",
-    apple: "/favicon.png",
+    apple: "/apple-touch-icon.png",
   },
   openGraph: {
     type: "website",
@@ -45,8 +45,8 @@ export const metadata: Metadata = {
     images: [
       {
         url: "/og-image.png",
-        width: 1200,
-        height: 630,
+        width: 1254,
+        height: 1254,
         alt: "Homi - Website cho thuê phòng trọ Hà Nội",
       },
     ],

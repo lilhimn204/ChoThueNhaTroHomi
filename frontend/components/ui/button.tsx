@@ -26,9 +26,9 @@ const variants: Record<ButtonVariant, string> = {
 };
 
 const sizes: Record<ButtonSize, string> = {
-  sm: "h-10 rounded-xl px-4 text-sm",
-  md: "h-11 rounded-2xl px-5 text-sm",
-  lg: "h-12 rounded-2xl px-6 text-base",
+  sm: "min-h-11 rounded-xl px-4 py-2 text-sm",
+  md: "min-h-11 rounded-2xl px-5 py-2 text-sm",
+  lg: "min-h-12 rounded-2xl px-6 py-2.5 text-base",
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
@@ -47,7 +47,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
     <button
       ref={ref}
       className={cn(
-        "inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-500)] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+        "inline-flex min-w-0 items-center justify-center gap-2 whitespace-normal text-center font-medium leading-tight transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-500)] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 sm:whitespace-nowrap [&_svg]:shrink-0",
         "focus-visible:shadow-[var(--shadow-focus)] disabled:translate-y-0 disabled:scale-100 disabled:shadow-none",
         variants[variant],
         sizes[size],
@@ -56,7 +56,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
       {...props}
     >
       {leadingIcon}
-      <span>{children}</span>
+      <span className="min-w-0">{children}</span>
       {trailingIcon}
     </button>
   );

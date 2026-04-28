@@ -175,10 +175,10 @@ export function AdminDashboardClient() {
 
           <DashboardCharts />
 
-          <div className="grid gap-6 xl:grid-cols-2">
-            <section className="space-y-4">
-              <div className="flex items-center justify-between rounded-[24px] border border-[var(--color-border-soft)] bg-[var(--color-surface)] px-5 py-4 shadow-sm">
-                <h2 className="text-2xl font-semibold text-[var(--color-text-strong)]">
+          <div className="grid min-w-0 gap-5 xl:grid-cols-2">
+            <section className="min-w-0 space-y-4">
+              <div className="flex flex-col gap-3 rounded-[24px] border border-[var(--color-border-soft)] bg-[var(--color-surface)] px-4 py-4 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:px-5">
+                <h2 className="text-xl font-semibold text-[var(--color-text-strong)] sm:text-2xl">
                   Bài đăng mới cập nhật
                 </h2>
                 <Link href="/admin/rooms">
@@ -198,9 +198,9 @@ export function AdminDashboardClient() {
               />
             </section>
 
-            <section className="space-y-4">
-              <div className="flex items-center justify-between rounded-[24px] border border-[var(--color-border-soft)] bg-[var(--color-surface)] px-5 py-4 shadow-sm">
-                <h2 className="text-2xl font-semibold text-[var(--color-text-strong)]">
+            <section className="min-w-0 space-y-4">
+              <div className="flex flex-col gap-3 rounded-[24px] border border-[var(--color-border-soft)] bg-[var(--color-surface)] px-4 py-4 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:px-5">
+                <h2 className="text-xl font-semibold text-[var(--color-text-strong)] sm:text-2xl">
                   Yêu cầu liên hệ gần đây
                 </h2>
                 <Link href="/admin/contact-requests">
