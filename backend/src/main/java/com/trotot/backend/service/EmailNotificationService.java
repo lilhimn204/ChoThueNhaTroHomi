@@ -12,6 +12,7 @@ import com.trotot.backend.config.AppProperties;
 import com.trotot.backend.entity.ContactRequest;
 import com.trotot.backend.entity.Room;
 import com.trotot.backend.entity.User;
+import com.trotot.backend.exception.BusinessException;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -25,6 +26,47 @@ public class EmailNotificationService {
     public EmailNotificationService(ObjectProvider<JavaMailSender> mailSenderProvider, AppProperties appProperties) {
         this.mailSenderProvider = mailSenderProvider;
         this.appProperties = appProperties;
+    }
+
+    public void sendRegistrationOtp(String recipientEmail, String fullName, String otp, long expiresInMinutes) {
+        if (!appProperties.getMail().isEnabled()) {
+            log.warn("Registration OTP email skipped because app.mail.enabled=false for recipient {}.", recipientEmail);
+            return;
+        }
+
+        if (!StringUtils.hasText(recipientEmail)) {
+            throw new BusinessException("Email nhận OTP không hợp lệ.");
+        }
+
+        JavaMailSender mailSender = mailSenderProvider.getIfAvailable();
+        if (mailSender == null) {
+            log.warn("Registration OTP email skipped because JavaMailSender is not configured.");
+            throw new BusinessException("Hệ thống gửi email chưa được cấu hình.");
+        }
+
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom(appProperties.getMail().getFrom());
+        message.setTo(recipientEmail);
+        message.setSubject("Homi - Mã xác nhận đăng ký");
+        message.setText("""
+                Xin chào %s,
+
+                Mã xác nhận đăng ký tài khoản Homi của bạn là: %s
+
+                Mã này có hiệu lực trong %d phút. Không chia sẻ mã này với bất kỳ ai.
+
+                Nếu bạn không đăng ký tài khoản Homi, vui lòng bỏ qua email này.
+                """.formatted(
+                StringUtils.hasText(fullName) ? fullName : "bạn",
+                otp,
+                expiresInMinutes));
+
+        try {
+            mailSender.send(message);
+        } catch (MailException exception) {
+            log.warn("Could not send registration OTP email to {}: {}", recipientEmail, exception.getMessage());
+            throw new BusinessException("Không thể gửi mã OTP đến email đăng ký. Vui lòng thử lại sau.");
+        }
     }
 
     @Async

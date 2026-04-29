@@ -76,22 +76,22 @@ export function HostDashboardClient() {
   }, [dashboard]);
 
   return (
-    <div className="space-y-8">
-      <section className="overflow-hidden rounded-[32px] border border-[var(--color-border-card)] bg-[var(--color-surface)] shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)]">
-        <div className="grid gap-6 p-6 lg:grid-cols-[1.3fr_0.7fr] lg:p-8">
+    <div className="space-y-6 sm:space-y-8">
+      <section className="overflow-hidden rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px]">
+        <div className="grid gap-5 p-4 sm:gap-6 sm:p-6 lg:grid-cols-[1.3fr_0.7fr] lg:p-8">
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[var(--color-brand-700)]">
               Tổng quan chủ trọ
             </p>
-            <h1 className="mt-3 text-3xl font-semibold tracking-tight text-[var(--color-text-strong)] sm:text-4xl">
+            <h1 className="mt-3 text-2xl font-semibold tracking-tight text-[var(--color-text-strong)] sm:text-4xl">
               Xin chào, {dashboard?.fullName ?? user?.fullName ?? "bạn"}
             </h1>
-            <p className="mt-4 max-w-2xl text-base leading-8 text-[var(--color-text-muted)]">
+            <p className="mt-4 max-w-2xl text-sm leading-7 text-[var(--color-text-muted)] sm:text-base sm:leading-8">
               Đây là khu vực riêng để bạn đăng phòng, theo dõi khách quan tâm và cập nhật
               trạng thái phòng mà không cần vào trang quản trị tổng.
             </p>
           </div>
-          <div className="rounded-[28px] bg-[var(--color-brand-950)] p-5 text-white shadow-sm transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-[var(--shadow-card-hover)]">
+          <div className="rounded-[22px] bg-[var(--color-brand-950)] p-4 text-white shadow-sm transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-[var(--shadow-card-hover)] sm:rounded-[28px] sm:p-5">
             <p className="text-sm text-white/60">CTA chính</p>
             <p className="mt-3 text-2xl font-semibold">Có phòng trống mới?</p>
             <Link href="/host/posts/create">
@@ -159,10 +159,10 @@ export function HostDashboardClient() {
             />
           </section>
 
-          <section className="rounded-[32px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)]">
+          <section className="rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px] sm:p-6">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <h2 className="text-2xl font-semibold text-[var(--color-text-strong)]">
+                <h2 className="text-xl font-semibold text-[var(--color-text-strong)] sm:text-2xl">
                   Liên hệ mới nhất
                 </h2>
                 <p className="mt-1 text-sm text-[var(--color-text-muted)]">

@@ -55,6 +55,31 @@ public class User {
     @Column(name = "host_bio", length = 500)
     private String hostBio;
 
+    @Column(name = "email_verified", nullable = false)
+    private boolean emailVerified = true;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "auth_provider", nullable = false, length = 20)
+    private AuthProvider authProvider = AuthProvider.LOCAL;
+
+    @Column(name = "google_id", unique = true, length = 120)
+    private String googleId;
+
+    @Column(name = "otp_hash", length = 255)
+    private String otpHash;
+
+    @Column(name = "otp_expires_at")
+    private Instant otpExpiresAt;
+
+    @Column(name = "otp_attempts", nullable = false)
+    private int otpAttempts = 0;
+
+    @Column(name = "otp_resend_count", nullable = false)
+    private int otpResendCount = 0;
+
+    @Column(name = "otp_last_sent_at")
+    private Instant otpLastSentAt;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private UserStatus status = UserStatus.ACTIVE;

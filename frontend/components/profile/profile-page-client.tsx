@@ -17,13 +17,13 @@ export function ProfilePageClient() {
   return (
     <RequireAuth>
       {status === "loading" || !user ? (
-        <div className="container-shell grid gap-8 py-12 xl:grid-cols-[0.72fr_1.28fr]">
-          <LoadingSkeleton className="h-80 rounded-[32px]" />
-          <LoadingSkeleton className="h-[32rem] rounded-[32px]" />
+        <div className="container-shell grid gap-5 py-8 sm:gap-8 sm:py-12 xl:grid-cols-[0.72fr_1.28fr]">
+          <LoadingSkeleton className="h-64 rounded-[24px] sm:h-80 sm:rounded-[32px]" />
+          <LoadingSkeleton className="h-[28rem] rounded-[24px] sm:h-[32rem] sm:rounded-[32px]" />
         </div>
       ) : (
-        <div className="container-shell grid gap-8 py-12 xl:grid-cols-[0.72fr_1.28fr]">
-          <aside className="rounded-[32px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)]">
+        <div className="container-shell grid gap-5 py-8 sm:gap-8 sm:py-12 xl:grid-cols-[0.72fr_1.28fr]">
+          <aside className="rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px] sm:p-6">
             <div className="relative mx-auto size-28 overflow-hidden rounded-full border-4 border-[var(--color-brand-50)]">
               <Image
                 src={normalizeUploadImageSrc(
@@ -37,7 +37,7 @@ export function ProfilePageClient() {
               />
             </div>
             <div className="mt-5 text-center">
-              <h2 className="text-2xl font-semibold text-[var(--color-text-strong)]">
+              <h2 className="text-xl font-semibold text-[var(--color-text-strong)] sm:text-2xl">
                 {user.fullName}
               </h2>
               <p className="mt-2 text-sm text-[var(--color-text-muted)]">{user.email}</p>
@@ -56,7 +56,7 @@ export function ProfilePageClient() {
             </div>
           </aside>
 
-          <div className="space-y-6">
+          <div className="min-w-0 space-y-5 sm:space-y-6">
             <ProfileForm key={user.id} profile={user} />
             <PasswordChangeForm />
           </div>

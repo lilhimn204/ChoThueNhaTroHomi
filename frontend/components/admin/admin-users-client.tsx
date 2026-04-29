@@ -149,23 +149,24 @@ export function AdminUsersClient() {
   }, [data, keyword, toast]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5 sm:space-y-6">
       {/* Header */}
-      <div className="rounded-[32px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)]">
+      <div className="rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px] sm:p-6">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div className="space-y-3">
             <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[var(--color-brand-700)]">
               Quản trị
             </p>
-            <h1 className="text-4xl font-semibold tracking-tight text-[var(--color-text-strong)]">
+            <h1 className="text-3xl font-semibold tracking-tight text-[var(--color-text-strong)] sm:text-4xl">
               Quản lý người dùng
             </h1>
-            <p className="max-w-2xl text-base leading-8 text-[var(--color-text-muted)]">
+            <p className="max-w-2xl text-sm leading-7 text-[var(--color-text-muted)] sm:text-base sm:leading-8">
               Xem danh sách, tìm kiếm và quản lý trạng thái tài khoản người dùng trong hệ thống.
             </p>
           </div>
-          <div className="flex flex-wrap gap-3">
+          <div className="grid w-full gap-3 sm:flex sm:w-auto sm:flex-wrap">
             <Button
+              className="w-full sm:w-auto"
               variant="outline"
               disabled={!data}
               onClick={handleExport}
@@ -178,7 +179,7 @@ export function AdminUsersClient() {
       </div>
 
       {/* Filters */}
-      <div className="rounded-[28px] border border-[var(--color-border-soft)] bg-[var(--color-surface)] p-5 shadow-[var(--shadow-card)]">
+      <div className="rounded-[22px] border border-[var(--color-border-soft)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] sm:rounded-[28px] sm:p-5">
         <form onSubmit={handleSearch} className="flex flex-col gap-4 md:flex-row md:items-end">
           <div className="flex-1">
             <Input
@@ -202,7 +203,7 @@ export function AdminUsersClient() {
               }}
             />
           </div>
-          <Button type="submit">Tìm kiếm</Button>
+          <Button className="w-full md:w-auto" type="submit">Tìm kiếm</Button>
         </form>
       </div>
 

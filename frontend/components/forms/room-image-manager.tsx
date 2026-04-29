@@ -129,13 +129,13 @@ export function RoomImageManager({
         <Alert tone="warning" title="Khong the cap nhat anh" description={errorMessage} />
       ) : null}
 
-      <div className="rounded-[28px] border border-[var(--color-border-strong)] bg-[var(--color-surface-soft)] p-4">
+      <div className="rounded-[22px] border border-[var(--color-border-strong)] bg-[var(--color-surface-soft)] p-3 sm:rounded-[28px] sm:p-4">
         {images.length ? (
           <div className="grid gap-3 sm:grid-cols-2">
             {images.map((image, index) => (
               <div
                 key={`${image.imageUrl}-${index}`}
-                className="overflow-hidden rounded-3xl border border-[var(--color-border-soft)] bg-[var(--color-surface)]"
+                className="overflow-hidden rounded-[22px] border border-[var(--color-border-soft)] bg-[var(--color-surface)] sm:rounded-3xl"
               >
                 <div className="relative aspect-[16/10]">
                   <Image
@@ -160,11 +160,12 @@ export function RoomImageManager({
                       )
                     }
                   />
-                  <div className="flex flex-wrap gap-2">
+                  <div className="grid gap-2 sm:flex sm:flex-wrap">
                     <Button
                       type="button"
                       size="sm"
                       variant={image.isThumbnail ? "primary" : "outline"}
+                      className="w-full sm:w-auto"
                       leadingIcon={<Star className="size-4" />}
                       onClick={() =>
                         commitImages(
@@ -181,6 +182,7 @@ export function RoomImageManager({
                       type="button"
                       size="sm"
                       variant="ghost"
+                      className="w-full sm:w-auto"
                       leadingIcon={<Trash2 className="size-4" />}
                       onClick={() =>
                         commitImages(images.filter((_, itemIndex) => itemIndex !== index))
@@ -233,7 +235,7 @@ export function RoomImageManager({
             <Button
               type="button"
               variant="outline"
-              className="self-end"
+              className="w-full self-end sm:w-auto"
               disabled={images.length >= MAX_IMAGES}
               onClick={addManualUrl}
             >

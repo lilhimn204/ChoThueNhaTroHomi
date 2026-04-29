@@ -107,14 +107,14 @@ export function HostCustomersClient() {
   };
 
   return (
-    <div className="space-y-6">
-      <section className="rounded-[32px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)]">
+    <div className="space-y-5 sm:space-y-6">
+      <section className="rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px] sm:p-6">
         <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--color-brand-700)]">
               Khách liên hệ
             </p>
-            <h1 className="mt-2 text-3xl font-semibold tracking-tight text-[var(--color-text-strong)]">
+            <h1 className="mt-2 text-2xl font-semibold tracking-tight text-[var(--color-text-strong)] sm:text-3xl">
               Quản lý người quan tâm phòng
             </h1>
             <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--color-text-muted)]">
@@ -122,7 +122,7 @@ export function HostCustomersClient() {
               trong quá trình tư vấn.
             </p>
           </div>
-          <div className="flex flex-wrap items-end gap-3">
+          <div className="grid w-full gap-3 sm:flex sm:flex-wrap sm:items-end lg:w-auto">
             <div className="w-full lg:w-64">
               <Select
                 label="Lọc trạng thái"
@@ -137,6 +137,7 @@ export function HostCustomersClient() {
               />
             </div>
             <Button
+              className="w-full sm:w-auto"
               variant="outline"
               disabled={exporting || loading}
               onClick={async () => {
@@ -197,7 +198,7 @@ export function HostCustomersClient() {
               return (
                 <article
                   key={customer.id}
-                  className="rounded-[30px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-5 shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:-translate-y-1 hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)]"
+                  className="rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:-translate-y-1 hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[30px] sm:p-5"
                 >
                   <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                     <div>
@@ -207,7 +208,7 @@ export function HostCustomersClient() {
                           {formatDate(customer.createdAt)}
                         </span>
                       </div>
-                      <h2 className="mt-3 text-xl font-semibold text-[var(--color-text-strong)]">
+                      <h2 className="mt-3 text-lg font-semibold text-[var(--color-text-strong)] sm:text-xl">
                         {customer.requesterName}
                       </h2>
                       <p className="mt-1 text-sm text-[var(--color-text-muted)]">
@@ -231,10 +232,11 @@ export function HostCustomersClient() {
                     </div>
                   </div>
 
-                  <div className="mt-5 flex flex-wrap gap-2">
+                  <div className="mt-5 grid gap-2 sm:flex sm:flex-wrap">
                     <Button
                       variant="secondary"
                       size="sm"
+                      className="w-full sm:w-auto"
                       disabled={actionRequestId === customer.id}
                       onClick={() => updateStatus(customer.id, "IN_PROGRESS")}
                     >
@@ -243,6 +245,7 @@ export function HostCustomersClient() {
                     <Button
                       variant="secondary"
                       size="sm"
+                      className="w-full sm:w-auto"
                       disabled={actionRequestId === customer.id}
                       onClick={() => updateStatus(customer.id, "RESOLVED")}
                     >
@@ -251,6 +254,7 @@ export function HostCustomersClient() {
                     <Button
                       variant="outline"
                       size="sm"
+                      className="w-full sm:w-auto"
                       disabled={actionRequestId === customer.id}
                       onClick={() => updateStatus(customer.id, "CANCELLED")}
                     >

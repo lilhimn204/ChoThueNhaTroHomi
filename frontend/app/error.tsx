@@ -17,12 +17,12 @@ export default function GlobalError({
   }, [error]);
 
   return (
-    <div className="container-shell flex min-h-[60vh] flex-col items-center justify-center py-16">
-      <div className="w-full max-w-xl rounded-[32px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-10 shadow-[var(--shadow-card)]">
+    <div className="container-shell flex min-h-[60vh] flex-col items-center justify-center py-10 sm:py-16">
+      <div className="w-full max-w-xl rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-5 shadow-[var(--shadow-card)] sm:rounded-[32px] sm:p-10">
         <p className="text-sm font-semibold uppercase tracking-[0.2em] text-red-600">
           Lỗi hệ thống
         </p>
-        <h1 className="mt-4 text-3xl font-semibold tracking-tight text-[var(--color-text-strong)]">
+        <h1 className="mt-4 text-2xl font-semibold tracking-tight text-[var(--color-text-strong)] sm:text-3xl">
           Đã xảy ra lỗi không mong muốn
         </h1>
         <div className="mt-6">
@@ -32,7 +32,7 @@ export default function GlobalError({
             description={error.message || "Không thể xử lý yêu cầu. Vui lòng thử lại sau."}
           />
         </div>
-        <div className="mt-6 flex gap-3">
+        <div className="mt-6 grid gap-3 sm:flex">
           <Button onClick={reset}>Thử lại</Button>
           <Button variant="outline" onClick={() => (window.location.href = "/")}>
             Về trang chủ

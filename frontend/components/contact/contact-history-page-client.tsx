@@ -55,22 +55,22 @@ export function ContactHistoryPageClient() {
 
   return (
     <RequireAuth>
-      <div className="container-shell py-12">
+      <div className="container-shell py-8 sm:py-12">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div className="space-y-3">
             <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[var(--color-brand-700)]">
               Lịch sử liên hệ
             </p>
-            <h1 className="text-4xl font-semibold tracking-tight text-[var(--color-text-strong)]">
+            <h1 className="text-3xl font-semibold tracking-tight text-[var(--color-text-strong)] sm:text-4xl">
               Lịch sử yêu cầu liên hệ
             </h1>
-            <p className="max-w-2xl text-base leading-8 text-[var(--color-text-muted)]">
+            <p className="max-w-2xl text-sm leading-7 text-[var(--color-text-muted)] sm:text-base sm:leading-8">
               Danh sách được trình bày gọn để trên điện thoại vẫn dễ đọc. Mỗi
               mục hiển thị tên phòng, thời gian gửi, trạng thái và ghi chú từ admin.
             </p>
           </div>
-          <Link href="/rooms">
-            <Button>Xem thêm phòng trọ</Button>
+          <Link href="/rooms" className="block w-full sm:w-auto">
+            <Button className="w-full sm:w-auto">Xem thêm phòng trọ</Button>
           </Link>
         </div>
 
@@ -93,7 +93,7 @@ export function ContactHistoryPageClient() {
                 {requests.map((request) => (
                   <article
                     key={request.id}
-                    className="rounded-[30px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-5 shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:-translate-y-1 hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)]"
+                    className="rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:-translate-y-1 hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[30px] sm:p-5"
                   >
                     <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                       <div className="space-y-3">
@@ -108,7 +108,7 @@ export function ContactHistoryPageClient() {
                             {formatDate(request.createdAt)}
                           </span>
                         </div>
-                        <h2 className="text-xl font-semibold text-[var(--color-text-strong)]">
+                        <h2 className="text-lg font-semibold text-[var(--color-text-strong)] sm:text-xl">
                           {request.roomTitle}
                         </h2>
                         <p className="max-w-3xl text-sm leading-7 text-[var(--color-text-muted)]">
@@ -129,8 +129,8 @@ export function ContactHistoryPageClient() {
                           </div>
                         ) : null}
                       </div>
-                      <Link href={`/rooms/${request.roomSlug}`}>
-                        <Button variant="outline">Xem lại phòng</Button>
+                      <Link href={`/rooms/${request.roomSlug}`} className="block w-full sm:w-auto">
+                        <Button className="w-full sm:w-auto" variant="outline">Xem lại phòng</Button>
                       </Link>
                     </div>
                   </article>

@@ -21,10 +21,20 @@ CREATE TABLE IF NOT EXISTS users (
     avatar_url VARCHAR(255),
     address VARCHAR(255),
     host_bio VARCHAR(500),
+    email_verified BOOLEAN NOT NULL DEFAULT TRUE,
+    auth_provider ENUM('LOCAL', 'GOOGLE') NOT NULL DEFAULT 'LOCAL',
+    google_id VARCHAR(120),
+    otp_hash VARCHAR(255),
+    otp_expires_at TIMESTAMP NULL,
+    otp_attempts INT NOT NULL DEFAULT 0,
+    otp_resend_count INT NOT NULL DEFAULT 0,
+    otp_last_sent_at TIMESTAMP NULL,
     status ENUM('ACTIVE', 'INACTIVE', 'LOCKED') NOT NULL DEFAULT 'ACTIVE',
     enabled BOOLEAN NOT NULL DEFAULT TRUE,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    UNIQUE KEY uk_users_google_id (google_id),
+    INDEX idx_users_auth_provider (auth_provider),
     INDEX idx_users_status (status)
 ) ENGINE=InnoDB;
 

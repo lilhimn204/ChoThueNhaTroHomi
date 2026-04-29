@@ -102,7 +102,7 @@ export function SavedRoomsPageClient() {
 
   if (authLoading) {
     return (
-      <div className="container-shell py-10">
+      <div className="container-shell py-8 sm:py-10">
         <LoadingSkeleton className="h-8 w-64 rounded-xl" />
         <div className="mt-6 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
           {Array.from({ length: 6 }).map((_, index) => (
@@ -115,7 +115,7 @@ export function SavedRoomsPageClient() {
 
   if (!user) {
     return (
-      <div className="container-shell py-10">
+      <div className="container-shell py-8 sm:py-10">
         <EmptyState
           title="Cần đăng nhập"
           description="Đăng nhập để xem danh sách phòng đã lưu."
@@ -127,7 +127,7 @@ export function SavedRoomsPageClient() {
   }
 
   return (
-    <div className="container-shell py-10">
+    <div className="container-shell py-8 sm:py-10">
       <SectionHeading
         eyebrow="Phòng đã lưu"
         title="Danh sách phòng trọ bạn quan tâm"
@@ -162,14 +162,14 @@ export function SavedRoomsPageClient() {
             onRemove={(roomId) => setSelectedIds((prev) => prev.filter((id) => id !== roomId))}
           />
 
-          <div className="mt-6 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+          <div className="mt-5 grid gap-4 sm:mt-6 sm:gap-5 md:grid-cols-2 xl:grid-cols-3">
             {rooms.map((item) => {
               const selected = selectedIds.includes(item.roomId);
 
               return (
                 <article
                   key={item.roomId}
-                  className="group overflow-hidden rounded-[28px] border border-[var(--color-border-card)] bg-[var(--color-surface)] shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:-translate-y-1 hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)]"
+                  className="group overflow-hidden rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:-translate-y-1 hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[28px]"
                 >
                   <div className="relative h-48 overflow-hidden">
                     <Image
@@ -196,9 +196,9 @@ export function SavedRoomsPageClient() {
                     </div>
                   </div>
 
-                  <div className="space-y-4 p-5">
+                  <div className="space-y-4 p-4 sm:p-5">
                     <div className="flex items-start justify-between gap-3">
-                      <h3 className="line-clamp-2 text-lg font-semibold text-[var(--color-text-strong)]">
+                      <h3 className="line-clamp-2 text-base font-semibold text-[var(--color-text-strong)] sm:text-lg">
                         {item.title}
                       </h3>
                       <p className="shrink-0 rounded-full bg-[var(--badge-brand-bg)] px-3 py-1 text-sm font-semibold text-[var(--badge-brand-text)]">

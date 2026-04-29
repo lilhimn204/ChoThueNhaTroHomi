@@ -10,9 +10,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.trotot.backend.config.AppProperties;
 import com.trotot.backend.dto.auth.AuthResponse;
+import com.trotot.backend.dto.auth.GoogleLoginRequest;
 import com.trotot.backend.dto.auth.LoginRequest;
+import com.trotot.backend.dto.auth.RegistrationOtpResponse;
 import com.trotot.backend.dto.auth.RefreshTokenRequest;
 import com.trotot.backend.dto.auth.RegisterRequest;
+import com.trotot.backend.dto.auth.ResendOtpRequest;
+import com.trotot.backend.dto.auth.VerifyOtpRequest;
 import com.trotot.backend.service.AuthService;
 import com.trotot.backend.util.CookieUtils;
 
@@ -34,12 +38,31 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<AuthResponse> register(
-            @Valid @RequestBody RegisterRequest request,
+    public ResponseEntity<RegistrationOtpResponse> register(@Valid @RequestBody RegisterRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(authService.register(request));
+    }
+
+    @PostMapping("/verify-otp")
+    public ResponseEntity<AuthResponse> verifyOtp(
+            @Valid @RequestBody VerifyOtpRequest request,
             HttpServletResponse response) {
-        AuthResponse authResponse = authService.register(request);
+        AuthResponse authResponse = authService.verifyOtp(request);
         setAuthCookies(response, authResponse);
-        return ResponseEntity.status(HttpStatus.CREATED).body(authResponse);
+        return ResponseEntity.ok(authResponse);
+    }
+
+    @PostMapping("/resend-otp")
+    public ResponseEntity<RegistrationOtpResponse> resendOtp(@Valid @RequestBody ResendOtpRequest request) {
+        return ResponseEntity.ok(authService.resendOtp(request));
+    }
+
+    @PostMapping("/google")
+    public ResponseEntity<AuthResponse> loginWithGoogle(
+            @Valid @RequestBody GoogleLoginRequest request,
+            HttpServletResponse response) {
+        AuthResponse authResponse = authService.loginWithGoogle(request);
+        setAuthCookies(response, authResponse);
+        return ResponseEntity.ok(authResponse);
     }
 
     @PostMapping("/login")

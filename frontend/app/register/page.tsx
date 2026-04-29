@@ -17,15 +17,15 @@ export default async function RegisterPage({
 
   return (
     <GuestOnly redirectTo={redirect}>
-      <div className="container-shell grid gap-8 py-12 lg:grid-cols-[0.85fr_1.15fr]">
-        <div className="rounded-[32px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-8 shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)]">
+      <div className="container-shell grid gap-5 py-8 sm:gap-8 sm:py-12 lg:grid-cols-[0.85fr_1.15fr]">
+        <div className="rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-5 shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px] sm:p-8">
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[var(--color-brand-700)]">
             Đăng ký
           </p>
-          <h1 className="mt-4 text-4xl font-semibold tracking-tight text-[var(--color-text-strong)]">
+          <h1 className="mt-4 text-3xl font-semibold tracking-tight text-[var(--color-text-strong)] sm:text-4xl">
             Đăng ký để lưu phòng và theo dõi lịch sử liên hệ.
           </h1>
-          <p className="mt-4 text-base leading-8 text-[var(--color-text-muted)]">
+          <p className="mt-4 text-sm leading-7 text-[var(--color-text-muted)] sm:text-base sm:leading-8">
             Form đăng ký chỉ giữ những trường cần thiết. Cách trình bày này giúp
             người dùng nhập thông tin nhanh, dễ hiểu và ít bỏ ngang.
           </p>

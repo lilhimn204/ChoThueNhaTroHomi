@@ -18,6 +18,8 @@ public class AppProperties {
     private final Upload upload = new Upload();
     private final Cookie cookie = new Cookie();
     private final Mail mail = new Mail();
+    private final Otp otp = new Otp();
+    private final Google google = new Google();
 
     @Getter
     @Setter
@@ -44,6 +46,21 @@ public class AppProperties {
     public static class Mail {
         private boolean enabled = false;
         private String from = "no-reply@homi.local";
+    }
+
+    @Getter
+    @Setter
+    public static class Otp {
+        private long expirationMinutes = 10;
+        private int maxAttempts = 5;
+        private int maxResendCount = 3;
+        private long resendCooldownSeconds = 60;
+    }
+
+    @Getter
+    @Setter
+    public static class Google {
+        private String clientId = "";
     }
 
     @Getter

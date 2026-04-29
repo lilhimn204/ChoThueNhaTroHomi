@@ -16,10 +16,14 @@ import {
   updateStoredUser,
 } from "@/lib/auth-storage";
 import {
+  loginWithGoogle as googleLoginRequest,
   login as loginRequest,
   register as registerRequest,
+  resendRegistrationOtp as resendRegistrationOtpRequest,
   logout as logoutRequest,
   getMe,
+  verifyRegistrationOtp as verifyRegistrationOtpRequest,
+  type RegistrationOtpResponse,
 } from "@/services/auth-service";
 import type { UserProfile } from "@/types";
 
@@ -37,11 +41,19 @@ interface RegisterInput {
   password: string;
 }
 
+interface VerifyOtpInput {
+  email: string;
+  otp: string;
+}
+
 interface AuthContextValue {
   status: AuthStatus;
   user: UserProfile | null;
   login: (input: LoginInput) => Promise<UserProfile>;
-  register: (input: RegisterInput) => Promise<UserProfile>;
+  register: (input: RegisterInput) => Promise<RegistrationOtpResponse>;
+  verifyRegistrationOtp: (input: VerifyOtpInput) => Promise<UserProfile>;
+  resendRegistrationOtp: (email: string) => Promise<RegistrationOtpResponse>;
+  loginWithGoogle: (idToken: string) => Promise<UserProfile>;
   logout: () => void;
   refreshProfile: () => Promise<UserProfile | null>;
   replaceUser: (user: UserProfile) => void;
@@ -114,7 +126,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return response.user;
       },
       async register(input) {
-        const response = await registerRequest(input);
+        return registerRequest(input);
+      },
+      async verifyRegistrationOtp(input) {
+        const response = await verifyRegistrationOtpRequest(input);
+        persistAuth(response.user);
+        setUser(response.user);
+        setStatus("authenticated");
+        return response.user;
+      },
+      async resendRegistrationOtp(email) {
+        return resendRegistrationOtpRequest({ email });
+      },
+      async loginWithGoogle(idToken) {
+        const response = await googleLoginRequest({ idToken });
         persistAuth(response.user);
         setUser(response.user);
         setStatus("authenticated");

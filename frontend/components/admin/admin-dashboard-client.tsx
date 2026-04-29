@@ -118,13 +118,13 @@ export function AdminDashboardClient() {
 
   return (
     <div className="space-y-6">
-      <div className="rounded-[32px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)]">
+      <div className="rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px] sm:p-6">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div className="space-y-3">
             <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[var(--color-brand-700)]">
               Admin Dashboard
             </p>
-            <h1 className="text-4xl font-semibold tracking-tight text-[var(--color-text-strong)]">
+            <h1 className="text-3xl font-semibold tracking-tight text-[var(--color-text-strong)] sm:text-4xl">
               Tổng quan hệ thống
             </h1>
             <p className="max-w-2xl text-base leading-8 text-[var(--color-text-muted)]">

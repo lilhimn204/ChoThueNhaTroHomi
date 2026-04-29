@@ -109,29 +109,29 @@ export function HostProfileClient() {
 
   if (loading) {
     return (
-      <div className="space-y-6">
-        <LoadingSkeleton className="h-44 rounded-[32px]" />
-        <LoadingSkeleton className="h-[30rem] rounded-[32px]" />
+      <div className="space-y-5 sm:space-y-6">
+        <LoadingSkeleton className="h-40 rounded-[24px] sm:h-44 sm:rounded-[32px]" />
+        <LoadingSkeleton className="h-[28rem] rounded-[24px] sm:h-[30rem] sm:rounded-[32px]" />
       </div>
     );
   }
 
   return (
-    <form className="space-y-6" onSubmit={handleSubmit}>
-      <section className="rounded-[32px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)]">
+    <form className="space-y-5 sm:space-y-6" onSubmit={handleSubmit}>
+      <section className="rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px] sm:p-6">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--color-brand-700)]">
               Hồ sơ người cho thuê
             </p>
-            <h1 className="mt-2 text-3xl font-semibold tracking-tight text-[var(--color-text-strong)]">
+            <h1 className="mt-2 text-2xl font-semibold tracking-tight text-[var(--color-text-strong)] sm:text-3xl">
               Thông tin liên hệ và giới thiệu
             </h1>
             <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--color-text-muted)]">
               Hồ sơ rõ ràng giúp người tìm phòng tin tưởng hơn khi gửi yêu cầu xem phòng.
             </p>
           </div>
-          <Button type="submit" disabled={submitting} trailingIcon={<Save className="size-4" />}>
+          <Button className="w-full sm:w-auto" type="submit" disabled={submitting} trailingIcon={<Save className="size-4" />}>
             Lưu hồ sơ
           </Button>
         </div>
@@ -149,8 +149,8 @@ export function HostProfileClient() {
         ) : null}
       </section>
 
-      <section className="grid gap-6 xl:grid-cols-[1fr_360px]">
-        <div className="rounded-[32px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)]">
+      <section className="grid min-w-0 gap-5 sm:gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
+        <div className="rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px] sm:p-6">
           <h2 className="text-xl font-semibold text-[var(--color-text-strong)]">
             Thông tin cơ bản
           </h2>
@@ -201,7 +201,7 @@ export function HostProfileClient() {
           </div>
         </div>
 
-        <aside className="rounded-[32px] border border-white/10 bg-[var(--color-brand-950)] p-6 text-white shadow-[var(--shadow-card)] ring-1 ring-white/10 transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-[var(--shadow-card-hover)]">
+        <aside className="rounded-[24px] border border-white/10 bg-[var(--color-brand-950)] p-4 text-white shadow-[var(--shadow-card)] ring-1 ring-white/10 transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-[var(--shadow-card-hover)] sm:rounded-[32px] sm:p-6">
           <p className="text-sm font-semibold uppercase tracking-[0.18em] text-white/55">
             Gợi ý hồ sơ tốt
           </p>

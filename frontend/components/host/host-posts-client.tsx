@@ -126,27 +126,28 @@ export function HostPostsClient() {
   };
 
   return (
-    <div className="space-y-6">
-      <section className="rounded-[32px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)]">
+    <div className="space-y-5 sm:space-y-6">
+      <section className="rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px] sm:p-6">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--color-brand-700)]">
               Bài đăng của tôi
             </p>
-            <h1 className="mt-2 text-3xl font-semibold tracking-tight text-[var(--color-text-strong)]">
+            <h1 className="mt-2 text-2xl font-semibold tracking-tight text-[var(--color-text-strong)] sm:text-3xl">
               Quản lý phòng đang cho thuê
             </h1>
             <p className="mt-2 text-sm leading-6 text-[var(--color-text-muted)]">
               Theo dõi trạng thái, chỉnh sửa nội dung và xử lý các bài đã hết phòng.
             </p>
           </div>
-          <div className="flex flex-wrap gap-3">
-            <Link href="/host/posts/create">
+          <div className="grid w-full gap-3 sm:flex sm:flex-wrap lg:w-auto">
+            <Link href="/host/posts/create" className="block">
               <Button className="w-full lg:w-auto" trailingIcon={<Plus className="size-4" />}>
                 Thêm bài đăng
               </Button>
             </Link>
             <Button
+              className="w-full sm:w-auto"
               variant="outline"
               disabled={exporting || loading}
               onClick={async () => {
@@ -185,7 +186,7 @@ export function HostPostsClient() {
           </div>
         </div>
 
-        <div className="mt-6 grid gap-4 lg:grid-cols-[1fr_220px]">
+        <div className="mt-5 grid gap-4 sm:mt-6 lg:grid-cols-[1fr_220px]">
           <Input
             label="Tìm bài đăng / mã tin"
             placeholder="Nhập tên phòng, địa chỉ hoặc mã tin"
@@ -234,9 +235,9 @@ export function HostPostsClient() {
               return (
                 <article
                   key={post.id}
-                  className="group grid gap-4 rounded-[30px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:-translate-y-1 hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] lg:grid-cols-[190px_1fr]"
+                  className="group grid min-w-0 gap-4 rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:-translate-y-1 hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[30px] lg:grid-cols-[190px_minmax(0,1fr)]"
                 >
-                  <div className="relative min-h-44 overflow-hidden rounded-[24px] bg-[var(--color-surface-soft)]">
+                  <div className="relative min-h-40 overflow-hidden rounded-[20px] bg-[var(--color-surface-soft)] sm:min-h-44 sm:rounded-[24px]">
                     {post.thumbnail ? (
                       <Image
                         src={normalizeUploadImageSrc(post.thumbnail)}
@@ -253,12 +254,12 @@ export function HostPostsClient() {
                   </div>
                   <div className="flex flex-col gap-4">
                     <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
-                      <div>
+                      <div className="min-w-0">
                         <div className="flex flex-wrap items-center gap-2">
                           <Badge tone={statusMeta.tone}>{statusMeta.label}</Badge>
                           <Badge tone="muted">{post.contactRequestCount} khách quan tâm</Badge>
                         </div>
-                        <h2 className="mt-3 text-xl font-semibold text-[var(--color-text-strong)] transition-colors duration-200 group-hover:text-[var(--color-brand-700)]">
+                        <h2 className="mt-3 line-clamp-2 text-lg font-semibold text-[var(--color-text-strong)] transition-colors duration-200 group-hover:text-[var(--color-brand-700)] sm:text-xl">
                           {post.title}
                         </h2>
                         <p className="mt-2 text-xs font-semibold uppercase tracking-[0.16em] text-[var(--color-brand-700)]">
@@ -278,15 +279,16 @@ export function HostPostsClient() {
                       </div>
                     </div>
 
-                    <div className="mt-auto flex flex-wrap gap-2">
-                      <Link href={`/host/posts/${post.id}/edit`}>
-                        <Button variant="outline" size="sm" leadingIcon={<Edit3 className="size-4" />}>
+                    <div className="mt-auto grid gap-2 sm:flex sm:flex-wrap">
+                      <Link href={`/host/posts/${post.id}/edit`} className="block">
+                        <Button className="w-full sm:w-auto" variant="outline" size="sm" leadingIcon={<Edit3 className="size-4" />}>
                           Sửa
                         </Button>
                       </Link>
                       <Button
                         variant="secondary"
                         size="sm"
+                        className="w-full sm:w-auto"
                         disabled={actionRoomId === post.id}
                         leadingIcon={<EyeOff className="size-4" />}
                         onClick={() =>
@@ -298,6 +300,7 @@ export function HostPostsClient() {
                       <Button
                         variant="secondary"
                         size="sm"
+                        className="w-full sm:w-auto"
                         disabled={actionRoomId === post.id}
                         onClick={() => handleStatusChange(post.id, nextOccupancyStatus)}
                       >
@@ -306,6 +309,7 @@ export function HostPostsClient() {
                       <Button
                         variant="outline"
                         size="sm"
+                        className="w-full sm:w-auto"
                         disabled={actionRoomId === post.id}
                         leadingIcon={<Trash2 className="size-4" />}
                         onClick={() => setDeleteTarget(post)}

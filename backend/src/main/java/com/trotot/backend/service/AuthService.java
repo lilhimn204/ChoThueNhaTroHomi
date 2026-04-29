@@ -1,5 +1,8 @@
 package com.trotot.backend.service;
 
+import java.security.SecureRandom;
+import java.time.Instant;
+import java.util.Base64;
 import java.util.Comparator;
 import java.util.Set;
 
@@ -8,12 +11,18 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
+import com.trotot.backend.config.AppProperties;
 import com.trotot.backend.dto.auth.AuthResponse;
 import com.trotot.backend.dto.auth.AuthUserResponse;
+import com.trotot.backend.dto.auth.GoogleLoginRequest;
 import com.trotot.backend.dto.auth.LoginRequest;
+import com.trotot.backend.dto.auth.RegistrationOtpResponse;
 import com.trotot.backend.dto.auth.RegisterRequest;
-import com.trotot.backend.util.InputSanitizer;
+import com.trotot.backend.dto.auth.ResendOtpRequest;
+import com.trotot.backend.dto.auth.VerifyOtpRequest;
+import com.trotot.backend.entity.AuthProvider;
 import com.trotot.backend.entity.Role;
 import com.trotot.backend.entity.RoleName;
 import com.trotot.backend.entity.User;
@@ -23,6 +32,7 @@ import com.trotot.backend.repository.RoleRepository;
 import com.trotot.backend.repository.UserRepository;
 import com.trotot.backend.security.JwtService;
 import com.trotot.backend.security.UserPrincipal;
+import com.trotot.backend.util.InputSanitizer;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -31,12 +41,19 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class AuthService {
 
+    private static final int OTP_BOUND = 1_000_000;
+    private static final int GENERATED_PASSWORD_BYTES = 32;
+
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
     private final RefreshTokenService refreshTokenService;
+    private final EmailNotificationService emailNotificationService;
+    private final GoogleIdentityService googleIdentityService;
+    private final AppProperties appProperties;
+    private final SecureRandom secureRandom = new SecureRandom();
 
     public AuthService(
             UserRepository userRepository,
@@ -44,18 +61,24 @@ public class AuthService {
             PasswordEncoder passwordEncoder,
             AuthenticationManager authenticationManager,
             JwtService jwtService,
-            RefreshTokenService refreshTokenService) {
+            RefreshTokenService refreshTokenService,
+            EmailNotificationService emailNotificationService,
+            GoogleIdentityService googleIdentityService,
+            AppProperties appProperties) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
         this.refreshTokenService = refreshTokenService;
+        this.emailNotificationService = emailNotificationService;
+        this.googleIdentityService = googleIdentityService;
+        this.appProperties = appProperties;
     }
 
     @Transactional
-    public AuthResponse register(RegisterRequest request) {
-        String email = request.email().trim().toLowerCase();
+    public RegistrationOtpResponse register(RegisterRequest request) {
+        String email = normalizeEmail(request.email());
         if (userRepository.existsByEmail(email)) {
             log.warn("Registration failed: email already exists - {}", email);
             throw new BusinessException("Email đã tồn tại trong hệ thống.");
@@ -69,18 +92,33 @@ public class AuthService {
         user.setEmail(email);
         user.setPasswordHash(passwordEncoder.encode(request.password()));
         user.setPhone(InputSanitizer.trimToNull(request.phone()));
-        user.setStatus(UserStatus.ACTIVE);
-        user.setEnabled(true);
+        user.setStatus(UserStatus.INACTIVE);
+        user.setEnabled(false);
+        user.setEmailVerified(false);
+        user.setAuthProvider(AuthProvider.LOCAL);
         user.getRoles().add(userRole);
 
+        String otp = prepareOtp(user, false);
         User savedUser = userRepository.save(user);
-        log.info("User registered: id={}, email={}", savedUser.getId(), email);
-        return buildAuthResponse(savedUser, refreshTokenService.createRefreshToken(savedUser));
+        emailNotificationService.sendRegistrationOtp(
+                savedUser.getEmail(),
+                savedUser.getFullName(),
+                otp,
+                appProperties.getOtp().getExpirationMinutes());
+
+        log.info("User registered pending email verification: id={}, email={}", savedUser.getId(), email);
+        return buildRegistrationOtpResponse(savedUser.getEmail(), "Mã OTP đã được gửi đến email đăng ký.");
     }
 
     @Transactional
     public AuthResponse login(LoginRequest request) {
-        String email = request.email().trim().toLowerCase();
+        String email = normalizeEmail(request.email());
+        User existingUser = userRepository.findByEmail(email).orElse(null);
+
+        if (isLocalEmailUnverified(existingUser)) {
+            log.warn("Login blocked for unverified email: {}", email);
+            throw new BusinessException("Tài khoản chưa xác minh email. Vui lòng nhập mã OTP đã gửi đến Gmail.");
+        }
 
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, request.password()));
@@ -89,11 +127,107 @@ public class AuthService {
             throw ex;
         }
 
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new BusinessException("Email hoặc mật khẩu không hợp lệ."));
+        User user = existingUser != null
+                ? existingUser
+                : userRepository.findByEmail(email)
+                        .orElseThrow(() -> new BusinessException("Email hoặc mật khẩu không hợp lệ."));
 
         log.info("Login successful: id={}, email={}", user.getId(), email);
         return buildAuthResponse(user, refreshTokenService.createRefreshToken(user));
+    }
+
+    @Transactional
+    public AuthResponse loginWithGoogle(GoogleLoginRequest request) {
+        GoogleIdentityService.GoogleAccount googleAccount = googleIdentityService.verify(request.idToken());
+
+        User user = userRepository.findByGoogleId(googleAccount.googleId()).orElse(null);
+        if (user == null) {
+            user = userRepository.findByEmail(googleAccount.email()).orElse(null);
+        }
+
+        if (user == null) {
+            user = createGoogleUser(googleAccount);
+        } else {
+            ensureGoogleLoginAllowed(user);
+            linkGoogleIdentity(user, googleAccount);
+        }
+
+        ensureDefaultRoleIfMissing(user);
+        User savedUser = userRepository.save(user);
+
+        log.info("Google login successful: id={}, email={}", savedUser.getId(), savedUser.getEmail());
+        return buildAuthResponse(savedUser, refreshTokenService.createRefreshToken(savedUser));
+    }
+
+    @Transactional(noRollbackFor = BusinessException.class)
+    public AuthResponse verifyOtp(VerifyOtpRequest request) {
+        String email = normalizeEmail(request.email());
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new BusinessException("Không tìm thấy tài khoản cần xác minh."));
+
+        validateOtpTarget(user);
+
+        if (user.getOtpHash() == null || user.getOtpExpiresAt() == null) {
+            throw new BusinessException("Mã OTP không còn hiệu lực. Vui lòng gửi lại mã mới.");
+        }
+
+        Instant now = Instant.now();
+        if (now.isAfter(user.getOtpExpiresAt())) {
+            throw new BusinessException("Mã OTP đã hết hạn. Vui lòng gửi lại mã mới.");
+        }
+
+        if (user.getOtpAttempts() >= appProperties.getOtp().getMaxAttempts()) {
+            throw new BusinessException("Bạn đã nhập sai OTP quá số lần cho phép. Vui lòng gửi lại mã mới.");
+        }
+
+        if (!passwordEncoder.matches(request.otp(), user.getOtpHash())) {
+            user.setOtpAttempts(user.getOtpAttempts() + 1);
+            userRepository.save(user);
+            throw new BusinessException("Mã OTP không đúng. Vui lòng kiểm tra lại.");
+        }
+
+        user.setEmailVerified(true);
+        user.setStatus(UserStatus.ACTIVE);
+        user.setEnabled(true);
+        clearOtp(user);
+
+        User savedUser = userRepository.save(user);
+        log.info("Email verified: id={}, email={}", savedUser.getId(), savedUser.getEmail());
+        return buildAuthResponse(savedUser, refreshTokenService.createRefreshToken(savedUser));
+    }
+
+    @Transactional
+    public RegistrationOtpResponse resendOtp(ResendOtpRequest request) {
+        String email = normalizeEmail(request.email());
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new BusinessException("Không tìm thấy tài khoản cần xác minh."));
+
+        validateOtpTarget(user);
+
+        Instant now = Instant.now();
+        Instant nextAllowedAt = user.getOtpLastSentAt() == null
+                ? Instant.EPOCH
+                : user.getOtpLastSentAt().plusSeconds(appProperties.getOtp().getResendCooldownSeconds());
+        if (now.isBefore(nextAllowedAt)) {
+            long seconds = Math.max(1, nextAllowedAt.getEpochSecond() - now.getEpochSecond());
+            throw new BusinessException("Vui lòng chờ " + seconds + " giây trước khi gửi lại OTP.");
+        }
+
+        if (user.getOtpResendCount() >= appProperties.getOtp().getMaxResendCount()) {
+            throw new BusinessException("Bạn đã vượt quá số lần gửi lại OTP. Vui lòng thử lại sau.");
+        }
+
+        String otp = prepareOtp(user, true);
+        User savedUser = userRepository.save(user);
+        emailNotificationService.sendRegistrationOtp(
+                savedUser.getEmail(),
+                savedUser.getFullName(),
+                otp,
+                appProperties.getOtp().getExpirationMinutes());
+
+        log.info("Registration OTP resent: id={}, email={}, resendCount={}",
+                savedUser.getId(), savedUser.getEmail(), savedUser.getOtpResendCount());
+        return buildRegistrationOtpResponse(savedUser.getEmail(), "Mã OTP mới đã được gửi đến email đăng ký.");
     }
 
     @Transactional
@@ -107,6 +241,139 @@ public class AuthService {
     public void logout(String refreshToken) {
         refreshTokenService.revoke(refreshToken);
         log.info("User logged out (refresh token revoked)");
+    }
+
+    private String normalizeEmail(String email) {
+        return email.trim().toLowerCase();
+    }
+
+    private User createGoogleUser(GoogleIdentityService.GoogleAccount googleAccount) {
+        User user = new User();
+        user.setFullName(resolveGoogleFullName(googleAccount));
+        user.setEmail(googleAccount.email());
+        user.setPasswordHash(passwordEncoder.encode(generateOpaquePassword()));
+        user.setAvatarUrl(InputSanitizer.trimToNull(googleAccount.avatarUrl()));
+        user.setStatus(UserStatus.ACTIVE);
+        user.setEnabled(true);
+        user.setEmailVerified(true);
+        user.setAuthProvider(AuthProvider.GOOGLE);
+        user.setGoogleId(googleAccount.googleId());
+        ensureDefaultRoleIfMissing(user);
+        return user;
+    }
+
+    private void linkGoogleIdentity(User user, GoogleIdentityService.GoogleAccount googleAccount) {
+        if (StringUtils.hasText(user.getGoogleId()) && !user.getGoogleId().equals(googleAccount.googleId())) {
+            throw new BusinessException("Email này đã được liên kết với một tài khoản Google khác.");
+        }
+
+        user.setGoogleId(googleAccount.googleId());
+        user.setAuthProvider(AuthProvider.GOOGLE);
+        user.setEmailVerified(true);
+
+        if (!user.isEnabled() && user.getStatus() == UserStatus.INACTIVE) {
+            user.setEnabled(true);
+            user.setStatus(UserStatus.ACTIVE);
+        }
+
+        if (!StringUtils.hasText(user.getFullName())) {
+            user.setFullName(resolveGoogleFullName(googleAccount));
+        }
+
+        if (StringUtils.hasText(googleAccount.avatarUrl())) {
+            user.setAvatarUrl(googleAccount.avatarUrl());
+        }
+
+        clearOtp(user);
+    }
+
+    private void ensureGoogleLoginAllowed(User user) {
+        if (user.getStatus() == UserStatus.LOCKED) {
+            throw new BusinessException("Tài khoản đã bị khóa. Vui lòng liên hệ quản trị viên.");
+        }
+
+        if (user.isEmailVerified() && (!user.isEnabled() || user.getStatus() != UserStatus.ACTIVE)) {
+            throw new BusinessException("Tài khoản đang bị vô hiệu hóa. Vui lòng liên hệ quản trị viên.");
+        }
+    }
+
+    private void ensureDefaultRoleIfMissing(User user) {
+        if (!user.getRoles().isEmpty()) {
+            return;
+        }
+
+        user.getRoles().add(roleRepository.findByName(RoleName.USER)
+                .orElseThrow(() -> new BusinessException("Hệ thống chưa được khởi tạo role USER.")));
+    }
+
+    private String resolveGoogleFullName(GoogleIdentityService.GoogleAccount googleAccount) {
+        String fullName = InputSanitizer.sanitize(googleAccount.fullName());
+        if (StringUtils.hasText(fullName)) {
+            return fullName;
+        }
+
+        int atIndex = googleAccount.email().indexOf('@');
+        return atIndex > 0 ? googleAccount.email().substring(0, atIndex) : googleAccount.email();
+    }
+
+    private String generateOpaquePassword() {
+        byte[] bytes = new byte[GENERATED_PASSWORD_BYTES];
+        secureRandom.nextBytes(bytes);
+        return Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
+    }
+
+    private boolean isLocalEmailUnverified(User user) {
+        return user != null
+                && user.getAuthProvider() == AuthProvider.LOCAL
+                && !user.isEmailVerified();
+    }
+
+    private void validateOtpTarget(User user) {
+        if (user.getAuthProvider() != AuthProvider.LOCAL) {
+            throw new BusinessException("Tài khoản này không sử dụng xác minh OTP.");
+        }
+
+        if (user.isEmailVerified()) {
+            throw new BusinessException("Email này đã được xác minh.");
+        }
+    }
+
+    private String prepareOtp(User user, boolean resend) {
+        String otp = generateOtp();
+        Instant now = Instant.now();
+
+        user.setOtpHash(passwordEncoder.encode(otp));
+        user.setOtpExpiresAt(now.plusSeconds(appProperties.getOtp().getExpirationMinutes() * 60));
+        user.setOtpAttempts(0);
+        user.setOtpLastSentAt(now);
+
+        if (resend) {
+            user.setOtpResendCount(user.getOtpResendCount() + 1);
+        } else {
+            user.setOtpResendCount(0);
+        }
+
+        return otp;
+    }
+
+    private String generateOtp() {
+        return String.format("%06d", secureRandom.nextInt(OTP_BOUND));
+    }
+
+    private void clearOtp(User user) {
+        user.setOtpHash(null);
+        user.setOtpExpiresAt(null);
+        user.setOtpAttempts(0);
+        user.setOtpResendCount(0);
+        user.setOtpLastSentAt(null);
+    }
+
+    private RegistrationOtpResponse buildRegistrationOtpResponse(String email, String message) {
+        return new RegistrationOtpResponse(
+                email,
+                appProperties.getOtp().getExpirationMinutes(),
+                appProperties.getOtp().getResendCooldownSeconds(),
+                message);
     }
 
     private AuthResponse buildAuthResponse(User user, String refreshToken) {

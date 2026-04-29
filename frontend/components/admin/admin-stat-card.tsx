@@ -12,9 +12,9 @@ const toneClasses = {
 
 export function AdminStatCard({ stat }: { stat: AdminStat }) {
   return (
-    <div className="group rounded-[28px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-5 shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:-translate-y-1 hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)]">
+    <div className="group rounded-[22px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:-translate-y-1 hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[28px] sm:p-5">
       <p className="text-sm font-medium text-[var(--color-text-muted)]">{stat.label}</p>
-      <p className="mt-4 text-4xl font-semibold tracking-tight text-[var(--color-text-strong)] transition-colors duration-200 group-hover:text-[var(--color-brand-700)]">
+      <p className="mt-3 text-3xl font-semibold tracking-tight text-[var(--color-text-strong)] transition-colors duration-200 group-hover:text-[var(--color-brand-700)] sm:mt-4 sm:text-4xl">
         {stat.value}
       </p>
       <div

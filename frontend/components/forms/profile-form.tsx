@@ -106,14 +106,14 @@ export function ProfileForm({ profile }: { profile: UserProfile }) {
 
   return (
     <form
-      className="rounded-[32px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:p-8"
+      className="rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px] sm:p-8"
       onSubmit={handleSubmit}
     >
       <div className="space-y-3">
-        <h1 className="text-3xl font-semibold tracking-tight text-[var(--color-text-strong)]">
+        <h1 className="text-2xl font-semibold tracking-tight text-[var(--color-text-strong)] sm:text-3xl">
           Hồ sơ cá nhân
         </h1>
-        <p className="text-base leading-7 text-[var(--color-text-muted)]">
+        <p className="text-sm leading-7 text-[var(--color-text-muted)] sm:text-base">
           Cập nhật các thông tin cơ bản dùng cho việc liên hệ: họ tên, email, số điện
           thoại và ảnh đại diện.
         </p>
@@ -131,7 +131,7 @@ export function ProfileForm({ profile }: { profile: UserProfile }) {
         </div>
       ) : null}
 
-      <div className="mt-8 grid gap-5 md:grid-cols-2">
+      <div className="mt-6 grid gap-5 md:grid-cols-2 sm:mt-8">
         <Input
           label="Họ tên"
           value={formData.fullName}
@@ -149,7 +149,7 @@ export function ProfileForm({ profile }: { profile: UserProfile }) {
           <span className="text-sm font-semibold text-[var(--color-text-strong)]">
             Ảnh đại diện
           </span>
-          <div className="mt-2 rounded-[28px] border border-[var(--color-border-strong)] bg-[var(--color-surface-soft)] p-4 shadow-sm transition-colors duration-200 hover:border-[var(--color-brand-500)]">
+          <div className="mt-2 rounded-[22px] border border-[var(--color-border-strong)] bg-[var(--color-surface-soft)] p-3 shadow-sm transition-colors duration-200 hover:border-[var(--color-brand-500)] sm:rounded-[28px] sm:p-4">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
               <div className="relative size-28 shrink-0 overflow-hidden rounded-full border-4 border-[var(--color-surface)] bg-[var(--color-surface)] shadow-[var(--shadow-card)]">
                 {formData.avatarUrl ? (

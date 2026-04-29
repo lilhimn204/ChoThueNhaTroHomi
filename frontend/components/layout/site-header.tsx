@@ -98,9 +98,14 @@ export function SiteHeader() {
           {isAdmin ? (
             <Link
               href="/admin"
-              className="rounded-full px-3 py-2 text-sm font-medium text-[var(--color-text-muted)] hover:-translate-y-0.5 hover:bg-[var(--color-surface-soft)] hover:text-[var(--color-text-strong)]"
+              className={cn(
+                "inline-flex h-11 items-center justify-center whitespace-nowrap rounded-full px-4 text-sm font-semibold transition-all duration-200",
+                isActive("/admin")
+                  ? "bg-[var(--color-brand-50)] text-[var(--color-brand-800)] shadow-sm ring-1 ring-[var(--color-border-soft)]"
+                  : "text-[var(--color-text-muted)] hover:-translate-y-0.5 hover:bg-[var(--color-surface-soft)] hover:text-[var(--color-text-strong)]",
+              )}
             >
-              Khu admin
+              Khu quản trị
             </Link>
           ) : null}
 
@@ -197,10 +202,15 @@ export function SiteHeader() {
             {isAdmin ? (
               <Link
                 href="/admin"
-                className="rounded-2xl px-4 py-3 text-sm font-medium text-[var(--color-text-muted)] transition-all duration-200 hover:translate-x-1 hover:bg-[var(--color-surface-soft)] hover:text-[var(--color-text-strong)]"
+                className={cn(
+                  "rounded-2xl px-4 py-3 text-sm font-medium transition-all duration-200",
+                  isActive("/admin")
+                    ? "bg-[var(--color-brand-50)] text-[var(--color-brand-800)] shadow-sm"
+                    : "text-[var(--color-text-muted)] hover:translate-x-1 hover:bg-[var(--color-surface-soft)] hover:text-[var(--color-text-strong)]",
+                )}
                 onClick={() => setMobileOpen(false)}
               >
-                Khu admin
+                Khu quản trị
               </Link>
             ) : null}
           </div>
