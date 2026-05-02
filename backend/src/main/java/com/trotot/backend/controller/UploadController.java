@@ -38,4 +38,13 @@ public class UploadController {
 
         return fileStorageService.storeAvatarImage(file, requestBaseUrl);
     }
+
+    @PostMapping(value = "/news", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public UploadResponse uploadNewsImage(@RequestPart("file") MultipartFile file) {
+        String requestBaseUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .build()
+                .toUriString();
+
+        return fileStorageService.storeNewsImage(file, requestBaseUrl);
+    }
 }

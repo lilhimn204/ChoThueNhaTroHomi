@@ -16,11 +16,14 @@ import org.springframework.util.StringUtils;
 import com.trotot.backend.config.AppProperties;
 import com.trotot.backend.dto.auth.AuthResponse;
 import com.trotot.backend.dto.auth.AuthUserResponse;
+import com.trotot.backend.dto.auth.ForgotPasswordRequest;
 import com.trotot.backend.dto.auth.GoogleLoginRequest;
 import com.trotot.backend.dto.auth.LoginRequest;
+import com.trotot.backend.dto.auth.PasswordResetOtpResponse;
 import com.trotot.backend.dto.auth.RegistrationOtpResponse;
 import com.trotot.backend.dto.auth.RegisterRequest;
 import com.trotot.backend.dto.auth.ResendOtpRequest;
+import com.trotot.backend.dto.auth.ResetPasswordRequest;
 import com.trotot.backend.dto.auth.VerifyOtpRequest;
 import com.trotot.backend.entity.AuthProvider;
 import com.trotot.backend.entity.Role;
@@ -231,6 +234,103 @@ public class AuthService {
     }
 
     @Transactional
+    public PasswordResetOtpResponse requestPasswordReset(ForgotPasswordRequest request) {
+        String email = normalizeEmail(request.email());
+        User user = userRepository.findByEmail(email).orElse(null);
+
+        if (user == null) {
+            log.info("Password reset requested for unknown email: {}", email);
+            return buildPasswordResetOtpResponse(email, "Nếu email tồn tại trong hệ thống, mã OTP đặt lại mật khẩu sẽ được gửi đến Gmail.");
+        }
+
+        validatePasswordResetTarget(user);
+        Instant now = Instant.now();
+        ensurePasswordResetSendAllowed(user, now);
+
+        String otp = preparePasswordResetOtp(user, hasActivePasswordResetOtp(user, now));
+        User savedUser = userRepository.save(user);
+        emailNotificationService.sendPasswordResetOtp(
+                savedUser.getEmail(),
+                savedUser.getFullName(),
+                otp,
+                appProperties.getOtp().getExpirationMinutes());
+
+        log.info("Password reset OTP sent: id={}, email={}", savedUser.getId(), savedUser.getEmail());
+        return buildPasswordResetOtpResponse(savedUser.getEmail(), "Mã OTP đặt lại mật khẩu đã được gửi đến Gmail.");
+    }
+
+    @Transactional
+    public PasswordResetOtpResponse resendPasswordResetOtp(ResendOtpRequest request) {
+        String email = normalizeEmail(request.email());
+        User user = userRepository.findByEmail(email).orElse(null);
+
+        if (user == null) {
+            log.info("Password reset resend requested for unknown email: {}", email);
+            return buildPasswordResetOtpResponse(email, "Nếu email tồn tại trong hệ thống, mã OTP đặt lại mật khẩu sẽ được gửi đến Gmail.");
+        }
+
+        validatePasswordResetTarget(user);
+        Instant now = Instant.now();
+        ensurePasswordResetSendAllowed(user, now);
+
+        String otp = preparePasswordResetOtp(user, hasActivePasswordResetOtp(user, now));
+        User savedUser = userRepository.save(user);
+        emailNotificationService.sendPasswordResetOtp(
+                savedUser.getEmail(),
+                savedUser.getFullName(),
+                otp,
+                appProperties.getOtp().getExpirationMinutes());
+
+        log.info("Password reset OTP resent: id={}, email={}, resendCount={}",
+                savedUser.getId(), savedUser.getEmail(), savedUser.getPasswordResetOtpResendCount());
+        return buildPasswordResetOtpResponse(savedUser.getEmail(), "Mã OTP đặt lại mật khẩu mới đã được gửi đến Gmail.");
+    }
+
+    @Transactional(noRollbackFor = BusinessException.class)
+    public void resetPassword(ResetPasswordRequest request) {
+        String email = normalizeEmail(request.email());
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new BusinessException("Không tìm thấy tài khoản cần đặt lại mật khẩu."));
+
+        validatePasswordResetTarget(user);
+
+        if (user.getPasswordResetOtpHash() == null || user.getPasswordResetOtpExpiresAt() == null) {
+            throw new BusinessException("Mã OTP đặt lại mật khẩu không còn hiệu lực. Vui lòng gửi lại mã mới.");
+        }
+
+        Instant now = Instant.now();
+        if (now.isAfter(user.getPasswordResetOtpExpiresAt())) {
+            throw new BusinessException("Mã OTP đặt lại mật khẩu đã hết hạn. Vui lòng gửi lại mã mới.");
+        }
+
+        if (user.getPasswordResetOtpAttempts() >= appProperties.getOtp().getMaxAttempts()) {
+            throw new BusinessException("Bạn đã nhập sai OTP quá số lần cho phép. Vui lòng gửi lại mã mới.");
+        }
+
+        if (!passwordEncoder.matches(request.otp(), user.getPasswordResetOtpHash())) {
+            user.setPasswordResetOtpAttempts(user.getPasswordResetOtpAttempts() + 1);
+            userRepository.save(user);
+            throw new BusinessException("Mã OTP không đúng. Vui lòng kiểm tra lại.");
+        }
+
+        if (passwordEncoder.matches(request.newPassword(), user.getPasswordHash())) {
+            throw new BusinessException("Mật khẩu mới phải khác mật khẩu hiện tại.");
+        }
+
+        user.setPasswordHash(passwordEncoder.encode(request.newPassword()));
+        user.setEmailVerified(true);
+        if (user.getStatus() == UserStatus.INACTIVE) {
+            user.setStatus(UserStatus.ACTIVE);
+            user.setEnabled(true);
+        }
+        clearPasswordResetOtp(user);
+
+        User savedUser = userRepository.save(user);
+        refreshTokenService.revokeActiveTokensForUser(savedUser.getId());
+        log.info("Password reset completed: id={}, email={}", savedUser.getId(), savedUser.getEmail());
+    }
+
+    @Transactional
     public AuthResponse refresh(String refreshToken) {
         RefreshTokenService.RefreshTokenRotation rotation = refreshTokenService.rotate(refreshToken);
         log.info("Token refreshed: id={}, email={}", rotation.user().getId(), rotation.user().getEmail());
@@ -338,6 +438,37 @@ public class AuthService {
         }
     }
 
+    private void validatePasswordResetTarget(User user) {
+        if (user.getStatus() == UserStatus.LOCKED) {
+            throw new BusinessException("Tài khoản đã bị khóa. Vui lòng liên hệ quản trị viên.");
+        }
+
+        if (!user.isEmailVerified()) {
+            throw new BusinessException("Tài khoản chưa xác minh email. Vui lòng hoàn tất xác minh đăng ký trước.");
+        }
+    }
+
+    private void ensurePasswordResetSendAllowed(User user, Instant now) {
+        Instant nextAllowedAt = user.getPasswordResetOtpLastSentAt() == null
+                ? Instant.EPOCH
+                : user.getPasswordResetOtpLastSentAt().plusSeconds(appProperties.getOtp().getResendCooldownSeconds());
+        if (now.isBefore(nextAllowedAt)) {
+            long seconds = Math.max(1, nextAllowedAt.getEpochSecond() - now.getEpochSecond());
+            throw new BusinessException("Vui lòng chờ " + seconds + " giây trước khi gửi lại OTP.");
+        }
+
+        if (hasActivePasswordResetOtp(user, now)
+                && user.getPasswordResetOtpResendCount() >= appProperties.getOtp().getMaxResendCount()) {
+            throw new BusinessException("Bạn đã vượt quá số lần gửi lại OTP. Vui lòng thử lại sau.");
+        }
+    }
+
+    private boolean hasActivePasswordResetOtp(User user, Instant now) {
+        return user.getPasswordResetOtpHash() != null
+                && user.getPasswordResetOtpExpiresAt() != null
+                && now.isBefore(user.getPasswordResetOtpExpiresAt());
+    }
+
     private String prepareOtp(User user, boolean resend) {
         String otp = generateOtp();
         Instant now = Instant.now();
@@ -356,6 +487,24 @@ public class AuthService {
         return otp;
     }
 
+    private String preparePasswordResetOtp(User user, boolean resend) {
+        String otp = generateOtp();
+        Instant now = Instant.now();
+
+        user.setPasswordResetOtpHash(passwordEncoder.encode(otp));
+        user.setPasswordResetOtpExpiresAt(now.plusSeconds(appProperties.getOtp().getExpirationMinutes() * 60));
+        user.setPasswordResetOtpAttempts(0);
+        user.setPasswordResetOtpLastSentAt(now);
+
+        if (resend) {
+            user.setPasswordResetOtpResendCount(user.getPasswordResetOtpResendCount() + 1);
+        } else {
+            user.setPasswordResetOtpResendCount(0);
+        }
+
+        return otp;
+    }
+
     private String generateOtp() {
         return String.format("%06d", secureRandom.nextInt(OTP_BOUND));
     }
@@ -368,8 +517,24 @@ public class AuthService {
         user.setOtpLastSentAt(null);
     }
 
+    private void clearPasswordResetOtp(User user) {
+        user.setPasswordResetOtpHash(null);
+        user.setPasswordResetOtpExpiresAt(null);
+        user.setPasswordResetOtpAttempts(0);
+        user.setPasswordResetOtpResendCount(0);
+        user.setPasswordResetOtpLastSentAt(null);
+    }
+
     private RegistrationOtpResponse buildRegistrationOtpResponse(String email, String message) {
         return new RegistrationOtpResponse(
+                email,
+                appProperties.getOtp().getExpirationMinutes(),
+                appProperties.getOtp().getResendCooldownSeconds(),
+                message);
+    }
+
+    private PasswordResetOtpResponse buildPasswordResetOtpResponse(String email, String message) {
+        return new PasswordResetOtpResponse(
                 email,
                 appProperties.getOtp().getExpirationMinutes(),
                 appProperties.getOtp().getResendCooldownSeconds(),

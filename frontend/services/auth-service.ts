@@ -22,6 +22,16 @@ interface ResendOtpPayload {
   email: string;
 }
 
+interface ForgotPasswordPayload {
+  email: string;
+}
+
+interface ResetPasswordPayload {
+  email: string;
+  otp: string;
+  newPassword: string;
+}
+
 interface GoogleLoginPayload {
   idToken: string;
 }
@@ -31,6 +41,13 @@ interface AuthBffResponse {
 }
 
 export interface RegistrationOtpResponse {
+  email: string;
+  expiresInMinutes: number;
+  resendCooldownSeconds: number;
+  message: string;
+}
+
+export interface PasswordResetOtpResponse {
   email: string;
   expiresInMinutes: number;
   resendCooldownSeconds: number;
@@ -118,6 +135,59 @@ export async function resendRegistrationOtp(
   }
 
   return (await response.json()) as RegistrationOtpResponse;
+}
+
+/**
+ * Start password reset by sending an OTP to the account email.
+ */
+export async function requestPasswordReset(
+  payload: ForgotPasswordPayload,
+): Promise<PasswordResetOtpResponse> {
+  const response = await fetch("/api/auth/forgot-password", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    await throwAuthError(response, "Không thể gửi mã đặt lại mật khẩu.");
+  }
+
+  return (await response.json()) as PasswordResetOtpResponse;
+}
+
+/**
+ * Request a new password reset OTP.
+ */
+export async function resendPasswordResetOtp(
+  payload: ResendOtpPayload,
+): Promise<PasswordResetOtpResponse> {
+  const response = await fetch("/api/auth/resend-password-reset-otp", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    await throwAuthError(response, "Không thể gửi lại mã đặt lại mật khẩu.");
+  }
+
+  return (await response.json()) as PasswordResetOtpResponse;
+}
+
+/**
+ * Verify password reset OTP and set the new password.
+ */
+export async function resetPassword(payload: ResetPasswordPayload): Promise<void> {
+  const response = await fetch("/api/auth/reset-password", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    await throwAuthError(response, "Không thể đặt lại mật khẩu.");
+  }
 }
 
 /**

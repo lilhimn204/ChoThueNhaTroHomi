@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 export default function NotFound() {
   return (
     <div className="container-shell flex min-h-[60vh] flex-col items-center justify-center py-10 text-center sm:py-16">
-      <div className="max-w-xl rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-5 shadow-[var(--shadow-card)] sm:rounded-[32px] sm:p-10">
+      <div className="motion-panel animate-content-rise max-w-xl rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-5 shadow-[var(--shadow-card)] ring-1 ring-transparent hover:-translate-y-1 hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px] sm:p-10">
         <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[var(--color-brand-700)]">
           404
         </p>

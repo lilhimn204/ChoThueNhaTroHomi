@@ -118,7 +118,7 @@ export function HostProfileClient() {
 
   return (
     <form className="space-y-5 sm:space-y-6" onSubmit={handleSubmit}>
-      <section className="rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px] sm:p-6">
+      <section className="motion-panel animate-content-rise rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent hover:-translate-y-1 hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px] sm:p-6">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--color-brand-700)]">
@@ -150,11 +150,11 @@ export function HostProfileClient() {
       </section>
 
       <section className="grid min-w-0 gap-5 sm:gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
-        <div className="rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px] sm:p-6">
+        <div className="motion-panel rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent hover:-translate-y-1 hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px] sm:p-6">
           <h2 className="text-xl font-semibold text-[var(--color-text-strong)]">
             Thông tin cơ bản
           </h2>
-          <div className="mt-5 grid gap-5 md:grid-cols-2">
+          <div className="motion-stagger mt-5 grid gap-5 md:grid-cols-2">
             <Input
               label="Họ tên"
               value={form.fullName}
@@ -201,11 +201,11 @@ export function HostProfileClient() {
           </div>
         </div>
 
-        <aside className="rounded-[24px] border border-white/10 bg-[var(--color-brand-950)] p-4 text-white shadow-[var(--shadow-card)] ring-1 ring-white/10 transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-[var(--shadow-card-hover)] sm:rounded-[32px] sm:p-6">
+        <aside className="motion-panel animate-content-rise rounded-[24px] border border-white/10 bg-[var(--color-brand-950)] p-4 text-white shadow-[var(--shadow-card)] ring-1 ring-white/10 hover:-translate-y-1 hover:border-white/20 hover:shadow-[var(--shadow-card-hover)] sm:rounded-[32px] sm:p-6">
           <p className="text-sm font-semibold uppercase tracking-[0.18em] text-white/55">
             Gợi ý hồ sơ tốt
           </p>
-          <ul className="mt-5 space-y-4 text-sm leading-6 text-white/78">
+          <ul className="motion-stagger mt-5 space-y-4 text-sm leading-6 text-white/78">
             <li>Ghi rõ khu vực bạn đang cho thuê để khách dễ hình dung.</li>
             <li>Dùng số điện thoại thường xuyên nghe máy.</li>
             <li>Mô tả ngắn, thật, tránh quảng cáo quá đà.</li>

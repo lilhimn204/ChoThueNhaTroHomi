@@ -8,7 +8,7 @@ export function AdminTable({
   rows: (string | ReactNode)[][];
 }) {
   return (
-    <div className="min-w-0 overflow-hidden rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)]">
+    <div className="motion-panel min-w-0 overflow-hidden rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] shadow-[var(--shadow-card)] ring-1 ring-transparent hover:-translate-y-0.5 hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)]">
       <div className="border-b border-[var(--color-border-soft)] bg-[var(--color-surface-soft)] px-4 py-2 text-xs font-medium text-[var(--color-text-muted)] lg:hidden">
         Kéo ngang để xem đầy đủ các cột
       </div>
@@ -29,7 +29,7 @@ export function AdminTable({
           </thead>
           <tbody className="divide-y divide-[var(--color-border-soft)]">
             {rows.map((row, rowIndex) => (
-              <tr key={rowIndex} className="transition-colors duration-200 hover:bg-[var(--color-surface-soft)]">
+              <tr key={rowIndex} className="motion-soft hover:bg-[var(--color-surface-soft)]">
                 {row.map((cell, cellIndex) => (
                   <td
                     key={`${rowIndex}-${cellIndex}`}

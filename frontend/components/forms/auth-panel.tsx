@@ -25,6 +25,7 @@ interface GoogleAccountsApi {
         callback: (response: GoogleCredentialResponse) => void;
         auto_select?: boolean;
         cancel_on_tap_outside?: boolean;
+        context?: "signin" | "signup" | "use";
       }) => void;
       renderButton: (
         parent: HTMLElement,
@@ -35,6 +36,8 @@ interface GoogleAccountsApi {
           text?: "signin_with" | "signup_with" | "continue_with";
           shape?: "rectangular" | "pill" | "circle" | "square";
           width?: number;
+          locale?: string;
+          logo_alignment?: "left" | "center";
         },
       ) => void;
     };
@@ -61,6 +64,13 @@ function GoogleAuthButton({
   onError: (message: string) => void;
 }) {
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const onCredentialRef = useRef(onCredential);
+  const onErrorRef = useRef(onError);
+
+  useEffect(() => {
+    onCredentialRef.current = onCredential;
+    onErrorRef.current = onError;
+  }, [onCredential, onError]);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -78,7 +88,7 @@ function GoogleAuthButton({
 
       const googleApi = (window as Window & { google?: GoogleAccountsApi }).google;
       if (!googleApi) {
-        onError("Không thể tải đăng nhập Google. Vui lòng thử lại sau.");
+        onErrorRef.current("Không thể tải đăng nhập Google. Vui lòng thử lại sau.");
         return;
       }
 
@@ -87,23 +97,26 @@ function GoogleAuthButton({
         client_id: GOOGLE_CLIENT_ID,
         callback(response) {
           if (!response.credential) {
-            onError("Google không trả về thông tin đăng nhập. Vui lòng thử lại.");
+            onErrorRef.current("Google không trả về thông tin đăng nhập. Vui lòng thử lại.");
             return;
           }
 
-          onCredential(response.credential);
+          onCredentialRef.current(response.credential);
         },
         auto_select: false,
         cancel_on_tap_outside: true,
+        context: mode === "register" ? "signup" : "signin",
       });
 
       googleApi.accounts.id.renderButton(containerRef.current, {
         type: "standard",
         theme: "outline",
-        size: "large",
-        text: mode === "register" ? "signup_with" : "signin_with",
+        size: "medium",
+        text: "signin_with",
         shape: "rectangular",
-        width: Math.min(Math.max(containerRef.current.offsetWidth, 240), 400),
+        width: Math.min(Math.max(containerRef.current.offsetWidth, 260), 520),
+        locale: "vi",
+        logo_alignment: "left",
       });
     };
 
@@ -118,7 +131,7 @@ function GoogleAuthButton({
     if (!script) {
       script = document.createElement("script");
       script.id = GOOGLE_SCRIPT_ID;
-      script.src = "https://accounts.google.com/gsi/client";
+      script.src = "https://accounts.google.com/gsi/client?hl=vi";
       script.async = true;
       script.defer = true;
       document.head.appendChild(script);
@@ -129,7 +142,7 @@ function GoogleAuthButton({
     };
 
     const handleError = () => {
-      onError("Không thể tải đăng nhập Google. Vui lòng thử lại sau.");
+      onErrorRef.current("Không thể tải đăng nhập Google. Vui lòng thử lại sau.");
     };
 
     script.addEventListener("load", handleLoad);
@@ -140,7 +153,7 @@ function GoogleAuthButton({
       script?.removeEventListener("load", handleLoad);
       script?.removeEventListener("error", handleError);
     };
-  }, [mode, onCredential, onError]);
+  }, [mode]);
 
   if (!GOOGLE_AUTH_ENABLED) {
     return null;
@@ -148,7 +161,11 @@ function GoogleAuthButton({
 
   return (
     <div
-      className={disabled ? "pointer-events-none opacity-50" : undefined}
+      className={
+        disabled
+          ? "motion-soft pointer-events-none min-h-10 w-full rounded-2xl opacity-50 grayscale [&>div]:!w-full [&_iframe]:!w-full"
+          : "motion-soft min-h-10 w-full rounded-2xl hover:-translate-y-0.5 hover:shadow-sm [&>div]:!w-full [&_iframe]:!w-full"
+      }
       ref={containerRef}
     />
   );
@@ -337,7 +354,7 @@ export function AuthPanel({
   };
 
   return (
-    <div className="rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-5 shadow-[var(--shadow-card)] sm:rounded-[32px] sm:p-8">
+    <div className="motion-panel animate-content-rise rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-5 shadow-[var(--shadow-card)] ring-1 ring-transparent hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px] sm:p-8">
       <div className="space-y-3">
         <h1 className="text-2xl font-semibold tracking-tight text-[var(--color-text-strong)] sm:text-3xl">
           {content.title}
@@ -359,7 +376,7 @@ export function AuthPanel({
               onError={setErrorMessage}
             />
 
-            <div className="flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.16em] text-[var(--color-text-muted)]">
+            <div className="motion-soft flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.16em] text-[var(--color-text-muted)]">
               <span className="h-px flex-1 bg-[var(--color-border-soft)]" />
               <span>Email</span>
               <span className="h-px flex-1 bg-[var(--color-border-soft)]" />
@@ -367,7 +384,7 @@ export function AuthPanel({
           </>
         ) : null}
 
-        <form className="space-y-5" onSubmit={handleSubmit}>
+        <form className="motion-stagger space-y-5" onSubmit={handleSubmit}>
           {successMessage ? (
             <Alert tone="success" title="Thao tác thành công" description={successMessage} />
           ) : null}
@@ -381,7 +398,7 @@ export function AuthPanel({
               <Alert
                 tone="info"
                 title="Kiểm tra Gmail"
-                description={`Mã OTP được gửi đến ${pendingEmail || formData.email}. Mã có hiệu lực trong ${otpExpiresInMinutes} phút.`}
+                description={`Mã OTP được gửi đến ${pendingEmail || formData.email}. Mã có hiệu lực trong ${otpExpiresInMinutes} phút. Kiểm tra mục "Thư rác" nếu chưa thấy email trong Hộp thư đến.`}
               />
               <Input
                 label="Mã OTP"
@@ -446,6 +463,17 @@ export function AuthPanel({
                 error={fieldErrors.password}
               />
 
+              {mode === "login" ? (
+                <div className="-mt-2 flex justify-end">
+                  <Link
+                    href="/forgot-password"
+                    className="motion-soft rounded-xl px-1 text-sm font-semibold text-[var(--color-brand-700)] hover:text-[var(--color-brand-800)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus-ring)]"
+                  >
+                    Quên mật khẩu?
+                  </Link>
+                </div>
+              ) : null}
+
               {mode === "register" ? (
                 <Input
                   label="Xác nhận mật khẩu"
@@ -467,7 +495,7 @@ export function AuthPanel({
           {step === "otp" ? (
             <div className="flex flex-col gap-3 text-sm text-[var(--color-text-muted)] sm:flex-row sm:items-center sm:justify-between">
               <button
-                className="font-semibold text-[var(--color-brand-700)] hover:text-[var(--color-brand-800)] disabled:cursor-not-allowed disabled:opacity-60"
+                className="motion-pressable inline-flex rounded-xl px-1 font-semibold text-[var(--color-brand-700)] hover:-translate-y-0.5 hover:text-[var(--color-brand-800)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus-ring)] disabled:cursor-not-allowed disabled:opacity-60"
                 type="button"
                 disabled={resending || submitting}
                 onClick={() => {
@@ -486,7 +514,7 @@ export function AuthPanel({
         {content.secondaryLabel}{" "}
         <Link
           href={content.secondaryHref}
-          className="font-semibold text-[var(--color-brand-700)] hover:text-[var(--color-brand-800)]"
+          className="motion-soft rounded-xl font-semibold text-[var(--color-brand-700)] hover:text-[var(--color-brand-800)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus-ring)]"
         >
           {content.secondaryAction}
         </Link>

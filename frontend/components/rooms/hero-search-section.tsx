@@ -28,8 +28,8 @@ export function HeroSearchSection() {
   return (
     <section className="container-shell pt-8 sm:pt-12">
       <div className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
-        <div className="space-y-6">
-          <p className="inline-flex items-center gap-2 rounded-full border border-white/35 bg-[var(--badge-brand-bg)] px-4 py-2 text-sm font-semibold text-[var(--badge-brand-text)] shadow-sm backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[var(--shadow-card)]">
+        <div className="animate-content-rise space-y-6">
+          <p className="motion-soft inline-flex items-center gap-2 rounded-full border border-white/35 bg-[var(--badge-brand-bg)] px-4 py-2 text-sm font-semibold text-[var(--badge-brand-text)] shadow-sm backdrop-blur-sm hover:-translate-y-0.5 hover:shadow-[var(--shadow-card)]">
             <Sparkles className="size-4" />
             Homi - tìm phòng trọ quanh các trường đại học Hà Nội
           </p>
@@ -44,9 +44,9 @@ export function HeroSearchSection() {
             </p>
           </div>
 
-          <div className="surface-panel pattern-grid rounded-[32px] border border-white/80 p-4 shadow-[var(--shadow-card)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[var(--shadow-card-hover)] sm:p-5">
-            <div className="grid gap-3 md:grid-cols-[1.2fr_0.9fr_0.9fr_auto]">
-              <label className="space-y-2 rounded-[24px] bg-[var(--color-surface-elevated)] px-4 py-3 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[var(--shadow-card)]">
+          <div className="motion-panel surface-panel pattern-grid rounded-[32px] border border-white/80 p-4 shadow-[var(--shadow-card)] hover:-translate-y-0.5 hover:shadow-[var(--shadow-card-hover)] sm:p-5">
+            <div className="motion-stagger grid gap-3 md:grid-cols-[1.2fr_0.9fr_0.9fr_auto]">
+              <label className="motion-soft space-y-2 rounded-[24px] bg-[var(--color-surface-elevated)] px-4 py-3 shadow-sm hover:-translate-y-0.5 hover:shadow-[var(--shadow-card)]">
                 <span className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--color-text-muted)]">
                   Khu vực
                 </span>
@@ -54,7 +54,7 @@ export function HeroSearchSection() {
                   Cầu Giấy, Thanh Xuân, Hà Đông
                 </p>
               </label>
-              <label className="space-y-2 rounded-[24px] bg-[var(--color-surface-elevated)] px-4 py-3 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[var(--shadow-card)]">
+              <label className="motion-soft space-y-2 rounded-[24px] bg-[var(--color-surface-elevated)] px-4 py-3 shadow-sm hover:-translate-y-0.5 hover:shadow-[var(--shadow-card)]">
                 <span className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--color-text-muted)]">
                   Ngân sách
                 </span>
@@ -62,7 +62,7 @@ export function HeroSearchSection() {
                   3 - 6 triệu / tháng
                 </p>
               </label>
-              <label className="space-y-2 rounded-[24px] bg-[var(--color-surface-elevated)] px-4 py-3 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[var(--shadow-card)]">
+              <label className="motion-soft space-y-2 rounded-[24px] bg-[var(--color-surface-elevated)] px-4 py-3 shadow-sm hover:-translate-y-0.5 hover:shadow-[var(--shadow-card)]">
                 <span className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--color-text-muted)]">
                   Nhu cầu
                 </span>
@@ -83,22 +83,22 @@ export function HeroSearchSection() {
           </div>
 
           <div className="flex flex-wrap gap-3 text-sm text-[var(--color-text-muted)]">
-            <p className="inline-flex items-center gap-2 rounded-full bg-[var(--color-surface)] px-4 py-2 shadow-[var(--shadow-card)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[var(--shadow-card-hover)]">
+            <p className="motion-soft inline-flex items-center gap-2 rounded-full bg-[var(--color-surface)] px-4 py-2 shadow-[var(--shadow-card)] hover:-translate-y-0.5 hover:shadow-[var(--shadow-card-hover)]">
               <MapPin className="size-4 text-[var(--color-brand-700)]" />
               Lọc theo quận/huyện để xem nhanh
             </p>
-            <p className="inline-flex items-center gap-2 rounded-full bg-[var(--color-surface)] px-4 py-2 shadow-[var(--shadow-card)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[var(--shadow-card-hover)]">
+            <p className="motion-soft inline-flex items-center gap-2 rounded-full bg-[var(--color-surface)] px-4 py-2 shadow-[var(--shadow-card)] hover:-translate-y-0.5 hover:shadow-[var(--shadow-card-hover)]">
               <ShieldCheck className="size-4 text-[var(--color-brand-700)]" />
               Biết ngay phòng còn trống hay đã hết
             </p>
           </div>
         </div>
 
-        <div className="group relative">
-          <div className="absolute inset-0 -rotate-4 rounded-[36px] bg-[linear-gradient(135deg,rgba(15,76,92,0.18),rgba(229,159,58,0.18))] transition-transform duration-500 group-hover:-rotate-3" />
-          <div className="relative overflow-hidden rounded-[36px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-card-hover)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[var(--shadow-card-hover)]">
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="rounded-[28px] bg-[var(--color-brand-700)] p-5 text-white shadow-[var(--shadow-button)] transition-all duration-300 hover:-translate-y-0.5">
+        <div className="group relative animate-content-rise">
+          <div className="motion-soft absolute inset-0 -rotate-4 rounded-[36px] bg-[linear-gradient(135deg,rgba(15,76,92,0.18),rgba(229,159,58,0.18))] group-hover:-rotate-3 group-hover:scale-[1.01]" />
+          <div className="motion-panel relative overflow-hidden rounded-[36px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-card-hover)] hover:-translate-y-1 hover:shadow-[var(--shadow-card-hover)]">
+            <div className="motion-stagger grid gap-4 sm:grid-cols-2">
+              <div className="motion-soft rounded-[28px] bg-[var(--color-brand-700)] p-5 text-white shadow-[var(--shadow-button)] hover:-translate-y-0.5">
                 <p className="text-sm font-medium text-white/75">Phòng đang hiển thị</p>
                 <p className="mt-3 text-4xl font-semibold" aria-live="polite">
                   {stats ? stats.visibleRooms : "..."}
@@ -107,7 +107,7 @@ export function HeroSearchSection() {
                   Tính theo số bài đăng đang được hiển thị công khai.
                 </p>
               </div>
-              <div className="rounded-[28px] bg-[var(--color-surface-soft)] p-5 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[var(--shadow-card)]">
+              <div className="motion-soft rounded-[28px] bg-[var(--color-surface-soft)] p-5 shadow-sm hover:-translate-y-0.5 hover:shadow-[var(--shadow-card)]">
                 <p className="text-sm font-medium text-[var(--color-text-muted)]">Tỷ lệ phòng còn trống</p>
                 <p className="mt-3 text-4xl font-semibold text-[var(--color-text-strong)]">
                   {stats ? `${stats.availableRate}%` : "..."}
@@ -116,7 +116,7 @@ export function HeroSearchSection() {
                   Dựa trên tỷ lệ phòng còn trống trong danh sách đang hiển thị.
                 </p>
               </div>
-              <div className="rounded-[28px] border border-[var(--color-border-soft)] p-5 transition-all duration-300 hover:border-[var(--color-brand-500)] sm:col-span-2">
+              <div className="motion-soft rounded-[28px] border border-[var(--color-border-soft)] p-5 hover:border-[var(--color-brand-500)] hover:shadow-[var(--shadow-card)] sm:col-span-2">
                 <p className="text-sm font-medium text-[var(--color-text-muted)]">
                   Thông tin cần quan tâm
                 </p>

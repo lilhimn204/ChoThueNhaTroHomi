@@ -18,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import com.trotot.backend.dto.user.ChangePasswordRequest;
 import com.trotot.backend.entity.User;
 import com.trotot.backend.exception.BusinessException;
+import com.trotot.backend.repository.RoleRepository;
 import com.trotot.backend.repository.UserRepository;
 import com.trotot.backend.security.UserPrincipal;
 
@@ -30,6 +31,9 @@ class UserServiceTest {
     private UserRepository userRepository;
 
     @Mock
+    private RoleRepository roleRepository;
+
+    @Mock
     private PasswordEncoder passwordEncoder;
 
     @Test
@@ -40,7 +44,7 @@ class UserServiceTest {
         user.setPasswordHash("old-hash");
 
         UserPrincipal principal = principal(7L);
-        UserService userService = new UserService(userRepository, passwordEncoder);
+        UserService userService = new UserService(userRepository, roleRepository, passwordEncoder);
 
         when(userRepository.findById(7L)).thenReturn(Optional.of(user));
         when(passwordEncoder.matches("old-password", "old-hash")).thenReturn(true);
@@ -64,7 +68,7 @@ class UserServiceTest {
         user.setPasswordHash("old-hash");
 
         UserPrincipal principal = principal(7L);
-        UserService userService = new UserService(userRepository, passwordEncoder);
+        UserService userService = new UserService(userRepository, roleRepository, passwordEncoder);
 
         when(userRepository.findById(7L)).thenReturn(Optional.of(user));
         when(passwordEncoder.matches("wrong-password", "old-hash")).thenReturn(false);

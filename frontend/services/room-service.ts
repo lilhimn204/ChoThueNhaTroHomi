@@ -7,6 +7,7 @@ import type {
   RoomStats,
   RoomStatus,
   RoomSummary,
+  RoomType,
 } from "@/types";
 
 interface SearchRoomsParams {
@@ -17,6 +18,7 @@ interface SearchRoomsParams {
   minArea?: string;
   maxArea?: string;
   status?: RoomStatus | "";
+  roomType?: RoomType | "";
   amenityIds?: string[];
   sort?: string;
   page?: number;
@@ -45,6 +47,7 @@ export interface RoomUpsertPayload {
   districtId: number;
   price: number;
   area: number;
+  roomType: RoomType;
   contactName: string;
   contactPhone: string;
   status: RoomStatus;
@@ -74,6 +77,7 @@ export function searchRooms(params: SearchRoomsParams, signal?: AbortSignal) {
       minArea: params.minArea,
       maxArea: params.maxArea,
       status: params.status,
+      type: params.roomType,
       amenityIds: params.amenityIds,
       sort: params.sort ?? "newest",
       page: params.page ?? 0,

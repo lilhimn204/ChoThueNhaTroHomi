@@ -36,6 +36,10 @@ public class FileStorageService {
         return storeImage(file, "avatars", requestBaseUrl, false);
     }
 
+    public UploadResponse storeNewsImage(MultipartFile file, String requestBaseUrl) {
+        return storeImage(file, "news", requestBaseUrl, true);
+    }
+
     private UploadResponse storeImage(MultipartFile file, String folder, String requestBaseUrl, boolean generateThumb) {
         validateImage(file);
 

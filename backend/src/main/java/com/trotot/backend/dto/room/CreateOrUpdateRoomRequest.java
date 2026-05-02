@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import com.trotot.backend.entity.RoomStatus;
+import com.trotot.backend.entity.RoomType;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.DecimalMin;
@@ -43,6 +44,7 @@ public record CreateOrUpdateRoomRequest(
         @Pattern(regexp = "^[0-9]{9,11}$", message = "Số điện thoại phải gồm 9 đến 11 chữ số.")
         String contactPhone,
 
+        RoomType roomType,
         RoomStatus status,
         String thumbnail,
         Boolean featured,

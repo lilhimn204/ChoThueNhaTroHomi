@@ -118,7 +118,7 @@ export function AdminDashboardClient() {
 
   return (
     <div className="space-y-6">
-      <div className="rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px] sm:p-6">
+      <div className="motion-panel animate-content-rise rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent hover:-translate-y-1 hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px] sm:p-6">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div className="space-y-3">
             <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[var(--color-brand-700)]">
@@ -155,19 +155,19 @@ export function AdminDashboardClient() {
         <Alert tone="warning" title="Không tải được dashboard" description={errorMessage} />
       ) : loading || !summary ? (
         <div className="space-y-6">
-          <div className="grid gap-5 md:grid-cols-2 2xl:grid-cols-4">
+          <div className="motion-stagger grid gap-5 md:grid-cols-2 2xl:grid-cols-4">
             {Array.from({ length: 4 }).map((_, index) => (
               <LoadingSkeleton key={index} className="h-44 rounded-[28px]" />
             ))}
           </div>
-          <div className="grid gap-6 xl:grid-cols-2">
+          <div className="motion-stagger grid gap-6 xl:grid-cols-2">
             <LoadingSkeleton className="h-80 rounded-[28px]" />
             <LoadingSkeleton className="h-80 rounded-[28px]" />
           </div>
         </div>
       ) : (
         <>
-          <div className="grid gap-5 md:grid-cols-2 2xl:grid-cols-4">
+          <div className="motion-stagger grid gap-5 md:grid-cols-2 2xl:grid-cols-4">
             {stats.map((stat) => (
               <AdminStatCard key={stat.label} stat={stat} />
             ))}
@@ -177,7 +177,7 @@ export function AdminDashboardClient() {
 
           <div className="grid min-w-0 gap-5 xl:grid-cols-2">
             <section className="min-w-0 space-y-4">
-              <div className="flex flex-col gap-3 rounded-[24px] border border-[var(--color-border-soft)] bg-[var(--color-surface)] px-4 py-4 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:px-5">
+              <div className="motion-panel flex flex-col gap-3 rounded-[24px] border border-[var(--color-border-soft)] bg-[var(--color-surface)] px-4 py-4 shadow-sm hover:-translate-y-0.5 hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card)] sm:flex-row sm:items-center sm:justify-between sm:px-5">
                 <h2 className="text-xl font-semibold text-[var(--color-text-strong)] sm:text-2xl">
                   Bài đăng mới cập nhật
                 </h2>
@@ -199,7 +199,7 @@ export function AdminDashboardClient() {
             </section>
 
             <section className="min-w-0 space-y-4">
-              <div className="flex flex-col gap-3 rounded-[24px] border border-[var(--color-border-soft)] bg-[var(--color-surface)] px-4 py-4 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:px-5">
+              <div className="motion-panel flex flex-col gap-3 rounded-[24px] border border-[var(--color-border-soft)] bg-[var(--color-surface)] px-4 py-4 shadow-sm hover:-translate-y-0.5 hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card)] sm:flex-row sm:items-center sm:justify-between sm:px-5">
                 <h2 className="text-xl font-semibold text-[var(--color-text-strong)] sm:text-2xl">
                   Yêu cầu liên hệ gần đây
                 </h2>

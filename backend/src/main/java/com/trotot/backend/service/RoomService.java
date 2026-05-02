@@ -29,6 +29,7 @@ import com.trotot.backend.entity.District;
 import com.trotot.backend.entity.Room;
 import com.trotot.backend.entity.RoomImage;
 import com.trotot.backend.entity.RoomStatus;
+import com.trotot.backend.entity.RoomType;
 import com.trotot.backend.entity.User;
 import com.trotot.backend.exception.BusinessException;
 import com.trotot.backend.exception.ResourceNotFoundException;
@@ -83,13 +84,15 @@ public class RoomService {
             BigDecimal minArea,
             BigDecimal maxArea,
             RoomStatus status,
+            String roomType,
             List<Long> amenityIds,
             String sort,
             int page,
             int size) {
+        RoomType resolvedRoomType = resolveRoomType(roomType);
         var pageable = PageRequest.of(Math.max(page, 0), InputSanitizer.normalizePageSize(size, 20), buildPublicSort(sort));
         var roomPage = roomRepository.findAll(
-                RoomSpecifications.publicSearch(keyword, districtId, minPrice, maxPrice, minArea, maxArea, status, amenityIds),
+                RoomSpecifications.publicSearch(keyword, districtId, minPrice, maxPrice, minArea, maxArea, status, resolvedRoomType, amenityIds),
                 pageable);
         return PageResponse.from(roomPage, this::toRoomSummaryResponse);
     }
@@ -190,6 +193,7 @@ public class RoomService {
         room.setDistrict(district);
         room.setPrice(request.price());
         room.setArea(request.area());
+        room.setRoomType(request.roomType() == null ? RoomType.BOARDING_ROOM : request.roomType());
         room.setContactName(InputSanitizer.sanitizeRequired(request.contactName()));
         room.setContactPhone(request.contactPhone().trim());
         room.setStatus(request.status() == null ? RoomStatus.AVAILABLE : request.status());
@@ -302,6 +306,7 @@ public class RoomService {
                 room.getAddress(),
                 room.getPrice(),
                 room.getArea(),
+                room.getRoomType(),
                 room.getStatus(),
                 room.getThumbnail(),
                 room.isFeatured(),
@@ -322,6 +327,7 @@ public class RoomService {
                 room.getDistrict().getCityName(),
                 room.getPrice(),
                 room.getArea(),
+                room.getRoomType(),
                 room.getContactName(),
                 room.getContactPhone(),
                 room.getStatus(),
@@ -344,6 +350,7 @@ public class RoomService {
                 room.getDistrict().getName(),
                 room.getPrice(),
                 room.getArea(),
+                room.getRoomType(),
                 room.getStatus(),
                 room.isFeatured(),
                 room.getContactName(),
@@ -363,6 +370,7 @@ public class RoomService {
                 room.getDistrict().getName(),
                 room.getPrice(),
                 room.getArea(),
+                room.getRoomType(),
                 room.getContactName(),
                 room.getContactPhone(),
                 room.getStatus(),
@@ -424,6 +432,14 @@ public class RoomService {
             case "area_desc" -> Sort.by(Sort.Direction.DESC, "area");
             default -> Sort.by(Sort.Direction.DESC, "createdAt");
         };
+    }
+
+    private RoomType resolveRoomType(String roomType) {
+        try {
+            return RoomType.fromValue(roomType);
+        } catch (IllegalArgumentException exception) {
+            throw new BusinessException("Loại phòng không hợp lệ.");
+        }
     }
 
 }

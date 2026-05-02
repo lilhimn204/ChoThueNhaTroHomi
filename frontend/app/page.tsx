@@ -41,7 +41,7 @@ export default function Home() {
       <FeaturedRoomsSection />
 
       <section className="container-shell mt-12 grid gap-5 sm:mt-20 sm:gap-6 lg:grid-cols-[0.9fr_1.1fr]">
-        <div className="rounded-[24px] bg-[var(--color-brand-950)] p-5 text-white shadow-[var(--shadow-card-hover)] sm:rounded-[32px] sm:p-8">
+        <div className="motion-panel animate-content-rise rounded-[24px] bg-[var(--color-brand-950)] p-5 text-white shadow-[var(--shadow-card-hover)] hover:-translate-y-1 sm:rounded-[32px] sm:p-8">
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-white/60">
             Vì sao chọn Homi
           </p>
@@ -53,7 +53,7 @@ export default function Home() {
             khu vực, giá, diện tích, tiện ích và trạng thái còn phòng. Cách trình
             bày gọn giúp sinh viên và người đi làm so sánh nhanh trước khi liên hệ.
           </p>
-          <div className="mt-6 flex items-start gap-3 rounded-[22px] bg-white/8 p-4 sm:mt-8 sm:items-center sm:rounded-[28px]">
+          <div className="motion-soft mt-6 flex items-start gap-3 rounded-[22px] bg-white/8 p-4 hover:bg-white/10 sm:mt-8 sm:items-center sm:rounded-[28px]">
             <Building2 className="size-5 text-[var(--color-accent-500)]" />
             <p className="text-sm leading-6 text-white/80">
               Ưu tiên các khu vực đông sinh viên như Cầu Giấy, Đống Đa, Thanh Xuân, Hà Đông, Nam Từ Liêm và các quận lân cận.
@@ -61,14 +61,14 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="grid gap-5">
+        <div className="motion-stagger grid gap-5">
           {reasons.map((reason) => (
             <article
               key={reason.title}
-              className="rounded-[22px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] sm:rounded-[28px] sm:p-6"
+              className="motion-panel group rounded-[22px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] hover:-translate-y-1 hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] sm:rounded-[28px] sm:p-6"
             >
               <div className="flex items-start gap-4">
-                <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-[var(--stat-brand-bg)] text-[var(--stat-brand-text)]">
+                <div className="motion-soft flex size-12 shrink-0 items-center justify-center rounded-2xl bg-[var(--stat-brand-bg)] text-[var(--stat-brand-text)] group-hover:scale-105 group-hover:shadow-md">
                   <reason.icon className="size-5" />
                 </div>
                 <div className="space-y-2">
@@ -86,19 +86,19 @@ export default function Home() {
       </section>
 
       <section className="container-shell mt-12 grid gap-5 sm:mt-20 sm:gap-8 lg:grid-cols-[1fr_0.8fr]">
-        <div className="rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-5 shadow-[var(--shadow-card)] sm:rounded-[32px] sm:p-8">
+        <div className="motion-panel animate-content-rise rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-5 shadow-[var(--shadow-card)] hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] sm:rounded-[32px] sm:p-8">
           <SectionHeading
             eyebrow="Quy trình tìm phòng"
             title="Từ lọc phòng đến gửi yêu cầu xem phòng trong vài bước."
             description="Trang danh sách phòng là điểm bắt đầu. Sau khi tìm thấy phòng phù hợp, bạn có thể xem chi tiết, gọi trực tiếp hoặc gửi yêu cầu hẹn lịch xem phòng."
           />
-          <div className="mt-6 grid gap-3 sm:mt-8 sm:gap-4">
+          <div className="motion-stagger mt-6 grid gap-3 sm:mt-8 sm:gap-4">
             {steps.map((step, index) => (
               <div
                 key={step}
-                className="flex gap-3 rounded-[20px] bg-[var(--color-surface-soft)] px-4 py-3 sm:gap-4 sm:rounded-[24px] sm:px-5 sm:py-4"
+                className="motion-soft group flex gap-3 rounded-[20px] bg-[var(--color-surface-soft)] px-4 py-3 hover:-translate-y-0.5 hover:bg-[var(--color-border-soft)] sm:gap-4 sm:rounded-[24px] sm:px-5 sm:py-4"
               >
-                <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-[var(--color-surface-elevated)] text-sm font-semibold text-[var(--color-brand-800)]">
+                <div className="motion-soft flex size-9 shrink-0 items-center justify-center rounded-full bg-[var(--color-surface-elevated)] text-sm font-semibold text-[var(--color-brand-800)] group-hover:scale-105">
                   0{index + 1}
                 </div>
                 <p className="text-sm leading-7 text-[var(--color-text-strong)]">{step}</p>
@@ -107,7 +107,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="rounded-[24px] bg-[linear-gradient(180deg,rgba(15,76,92,0.95),rgba(11,59,71,0.98))] p-5 text-white shadow-[var(--shadow-card-hover)] sm:rounded-[32px] sm:p-8">
+        <div className="motion-panel animate-content-rise rounded-[24px] bg-[linear-gradient(180deg,rgba(15,76,92,0.95),rgba(11,59,71,0.98))] p-5 text-white shadow-[var(--shadow-card-hover)] hover:-translate-y-1 sm:rounded-[32px] sm:p-8">
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-white/60">
             Dành cho người thuê
           </p>

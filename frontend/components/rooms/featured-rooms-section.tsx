@@ -45,7 +45,7 @@ export function FeaturedRoomsSection() {
 
   return (
     <section className="container-shell mt-20 space-y-8">
-      <div className="rounded-[34px] border border-[var(--color-border-card)] bg-[var(--color-surface)]/80 p-5 shadow-[var(--shadow-card)] backdrop-blur-sm transition-all duration-300 hover:shadow-[var(--shadow-card-hover)] sm:p-6">
+      <div className="motion-panel animate-content-rise rounded-[34px] border border-[var(--color-border-card)] bg-[var(--color-surface)]/80 p-5 shadow-[var(--shadow-card)] backdrop-blur-sm hover:-translate-y-0.5 hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] sm:p-6">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <SectionHeading
           eyebrow="Phòng nổi bật"
@@ -69,7 +69,7 @@ export function FeaturedRoomsSection() {
           description={errorMessage}
         />
       ) : rooms.length ? (
-        <div className="grid gap-5 lg:grid-cols-3">
+        <div className="motion-stagger grid gap-5 lg:grid-cols-3">
           {rooms.map((room) => (
             <RoomCard key={room.id} room={room} />
           ))}

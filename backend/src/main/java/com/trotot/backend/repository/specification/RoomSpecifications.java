@@ -7,6 +7,7 @@ import org.springframework.data.jpa.domain.Specification;
 
 import com.trotot.backend.entity.Room;
 import com.trotot.backend.entity.RoomStatus;
+import com.trotot.backend.entity.RoomType;
 
 public final class RoomSpecifications {
 
@@ -21,6 +22,7 @@ public final class RoomSpecifications {
             BigDecimal minArea,
             BigDecimal maxArea,
             RoomStatus status,
+            RoomType roomType,
             List<Long> amenityIds) {
         return visibleToPublic()
                 .and(hasKeyword(keyword))
@@ -30,6 +32,7 @@ public final class RoomSpecifications {
                 .and(hasMinArea(minArea))
                 .and(hasMaxArea(maxArea))
                 .and(hasStatus(status))
+                .and(hasRoomType(roomType))
                 .and(hasAllSelectedAmenities(amenityIds));
     }
 
@@ -104,6 +107,12 @@ public final class RoomSpecifications {
         return (root, query, cb) -> status == null
                 ? cb.conjunction()
                 : cb.equal(root.get("status"), status);
+    }
+
+    private static Specification<Room> hasRoomType(RoomType roomType) {
+        return (root, query, cb) -> roomType == null
+                ? cb.conjunction()
+                : cb.equal(root.get("roomType"), roomType);
     }
 
     private static Specification<Room> hasAllSelectedAmenities(List<Long> amenityIds) {

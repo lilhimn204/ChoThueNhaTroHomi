@@ -12,6 +12,10 @@ export function uploadRoomImage(file: File) {
   return uploadImage(file, "uploads/rooms");
 }
 
+export function uploadNewsImage(file: File) {
+  return uploadImage(file, "uploads/news");
+}
+
 export async function uploadAvatarImage(file: File) {
   try {
     return await uploadImage(file, "uploads/avatars");

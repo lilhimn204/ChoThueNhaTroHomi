@@ -77,7 +77,7 @@ export function HostDashboardClient() {
 
   return (
     <div className="space-y-6 sm:space-y-8">
-      <section className="overflow-hidden rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px]">
+      <section className="motion-panel animate-content-rise overflow-hidden rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] shadow-[var(--shadow-card)] ring-1 ring-transparent hover:-translate-y-1 hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px]">
         <div className="grid gap-5 p-4 sm:gap-6 sm:p-6 lg:grid-cols-[1.3fr_0.7fr] lg:p-8">
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[var(--color-brand-700)]">
@@ -91,7 +91,7 @@ export function HostDashboardClient() {
               trạng thái phòng mà không cần vào trang quản trị tổng.
             </p>
           </div>
-          <div className="rounded-[22px] bg-[var(--color-brand-950)] p-4 text-white shadow-sm transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-[var(--shadow-card-hover)] sm:rounded-[28px] sm:p-5">
+          <div className="motion-panel rounded-[22px] bg-[var(--color-brand-950)] p-4 text-white shadow-sm hover:-translate-y-1 hover:shadow-[var(--shadow-card-hover)] sm:rounded-[28px] sm:p-5">
             <p className="text-sm text-white/60">CTA chính</p>
             <p className="mt-3 text-2xl font-semibold">Có phòng trống mới?</p>
             <Link href="/host/posts/create">
@@ -118,7 +118,7 @@ export function HostDashboardClient() {
 
       {loading ? (
         <div className="space-y-6">
-          <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          <section className="motion-stagger grid gap-4 md:grid-cols-2 xl:grid-cols-4">
             {Array.from({ length: 4 }).map((_, index) => (
               <LoadingSkeleton key={index} className="h-40 rounded-[28px]" />
             ))}
@@ -132,7 +132,7 @@ export function HostDashboardClient() {
         />
       ) : (
         <>
-          <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          <section className="motion-stagger grid gap-4 md:grid-cols-2 xl:grid-cols-4">
             <HostStatCard
               label="Tổng bài đăng"
               value={String(dashboard.totalPosts)}
@@ -159,7 +159,7 @@ export function HostDashboardClient() {
             />
           </section>
 
-          <section className="rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px] sm:p-6">
+          <section className="motion-panel rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent hover:-translate-y-1 hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px] sm:p-6">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <h2 className="text-xl font-semibold text-[var(--color-text-strong)] sm:text-2xl">
@@ -182,12 +182,12 @@ export function HostDashboardClient() {
                 />
               </div>
             ) : (
-              <div className="mt-6 divide-y divide-[var(--color-border-soft)]">
+              <div className="motion-stagger mt-6 divide-y divide-[var(--color-border-soft)]">
                 {dashboard.recentContactRequests.map((customer) => {
                   const status = contactRequestStatusMeta[customer.status];
 
                   return (
-                    <div key={customer.id} className="grid gap-3 rounded-2xl px-3 py-4 transition-colors duration-200 hover:bg-[var(--color-surface-soft)] md:grid-cols-[1fr_auto] md:items-center">
+                    <div key={customer.id} className="motion-panel grid gap-3 rounded-2xl px-3 py-4 hover:bg-[var(--color-surface-soft)] md:grid-cols-[1fr_auto] md:items-center">
                       <div>
                         <p className="font-semibold text-[var(--color-text-strong)]">
                           {customer.requesterName}

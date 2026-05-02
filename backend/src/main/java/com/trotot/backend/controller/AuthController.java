@@ -10,12 +10,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.trotot.backend.config.AppProperties;
 import com.trotot.backend.dto.auth.AuthResponse;
+import com.trotot.backend.dto.auth.ForgotPasswordRequest;
 import com.trotot.backend.dto.auth.GoogleLoginRequest;
 import com.trotot.backend.dto.auth.LoginRequest;
+import com.trotot.backend.dto.auth.PasswordResetOtpResponse;
 import com.trotot.backend.dto.auth.RegistrationOtpResponse;
 import com.trotot.backend.dto.auth.RefreshTokenRequest;
 import com.trotot.backend.dto.auth.RegisterRequest;
 import com.trotot.backend.dto.auth.ResendOtpRequest;
+import com.trotot.backend.dto.auth.ResetPasswordRequest;
 import com.trotot.backend.dto.auth.VerifyOtpRequest;
 import com.trotot.backend.service.AuthService;
 import com.trotot.backend.util.CookieUtils;
@@ -54,6 +57,24 @@ public class AuthController {
     @PostMapping("/resend-otp")
     public ResponseEntity<RegistrationOtpResponse> resendOtp(@Valid @RequestBody ResendOtpRequest request) {
         return ResponseEntity.ok(authService.resendOtp(request));
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<PasswordResetOtpResponse> forgotPassword(
+            @Valid @RequestBody ForgotPasswordRequest request) {
+        return ResponseEntity.ok(authService.requestPasswordReset(request));
+    }
+
+    @PostMapping("/resend-password-reset-otp")
+    public ResponseEntity<PasswordResetOtpResponse> resendPasswordResetOtp(
+            @Valid @RequestBody ResendOtpRequest request) {
+        return ResponseEntity.ok(authService.resendPasswordResetOtp(request));
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<Void> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
+        authService.resetPassword(request);
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/google")

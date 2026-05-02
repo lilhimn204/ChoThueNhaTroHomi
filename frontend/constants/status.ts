@@ -1,9 +1,12 @@
 import type {
   ContactRequestStatus,
   ContactRequestType,
+  NewsArticleStatus,
   RoomReportReason,
   RoomReportStatus,
   RoomStatus,
+  SupportTicketStatus,
+  SupportTicketType,
   UserStatus,
 } from "@/types";
 
@@ -32,22 +35,45 @@ export const contactRequestTypeLabel: Record<ContactRequestType, string> = {
 };
 
 export const roomReportReasonLabel: Record<RoomReportReason, string> = {
-  WRONG_INFO: "Thong tin sai",
-  DUPLICATE: "Tin trung lap",
-  SCAM: "Nghi ngo lua dao",
-  UNAVAILABLE: "Phong khong con trong",
-  INAPPROPRIATE: "Noi dung khong phu hop",
-  OTHER: "Ly do khac",
+  WRONG_INFO: "Thông tin sai",
+  DUPLICATE: "Tin trùng lặp",
+  SCAM: "Nghi ngờ lừa đảo",
+  UNAVAILABLE: "Phòng không còn trống",
+  INAPPROPRIATE: "Nội dung không phù hợp",
+  OTHER: "Lý do khác",
 };
 
 export const roomReportStatusMeta: Record<
   RoomReportStatus,
   { label: string; tone: "brand" | "success" | "warning" | "danger" }
 > = {
-  NEW: { label: "Moi gui", tone: "warning" },
-  REVIEWING: { label: "Dang xem xet", tone: "brand" },
-  RESOLVED: { label: "Da xu ly", tone: "success" },
-  DISMISSED: { label: "Bo qua", tone: "danger" },
+  NEW: { label: "Mới gửi", tone: "warning" },
+  REVIEWING: { label: "Đang xem xét", tone: "brand" },
+  RESOLVED: { label: "Đã xử lý", tone: "success" },
+  DISMISSED: { label: "Bỏ qua", tone: "danger" },
+};
+
+export const supportTicketTypeLabel: Record<SupportTicketType, string> = {
+  ROOM_REPORT: "Báo cáo tin sai",
+  CONTACT: "Liên hệ Homi",
+};
+
+export const supportTicketStatusMeta: Record<
+  SupportTicketStatus,
+  { label: string; tone: "brand" | "success" | "warning" | "danger" }
+> = {
+  NEW: { label: "Mới gửi", tone: "warning" },
+  REVIEWING: { label: "Đang xử lý", tone: "brand" },
+  RESOLVED: { label: "Đã xử lý", tone: "success" },
+  DISMISSED: { label: "Bỏ qua", tone: "danger" },
+};
+
+export const newsArticleStatusMeta: Record<
+  NewsArticleStatus,
+  { label: string; tone: "brand" | "warning" }
+> = {
+  DRAFT: { label: "Bản nháp", tone: "warning" },
+  PUBLISHED: { label: "Đã xuất bản", tone: "brand" },
 };
 
 export const userStatusMeta: Record<

@@ -56,7 +56,7 @@ export function ContactHistoryPageClient() {
   return (
     <RequireAuth>
       <div className="container-shell py-8 sm:py-12">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+        <div className="animate-content-rise flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div className="space-y-3">
             <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[var(--color-brand-700)]">
               Lịch sử liên hệ
@@ -89,11 +89,11 @@ export function ContactHistoryPageClient() {
             </div>
           ) : requests.length ? (
             <div className="space-y-4">
-              <div className="grid gap-4">
+              <div className="motion-stagger grid gap-4">
                 {requests.map((request) => (
                   <article
                     key={request.id}
-                    className="rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:-translate-y-1 hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[30px] sm:p-5"
+                    className="motion-panel rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent hover:-translate-y-1 hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[30px] sm:p-5"
                   >
                     <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                       <div className="space-y-3">
@@ -123,7 +123,7 @@ export function ContactHistoryPageClient() {
                           </p>
                         ) : null}
                         {request.adminNote ? (
-                          <div className="rounded-[22px] border border-[var(--color-border-soft)] bg-[var(--color-surface-soft)] px-4 py-3 text-sm text-[var(--color-text-strong)] shadow-sm">
+                          <div className="motion-soft rounded-[22px] border border-[var(--color-border-soft)] bg-[var(--color-surface-soft)] px-4 py-3 text-sm text-[var(--color-text-strong)] shadow-sm hover:border-[var(--color-border-strong)]">
                             <span className="font-semibold">Ghi chú admin:</span>{" "}
                             {request.adminNote}
                           </div>

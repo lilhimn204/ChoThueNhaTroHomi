@@ -21,7 +21,7 @@ export function Pagination({
   };
 
   return (
-    <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2 rounded-3xl border border-[var(--color-border-soft)] bg-[var(--color-surface)] px-3 py-3 shadow-[var(--shadow-card)] sm:gap-4 sm:px-4">
+    <div className="motion-panel grid grid-cols-[1fr_auto_1fr] items-center gap-2 rounded-3xl border border-[var(--color-border-soft)] bg-[var(--color-surface)] px-3 py-3 shadow-[var(--shadow-card)] hover:-translate-y-0.5 hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] sm:gap-4 sm:px-4">
       <Button
         variant="ghost"
         size="sm"

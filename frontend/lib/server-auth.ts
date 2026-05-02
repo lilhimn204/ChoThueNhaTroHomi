@@ -1,5 +1,7 @@
 import { cookies } from "next/headers";
 
+import { fetchBackend } from "@/lib/backend-fetch";
+
 const BACKEND_URL = process.env.BACKEND_URL ?? "http://localhost:8080";
 
 export const ACCESS_COOKIE_NAME = "homi_token";
@@ -48,7 +50,7 @@ export async function refreshAccessToken(cookieStore: CookieStore) {
     return null;
   }
 
-  const backendResponse = await fetch(`${BACKEND_URL}/api/v1/auth/refresh`, {
+  const backendResponse = await fetchBackend(`${BACKEND_URL}/api/v1/auth/refresh`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ refreshToken }),
@@ -70,7 +72,7 @@ export async function revokeBackendRefreshToken(cookieStore: CookieStore) {
     return;
   }
 
-  await fetch(`${BACKEND_URL}/api/v1/auth/logout`, {
+  await fetchBackend(`${BACKEND_URL}/api/v1/auth/logout`, {
     method: "POST",
     headers: {
       Cookie: `${REFRESH_COOKIE_NAME}=${refreshToken}`,

@@ -4,6 +4,8 @@ import { useEffect } from "react";
 import { X } from "lucide-react";
 
 import type { Amenity, District } from "@/types";
+import { useDelayedPresence } from "@/hooks/use-delayed-presence";
+import { cn } from "@/lib/utils";
 import {
   FilterSidebar,
   type RoomFiltersValue,
@@ -28,8 +30,11 @@ export function MobileFilterDrawer({
   onClose: () => void;
   onApply: () => void;
 }) {
+  const { present: drawerPresent, leaving: drawerLeaving } =
+    useDelayedPresence(open);
+
   useEffect(() => {
-    if (!open) {
+    if (!drawerPresent) {
       return;
     }
 
@@ -39,15 +44,27 @@ export function MobileFilterDrawer({
     return () => {
       document.body.style.overflow = previousOverflow;
     };
-  }, [open]);
+  }, [drawerPresent]);
 
-  if (!open) {
+  if (!drawerPresent) {
     return null;
   }
 
   return (
-    <div className="fixed inset-0 z-50 bg-[rgba(8,24,32,0.52)] lg:hidden">
-      <div className="absolute inset-y-0 right-0 flex w-full max-w-md flex-col overflow-hidden bg-[var(--color-background)] p-3 pt-[calc(0.75rem_+_env(safe-area-inset-top))] shadow-2xl sm:p-4">
+    <div
+      className={cn(
+        "fixed inset-0 z-50 bg-[rgba(8,24,32,0.52)] backdrop-blur-sm lg:hidden",
+        drawerLeaving
+          ? "pointer-events-none animate-overlay-out"
+          : "animate-overlay-in",
+      )}
+    >
+      <div
+        className={cn(
+          "absolute inset-y-0 right-0 flex w-full max-w-md flex-col overflow-hidden bg-[var(--color-background)] p-3 pt-[calc(0.75rem_+_env(safe-area-inset-top))] shadow-2xl sm:p-4",
+          drawerLeaving ? "animate-drawer-right-out" : "animate-drawer-right-in",
+        )}
+      >
         <div className="mb-3 flex shrink-0 items-center justify-between gap-3">
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[var(--color-brand-700)]">
@@ -61,7 +78,7 @@ export function MobileFilterDrawer({
             type="button"
             aria-label="Đóng bộ lọc"
             onClick={onClose}
-            className="inline-flex size-11 items-center justify-center rounded-2xl border border-[var(--color-border-soft)] bg-[var(--color-surface)] text-[var(--color-text-strong)]"
+            className="motion-pressable inline-flex size-11 items-center justify-center rounded-2xl border border-[var(--color-border-soft)] bg-[var(--color-surface)] text-[var(--color-text-strong)] shadow-sm hover:-translate-y-0.5 hover:border-[var(--color-brand-500)] hover:shadow-[var(--shadow-card)] active:scale-[0.98]"
           >
             <X className="size-5" />
           </button>

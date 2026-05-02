@@ -6,11 +6,12 @@ import {
   clearAuthCookies,
   refreshAccessToken,
 } from "@/lib/server-auth";
+import { fetchBackend } from "@/lib/backend-fetch";
 
 const BACKEND_URL = process.env.BACKEND_URL ?? "http://localhost:8080";
 
 async function fetchMe(accessToken: string) {
-  return fetch(`${BACKEND_URL}/api/v1/users/me`, {
+  return fetchBackend(`${BACKEND_URL}/api/v1/users/me`, {
     headers: { Authorization: `Bearer ${accessToken}` },
   });
 }

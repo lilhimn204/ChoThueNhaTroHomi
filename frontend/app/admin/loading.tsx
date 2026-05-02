@@ -3,7 +3,7 @@ import { LoadingSkeleton } from "@/components/shared/loading-skeleton";
 export default function AdminLoading() {
   return (
     <div
-      className="mx-auto grid min-w-0 gap-5 py-6 lg:py-8 xl:grid-cols-[260px_minmax(0,1fr)]"
+      className="animate-content-rise mx-auto grid min-w-0 gap-5 py-6 lg:py-8 xl:grid-cols-[260px_minmax(0,1fr)]"
       style={{ width: "min(1600px, calc(100% - 2rem))" }}
     >
       <LoadingSkeleton className="h-56 rounded-[24px] sm:h-[420px] sm:rounded-[28px]" />

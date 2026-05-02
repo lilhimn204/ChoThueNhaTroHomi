@@ -75,6 +75,10 @@ public class Room {
     @Column(nullable = false, length = 20)
     private RoomStatus status = RoomStatus.AVAILABLE;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "room_type", nullable = false, length = 30)
+    private RoomType roomType = RoomType.BOARDING_ROOM;
+
     @Column(length = 255)
     private String thumbnail;
 

@@ -14,7 +14,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
       >
         <div className="grid min-w-0 gap-5 xl:grid-cols-[260px_minmax(0,1fr)]">
           <AdminSidebar />
-          <div className="min-w-0">{children}</div>
+          <div className="animate-content-rise min-w-0">{children}</div>
         </div>
       </div>
     </RequireAuth>

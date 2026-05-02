@@ -108,7 +108,7 @@ export function HostCustomersClient() {
 
   return (
     <div className="space-y-5 sm:space-y-6">
-      <section className="rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px] sm:p-6">
+      <section className="motion-panel animate-content-rise rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent hover:-translate-y-1 hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px] sm:p-6">
         <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--color-brand-700)]">
@@ -191,14 +191,14 @@ export function HostCustomersClient() {
         </div>
       ) : response?.content.length ? (
         <>
-          <div className="space-y-4">
+          <div className="motion-stagger space-y-4">
             {response.content.map((customer) => {
               const statusMeta = hostContactStatusMeta[customer.status];
 
               return (
                 <article
                   key={customer.id}
-                  className="rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:-translate-y-1 hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[30px] sm:p-5"
+                  className="motion-panel rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent hover:-translate-y-1 hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[30px] sm:p-5"
                 >
                   <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                     <div>
@@ -219,7 +219,7 @@ export function HostCustomersClient() {
                       </p>
                     </div>
 
-                    <div className="rounded-2xl bg-[var(--color-surface-soft)] p-4 text-sm text-[var(--color-text-muted)] lg:min-w-64">
+                    <div className="motion-panel rounded-2xl bg-[var(--color-surface-soft)] p-4 text-sm text-[var(--color-text-muted)] hover:-translate-y-0.5 hover:shadow-sm lg:min-w-64">
                       <p className="font-semibold text-[var(--color-text-strong)]">
                         {customer.phone}
                       </p>

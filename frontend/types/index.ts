@@ -1,5 +1,12 @@
 export type AmenityCategory = "ROOM" | "BUILDING" | "SERVICE";
 export type RoomStatus = "AVAILABLE" | "FULL" | "HIDDEN";
+export type UserRole = "USER" | "ADMIN";
+export type AuthProvider = "LOCAL" | "GOOGLE";
+export type RoomType =
+  | "apartment"
+  | "mini-apartment"
+  | "private-house"
+  | "boarding-room";
 export type UserStatus = "ACTIVE" | "INACTIVE" | "LOCKED";
 export type ContactRequestStatus =
   | "PENDING"
@@ -15,16 +22,27 @@ export type RoomReportReason =
   | "INAPPROPRIATE"
   | "OTHER";
 export type RoomReportStatus = "NEW" | "REVIEWING" | "RESOLVED" | "DISMISSED";
+export type SupportTicketType = "ROOM_REPORT" | "CONTACT";
+export type SupportTicketStatus = "NEW" | "REVIEWING" | "RESOLVED" | "DISMISSED";
+export type NewsArticleStatus = "DRAFT" | "PUBLISHED";
 
 export interface AdminUser {
   id: number;
   fullName: string;
   email: string;
   phone: string | null;
+  avatarUrl?: string | null;
+  address?: string | null;
+  hostBio?: string | null;
+  emailVerified: boolean;
+  authProvider: AuthProvider;
   status: UserStatus;
   enabled: boolean;
-  roles: string[];
+  lockReason?: string | null;
+  lockedAt?: string | null;
+  roles: UserRole[];
   createdAt: string;
+  updatedAt: string;
 }
 
 export interface District {
@@ -59,6 +77,7 @@ export interface RoomSummary {
   address: string;
   price: number;
   area: number;
+  roomType: RoomType;
   status: RoomStatus;
   thumbnail: string;
   featured: boolean;
@@ -85,6 +104,7 @@ export interface Room {
   cityName: string;
   price: number;
   area: number;
+  roomType: RoomType;
   contactName: string;
   contactPhone: string;
   status: RoomStatus;
@@ -141,6 +161,7 @@ export interface AdminRoomListItem {
   districtName: string;
   price: number;
   area: number;
+  roomType: RoomType;
   status: RoomStatus;
   featured: boolean;
   contactName: string;
@@ -188,6 +209,58 @@ export interface RoomReport {
   createdAt: string;
 }
 
+export interface SupportTicket {
+  id: number;
+  type: SupportTicketType;
+  listingReference?: string | null;
+  reason?: string | null;
+  fullName?: string | null;
+  email?: string | null;
+  phone?: string | null;
+  subject: string;
+  message: string;
+  status: SupportTicketStatus;
+  adminNote?: string | null;
+  handledByName?: string | null;
+  handledAt?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface NewsArticle {
+  id: number;
+  title: string;
+  slug: string;
+  seoTitle?: string | null;
+  seoDescription?: string | null;
+  ogImageUrl?: string | null;
+  canonicalUrl?: string | null;
+  summary: string;
+  content: string;
+  thumbnailUrl?: string | null;
+  featured: boolean;
+  category: string;
+  status: NewsArticleStatus;
+  publishedAt?: string | null;
+  authorName: string;
+  createdByName?: string | null;
+  updatedByName?: string | null;
+  lastEditedAt?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface NewsCategory {
+  id: number;
+  name: string;
+  slug: string;
+  description?: string | null;
+  displayOrder: number;
+  enabled: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface HostContactRequest {
   id: number;
   roomId: number;
@@ -225,6 +298,7 @@ export interface HostRoomListItem {
   districtName: string;
   price: number;
   area: number;
+  roomType: RoomType;
   status: RoomStatus;
   thumbnail: string;
   contactRequestCount: number;
@@ -244,6 +318,7 @@ export interface HostRoom {
   districtName: string;
   price: number;
   area: number;
+  roomType: RoomType;
   contactName: string;
   contactPhone: string;
   status: RoomStatus;

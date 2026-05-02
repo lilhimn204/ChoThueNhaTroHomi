@@ -12,11 +12,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { roomTypeOptions } from "@/constants/site";
 import { ApiError, getErrorMessage } from "@/services/api-client";
 import { getAmenities, getDistricts } from "@/services/lookup-service";
 import { createHostRoom, getHostRoom, updateHostRoom } from "@/services/host-service";
 import type { RoomImageInput, RoomUpsertPayload } from "@/services/room-service";
-import type { Amenity, District, RoomImage, RoomStatus } from "@/types";
+import type { Amenity, District, RoomImage, RoomStatus, RoomType } from "@/types";
 
 const statusOptions = [
   { label: "Còn phòng", value: "AVAILABLE" },
@@ -31,6 +32,7 @@ const defaultForm = {
   districtId: "",
   price: "",
   area: "",
+  roomType: "boarding-room" as RoomType,
   contactName: "",
   contactPhone: "",
   status: "AVAILABLE" as RoomStatus,
@@ -131,6 +133,7 @@ export function HostRoomForm({
           districtId: String(room.districtId),
           price: String(room.price),
           area: String(room.area),
+          roomType: room.roomType ?? "boarding-room",
           contactName: room.contactName,
           contactPhone: room.contactPhone,
           status: room.status,
@@ -178,6 +181,7 @@ export function HostRoomForm({
       districtId: Number(form.districtId),
       price: Number(form.price),
       area: Number(form.area),
+      roomType: form.roomType,
       contactName: form.contactName.trim(),
       contactPhone: form.contactPhone.trim(),
       status: form.status,
@@ -235,12 +239,12 @@ export function HostRoomForm({
 
   return (
     <form className="space-y-5 sm:space-y-6" onSubmit={handleSubmit}>
-      <section className="rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px] sm:p-6">
+      <section className="motion-panel animate-content-rise rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent hover:-translate-y-1 hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px] sm:p-6">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
           <div>
             <Link
               href="/host/posts"
-              className="inline-flex items-center gap-2 text-sm font-medium text-[var(--color-text-muted)] transition-colors duration-200 hover:text-[var(--color-text-strong)]"
+              className="motion-soft inline-flex items-center gap-2 rounded-xl text-sm font-medium text-[var(--color-text-muted)] hover:-translate-x-0.5 hover:text-[var(--color-text-strong)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus-ring)]"
             >
               <ArrowLeft className="size-4" />
               Quay lại danh sách bài đăng
@@ -272,11 +276,11 @@ export function HostRoomForm({
 
       <section className="grid min-w-0 gap-5 sm:gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
         <div className="min-w-0 space-y-5 sm:space-y-6">
-          <div className="rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px] sm:p-6">
+          <div className="motion-panel rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent hover:-translate-y-1 hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px] sm:p-6">
             <h2 className="text-xl font-semibold text-[var(--color-text-strong)]">
               Thông tin cơ bản
             </h2>
-            <div className="mt-5 grid gap-5">
+            <div className="motion-stagger mt-5 grid gap-5">
               <Input
                 label="Tiêu đề bài đăng"
                 placeholder="Ví dụ: Studio gần Đại học Quốc gia Hà Nội"
@@ -313,14 +317,20 @@ export function HostRoomForm({
                 value={form.districtId}
                 onChange={(event) => updateField("districtId", event.target.value)}
               />
+              <Select
+                label="Loại phòng"
+                options={roomTypeOptions}
+                value={form.roomType}
+                onChange={(event) => updateField("roomType", event.target.value as RoomType)}
+              />
             </div>
           </div>
 
-          <div className="rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px] sm:p-6">
+          <div className="motion-panel rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent hover:-translate-y-1 hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px] sm:p-6">
             <h2 className="text-xl font-semibold text-[var(--color-text-strong)]">
               Giá và trạng thái
             </h2>
-            <div className="mt-5 grid gap-5 md:grid-cols-2">
+            <div className="motion-stagger mt-5 grid gap-5 md:grid-cols-2">
               <Input
                 label="Giá thuê mỗi tháng"
                 type="number"
@@ -350,7 +360,7 @@ export function HostRoomForm({
             </div>
           </div>
 
-          <div className="rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px] sm:p-6">
+          <div className="motion-panel rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent hover:-translate-y-1 hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px] sm:p-6">
             <h2 className="text-xl font-semibold text-[var(--color-text-strong)]">
               Thư viện ảnh
             </h2>
@@ -365,11 +375,11 @@ export function HostRoomForm({
         </div>
 
         <aside className="min-w-0 space-y-5 sm:space-y-6 xl:sticky xl:top-24 xl:self-start">
-          <div className="rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px] sm:p-6">
+          <div className="motion-panel rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent hover:-translate-y-1 hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px] sm:p-6">
             <h2 className="text-xl font-semibold text-[var(--color-text-strong)]">
               Liên hệ
             </h2>
-            <div className="mt-5 space-y-5">
+            <div className="motion-stagger mt-5 space-y-5">
               <Input
                 label="Tên người liên hệ"
                 value={form.contactName}
@@ -387,19 +397,19 @@ export function HostRoomForm({
             </div>
           </div>
 
-          <div className="rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px] sm:p-6">
+          <div className="motion-panel rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent hover:-translate-y-1 hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px] sm:p-6">
             <h2 className="text-xl font-semibold text-[var(--color-text-strong)]">
               Tiện ích nổi bật
             </h2>
-            <div className="mt-5 grid gap-3">
+            <div className="motion-stagger mt-5 grid gap-3">
               {amenities.map((amenity) => (
                 <label
                   key={amenity.id}
-                  className="flex items-center gap-3 rounded-2xl border border-[var(--color-border-soft)] px-4 py-3 text-sm font-medium text-[var(--color-text-strong)] transition-all duration-200 hover:-translate-y-0.5 hover:border-[var(--color-border-strong)] hover:bg-[var(--color-surface-soft)] hover:shadow-sm"
+                  className="motion-panel flex items-center gap-3 rounded-2xl border border-[var(--color-border-soft)] px-4 py-3 text-sm font-medium text-[var(--color-text-strong)] hover:-translate-y-0.5 hover:border-[var(--color-border-strong)] hover:bg-[var(--color-surface-soft)] hover:shadow-sm has-[input:checked]:border-[var(--color-brand-500)] has-[input:checked]:bg-[var(--badge-brand-bg)]"
                 >
                   <input
                     type="checkbox"
-                    className="size-4 accent-[var(--color-brand-700)]"
+                    className="motion-soft size-4 accent-[var(--color-brand-700)]"
                     checked={selectedAmenityIds.includes(String(amenity.id))}
                     onChange={() => toggleAmenity(String(amenity.id))}
                   />

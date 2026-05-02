@@ -69,12 +69,12 @@ export function PasswordChangeForm() {
 
   return (
     <form
-      className="rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px] sm:p-8"
+      className="motion-panel group animate-content-rise rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent hover:-translate-y-1 hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px] sm:p-8"
       onSubmit={handleSubmit}
     >
       <div className="space-y-3">
         <div className="flex items-center gap-3">
-          <div className="flex size-11 items-center justify-center rounded-2xl bg-[var(--color-surface-soft)] text-[var(--color-brand-700)]">
+          <div className="motion-soft flex size-11 items-center justify-center rounded-2xl bg-[var(--color-surface-soft)] text-[var(--color-brand-700)] group-hover:scale-[1.03]">
             <LockKeyhole className="size-5" />
           </div>
           <h2 className="text-xl font-semibold text-[var(--color-text-strong)] sm:text-2xl">
@@ -98,7 +98,7 @@ export function PasswordChangeForm() {
         </div>
       ) : null}
 
-      <div className="mt-6 grid gap-5 md:grid-cols-3 sm:mt-8">
+      <div className="motion-stagger mt-6 grid gap-5 md:grid-cols-3 sm:mt-8">
         <Input
           label="Mật khẩu hiện tại"
           type="password"

@@ -172,7 +172,7 @@ export function AdminRoomReportsClient() {
 
   return (
     <div className="space-y-5 sm:space-y-6">
-      <div className="rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px] sm:p-6">
+      <div className="motion-panel animate-content-rise rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent hover:-translate-y-1 hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px] sm:p-6">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div className="space-y-3">
             <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[var(--color-brand-700)]">
@@ -240,7 +240,7 @@ export function AdminRoomReportsClient() {
 
       <div className="grid min-w-0 gap-5 sm:gap-6 xl:grid-cols-[minmax(0,1.1fr)_minmax(320px,0.9fr)]">
         <section className="space-y-4">
-          <div className="grid gap-4 rounded-[22px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[28px] sm:p-5 lg:grid-cols-3">
+          <div className="motion-panel motion-stagger grid gap-4 rounded-[22px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent hover:-translate-y-0.5 hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[28px] sm:p-5 lg:grid-cols-3">
             <Input
               label="Tim bao cao"
               placeholder="Ten phong, email, noi dung..."
@@ -286,7 +286,7 @@ export function AdminRoomReportsClient() {
                   <Link
                     key={`${report.id}-room`}
                     href={`/rooms/${report.roomSlug}`}
-                    className="font-semibold text-[var(--color-brand-700)] hover:text-[var(--color-brand-800)]"
+                    className="motion-soft rounded-xl font-semibold text-[var(--color-brand-700)] hover:text-[var(--color-brand-800)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus-ring)]"
                   >
                     {report.roomTitle}
                   </Link>,
@@ -327,14 +327,14 @@ export function AdminRoomReportsClient() {
           )}
         </section>
 
-        <aside className="rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px] sm:p-6">
+        <aside className="motion-panel rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent hover:-translate-y-1 hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px] sm:p-6">
           <h2 className="text-xl font-semibold text-[var(--color-text-strong)] sm:text-2xl">
             Xu ly bao cao
           </h2>
 
           {selectedReport ? (
             <>
-              <div className="mt-4 space-y-3 rounded-[22px] bg-[var(--color-surface-soft)] p-4 sm:rounded-[28px] sm:p-5">
+              <div className="motion-panel mt-4 space-y-3 rounded-[22px] bg-[var(--color-surface-soft)] p-4 hover:-translate-y-0.5 hover:shadow-sm sm:rounded-[28px] sm:p-5">
                 <div className="flex flex-wrap items-center gap-2">
                   <Badge tone={roomReportStatusMeta[selectedReport.status].tone}>
                     {roomReportStatusMeta[selectedReport.status].label}
@@ -359,7 +359,7 @@ export function AdminRoomReportsClient() {
                 ) : null}
               </div>
 
-              <form className="mt-6 space-y-4" onSubmit={handleUpdate}>
+              <form className="motion-stagger mt-6 space-y-4" onSubmit={handleUpdate}>
                 <Select
                   label="Trang thai moi"
                   options={statusOptions}

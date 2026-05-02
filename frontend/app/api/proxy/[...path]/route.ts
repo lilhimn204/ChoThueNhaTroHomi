@@ -6,6 +6,7 @@ import {
   clearAuthCookies,
   refreshAccessToken,
 } from "@/lib/server-auth";
+import { fetchBackend } from "@/lib/backend-fetch";
 
 const BACKEND_URL = process.env.BACKEND_URL ?? "http://localhost:8080";
 
@@ -106,7 +107,7 @@ async function forwardRequest(
     headers["Content-Type"] = contentType;
   }
 
-  return fetch(url.toString(), {
+  return fetchBackend(url, {
     method,
     headers,
     body,

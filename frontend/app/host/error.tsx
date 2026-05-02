@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 
 export default function HostError({ reset }: { reset: () => void }) {
   return (
-    <div className="container-shell py-10">
+    <div className="container-shell animate-content-rise py-10">
       <Alert
         tone="warning"
         title="Không thể tải khu đăng tin"

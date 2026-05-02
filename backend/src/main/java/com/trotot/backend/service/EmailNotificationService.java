@@ -1,6 +1,7 @@
 package com.trotot.backend.service;
 
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.mail.MailAuthenticationException;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -63,9 +64,60 @@ public class EmailNotificationService {
 
         try {
             mailSender.send(message);
+        } catch (MailAuthenticationException exception) {
+            log.warn(
+                    "Could not authenticate SMTP account while sending registration OTP to {}. Check MAIL_USERNAME and MAIL_PASSWORD/App Password.",
+                    recipientEmail);
+            throw new BusinessException("Hệ thống gửi OTP chưa xác thực được Gmail SMTP. Vui lòng kiểm tra email gửi và App Password.");
         } catch (MailException exception) {
             log.warn("Could not send registration OTP email to {}: {}", recipientEmail, exception.getMessage());
             throw new BusinessException("Không thể gửi mã OTP đến email đăng ký. Vui lòng thử lại sau.");
+        }
+    }
+
+    public void sendPasswordResetOtp(String recipientEmail, String fullName, String otp, long expiresInMinutes) {
+        if (!appProperties.getMail().isEnabled()) {
+            log.warn("Password reset OTP email skipped because app.mail.enabled=false for recipient {}.", recipientEmail);
+            return;
+        }
+
+        if (!StringUtils.hasText(recipientEmail)) {
+            throw new BusinessException("Email nhận OTP không hợp lệ.");
+        }
+
+        JavaMailSender mailSender = mailSenderProvider.getIfAvailable();
+        if (mailSender == null) {
+            log.warn("Password reset OTP email skipped because JavaMailSender is not configured.");
+            throw new BusinessException("Hệ thống gửi email chưa được cấu hình.");
+        }
+
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom(appProperties.getMail().getFrom());
+        message.setTo(recipientEmail);
+        message.setSubject("Homi - Mã đặt lại mật khẩu");
+        message.setText("""
+                Xin chào %s,
+
+                Mã đặt lại mật khẩu tài khoản Homi của bạn là: %s
+
+                Mã này có hiệu lực trong %d phút. Không chia sẻ mã này với bất kỳ ai.
+
+                Nếu bạn không yêu cầu đặt lại mật khẩu, vui lòng bỏ qua email này.
+                """.formatted(
+                StringUtils.hasText(fullName) ? fullName : "bạn",
+                otp,
+                expiresInMinutes));
+
+        try {
+            mailSender.send(message);
+        } catch (MailAuthenticationException exception) {
+            log.warn(
+                    "Could not authenticate SMTP account while sending password reset OTP to {}. Check MAIL_USERNAME and MAIL_PASSWORD/App Password.",
+                    recipientEmail);
+            throw new BusinessException("Hệ thống gửi OTP chưa xác thực được Gmail SMTP. Vui lòng kiểm tra email gửi và App Password.");
+        } catch (MailException exception) {
+            log.warn("Could not send password reset OTP email to {}: {}", recipientEmail, exception.getMessage());
+            throw new BusinessException("Không thể gửi mã OTP đặt lại mật khẩu. Vui lòng thử lại sau.");
         }
     }
 

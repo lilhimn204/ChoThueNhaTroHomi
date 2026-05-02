@@ -7,6 +7,7 @@ import java.util.List;
 import com.trotot.backend.dto.lookup.AmenityResponse;
 import com.trotot.backend.dto.room.RoomImageResponse;
 import com.trotot.backend.entity.RoomStatus;
+import com.trotot.backend.entity.RoomType;
 
 public record HostRoomResponse(
         Long id,
@@ -19,6 +20,7 @@ public record HostRoomResponse(
         String districtName,
         BigDecimal price,
         BigDecimal area,
+        RoomType roomType,
         String contactName,
         String contactPhone,
         RoomStatus status,

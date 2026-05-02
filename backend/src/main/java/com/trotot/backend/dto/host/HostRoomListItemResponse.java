@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 
 import com.trotot.backend.entity.RoomStatus;
+import com.trotot.backend.entity.RoomType;
 
 public record HostRoomListItemResponse(
         Long id,
@@ -13,6 +14,7 @@ public record HostRoomListItemResponse(
         String districtName,
         BigDecimal price,
         BigDecimal area,
+        RoomType roomType,
         RoomStatus status,
         String thumbnail,
         long contactRequestCount,

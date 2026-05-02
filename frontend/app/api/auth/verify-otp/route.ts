@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
+import { fetchBackend } from "@/lib/backend-fetch";
 import { type BackendAuthResponse, setAuthCookies } from "@/lib/server-auth";
 
 const BACKEND_URL = process.env.BACKEND_URL ?? "http://localhost:8080";
@@ -8,7 +9,7 @@ const BACKEND_URL = process.env.BACKEND_URL ?? "http://localhost:8080";
 export async function POST(request: NextRequest) {
   const body = await request.json();
 
-  const backendResponse = await fetch(`${BACKEND_URL}/api/v1/auth/verify-otp`, {
+  const backendResponse = await fetchBackend(`${BACKEND_URL}/api/v1/auth/verify-otp`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),

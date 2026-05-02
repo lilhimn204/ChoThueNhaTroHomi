@@ -7,6 +7,7 @@ import { ImagePlus, Star, Trash2 } from "lucide-react";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 import { normalizeUploadImageSrc } from "@/lib/images";
 import { getErrorMessage } from "@/services/api-client";
 import { uploadRoomImage } from "@/services/upload-service";
@@ -129,20 +130,20 @@ export function RoomImageManager({
         <Alert tone="warning" title="Khong the cap nhat anh" description={errorMessage} />
       ) : null}
 
-      <div className="rounded-[22px] border border-[var(--color-border-strong)] bg-[var(--color-surface-soft)] p-3 sm:rounded-[28px] sm:p-4">
+      <div className="motion-panel rounded-[22px] border border-[var(--color-border-strong)] bg-[var(--color-surface-soft)] p-3 hover:-translate-y-0.5 hover:border-[var(--color-brand-500)] hover:shadow-[var(--shadow-card)] sm:rounded-[28px] sm:p-4">
         {images.length ? (
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div className="motion-stagger grid gap-3 sm:grid-cols-2">
             {images.map((image, index) => (
               <div
                 key={`${image.imageUrl}-${index}`}
-                className="overflow-hidden rounded-[22px] border border-[var(--color-border-soft)] bg-[var(--color-surface)] sm:rounded-3xl"
+                className="motion-panel group overflow-hidden rounded-[22px] border border-[var(--color-border-soft)] bg-[var(--color-surface)] hover:-translate-y-1 hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] sm:rounded-3xl"
               >
                 <div className="relative aspect-[16/10]">
                   <Image
                     src={normalizeUploadImageSrc(image.imageUrl)}
                     alt={image.altText || roomTitle || "Anh phong tro"}
                     fill
-                    className="object-cover"
+                    className="motion-soft object-cover group-hover:scale-[1.04] group-hover:saturate-[1.08]"
                     sizes="(min-width: 1280px) 260px, 50vw"
                   />
                 </div>
@@ -196,8 +197,8 @@ export function RoomImageManager({
             ))}
           </div>
         ) : (
-          <div className="flex aspect-[16/8] flex-col items-center justify-center rounded-3xl border border-dashed border-[var(--color-border-strong)] bg-[var(--color-surface)] text-center">
-            <ImagePlus className="size-8 text-[var(--color-brand-700)]" />
+          <div className="motion-panel group flex aspect-[16/8] flex-col items-center justify-center rounded-3xl border border-dashed border-[var(--color-border-strong)] bg-[var(--color-surface)] text-center hover:-translate-y-0.5 hover:border-[var(--color-brand-500)] hover:shadow-sm">
+            <ImagePlus className="motion-soft size-8 text-[var(--color-brand-700)] group-hover:scale-110" />
             <p className="mt-3 text-sm font-semibold text-[var(--color-text-strong)]">
               Chua co anh phong
             </p>
@@ -210,7 +211,10 @@ export function RoomImageManager({
         <div className="mt-4 flex flex-col gap-3">
           <label
             htmlFor="room-gallery-upload"
-            className="inline-flex h-12 cursor-pointer items-center justify-center gap-2 rounded-2xl bg-[var(--color-brand-800)] px-5 text-sm font-semibold text-white shadow-sm transition hover:bg-[var(--color-brand-700)]"
+            className={cn(
+              "motion-pressable inline-flex h-12 cursor-pointer items-center justify-center gap-2 rounded-2xl bg-[var(--color-brand-800)] px-5 text-sm font-semibold text-white shadow-sm hover:-translate-y-0.5 hover:bg-[var(--color-brand-700)] hover:shadow-[var(--shadow-button-hover)] active:scale-[0.98]",
+              (uploading || images.length >= MAX_IMAGES) && "pointer-events-none opacity-60",
+            )}
           >
             <ImagePlus className="size-4" />
             {uploading ? "Dang tai anh..." : "Chon anh tu may"}
@@ -225,7 +229,7 @@ export function RoomImageManager({
             />
           </label>
 
-          <div className="grid gap-3 sm:grid-cols-[1fr_auto]">
+          <div className="motion-stagger grid gap-3 sm:grid-cols-[1fr_auto]">
             <Input
               label="Them anh bang URL"
               placeholder="https://images.unsplash.com/..."

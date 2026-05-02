@@ -17,9 +17,9 @@ export function EmptyState({
   actionHref?: string;
 }) {
   return (
-    <div className="rounded-[30px] border border-dashed border-[var(--color-border-strong)] bg-[var(--color-surface)] px-6 py-10 text-center shadow-[var(--shadow-card)] transition-all duration-300 hover:-translate-y-0.5 hover:border-[var(--color-brand-500)] hover:shadow-[var(--shadow-card-hover)]">
-      <div className="mx-auto flex size-16 items-center justify-center rounded-2xl bg-[var(--badge-brand-bg)] text-[var(--badge-brand-text)] shadow-sm">
-        <SearchX className="size-7" />
+    <div className="motion-panel animate-content-rise group rounded-[30px] border border-dashed border-[var(--color-border-strong)] bg-[var(--color-surface)] px-6 py-10 text-center shadow-[var(--shadow-card)] hover:-translate-y-1 hover:border-[var(--color-brand-500)] hover:shadow-[var(--shadow-card-hover)]">
+      <div className="motion-soft mx-auto flex size-16 items-center justify-center rounded-2xl bg-[var(--badge-brand-bg)] text-[var(--badge-brand-text)] shadow-sm group-hover:scale-[1.03]">
+        <SearchX className="motion-soft size-7 group-hover:scale-110" />
       </div>
       <h3 className="mt-5 text-xl font-semibold text-[var(--color-text-strong)]">
         {title}

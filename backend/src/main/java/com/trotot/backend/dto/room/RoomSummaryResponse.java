@@ -5,6 +5,7 @@ import java.time.Instant;
 import java.util.List;
 
 import com.trotot.backend.entity.RoomStatus;
+import com.trotot.backend.entity.RoomType;
 
 public record RoomSummaryResponse(
         Long id,
@@ -15,6 +16,7 @@ public record RoomSummaryResponse(
         String address,
         BigDecimal price,
         BigDecimal area,
+        RoomType roomType,
         RoomStatus status,
         String thumbnail,
         boolean featured,

@@ -41,11 +41,11 @@ export function Alert({
   return (
     <div
       className={cn(
-        "flex gap-3 rounded-3xl border px-4 py-4 shadow-sm backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[var(--shadow-card)]",
+        "motion-panel group flex gap-3 rounded-3xl border px-4 py-4 shadow-sm backdrop-blur-sm hover:-translate-y-0.5 hover:shadow-[var(--shadow-card)]",
         styles[tone].wrapper,
       )}
     >
-      <span className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-2xl bg-white/35">
+      <span className="motion-soft mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-2xl bg-white/35 group-hover:scale-105">
         <Icon className="size-5" />
       </span>
       <div className="space-y-1">

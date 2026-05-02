@@ -63,7 +63,7 @@ export function DashboardCharts() {
   if (!charts) return null;
 
   return (
-    <div className="grid min-w-0 gap-5 xl:grid-cols-3">
+    <div className="motion-stagger grid min-w-0 gap-5 xl:grid-cols-3">
       {/* Bar Chart — Rooms by District */}
       <ChartCard title="Phòng theo quận/huyện">
         {charts.roomsByDistrict.length === 0 ? (
@@ -200,7 +200,7 @@ export function DashboardCharts() {
 
 function ChartCard({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="group min-w-0 rounded-[24px] border border-[var(--color-border-soft)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:-translate-y-1 hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[28px] sm:p-5">
+    <div className="motion-panel group min-w-0 rounded-[24px] border border-[var(--color-border-soft)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent hover:-translate-y-1 hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[28px] sm:p-5">
       <h3 className="mb-4 text-base font-semibold text-[var(--color-text-strong)]">{title}</h3>
       {children}
     </div>
@@ -209,7 +209,7 @@ function ChartCard({ title, children }: { title: string; children: React.ReactNo
 
 function EmptyChart() {
   return (
-    <div className="flex h-64 items-center justify-center rounded-3xl border border-dashed border-[var(--color-border-soft)] bg-[var(--color-surface-soft)] text-sm text-[var(--color-text-muted)] transition-colors duration-200 group-hover:border-[var(--color-border-strong)]">
+    <div className="motion-soft flex h-64 items-center justify-center rounded-3xl border border-dashed border-[var(--color-border-soft)] bg-[var(--color-surface-soft)] text-sm text-[var(--color-text-muted)] group-hover:border-[var(--color-border-strong)]">
       Chưa có dữ liệu
     </div>
   );

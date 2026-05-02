@@ -84,12 +84,12 @@ export function ConfirmDialog({
       className="fixed inset-0 z-[9998] flex items-center justify-center bg-black/55 p-4 backdrop-blur-sm animate-fade-in"
       onClick={handleOverlayClick}
     >
-      <div className="w-full max-w-md animate-scale-in rounded-3xl border border-[var(--color-border-soft)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-card-hover)] ring-1 ring-white/10">
+      <div className="motion-panel w-full max-w-md animate-dialog-in rounded-3xl border border-[var(--color-border-soft)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-card-hover)] ring-1 ring-white/10">
         {/* Icon + Content */}
         <div className="flex gap-4">
           <div
             className={cn(
-              "flex size-12 shrink-0 items-center justify-center rounded-2xl shadow-sm transition-transform duration-200 ease-out",
+              "motion-soft flex size-12 shrink-0 items-center justify-center rounded-2xl shadow-sm",
               config.iconBg,
             )}
           >
@@ -119,7 +119,7 @@ export function ConfirmDialog({
           <button
             type="button"
             className={cn(
-              "inline-flex h-10 w-full items-center justify-center gap-2 rounded-xl px-5 text-sm font-semibold shadow-sm transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-[var(--shadow-button-hover)] active:translate-y-0 active:scale-[0.98] disabled:translate-y-0 disabled:scale-100 disabled:opacity-50 sm:w-auto",
+              "motion-pressable inline-flex h-10 w-full items-center justify-center gap-2 rounded-xl px-5 text-sm font-semibold shadow-sm hover:-translate-y-0.5 hover:shadow-[var(--shadow-button-hover)] active:scale-[0.98] disabled:translate-y-0 disabled:scale-100 disabled:opacity-50 sm:w-auto",
               config.button,
             )}
             onClick={onConfirm}

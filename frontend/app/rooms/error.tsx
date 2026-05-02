@@ -17,7 +17,7 @@ export default function RoomsError({
   }, [error]);
 
   return (
-    <div className="container-shell py-10">
+    <div className="container-shell animate-content-rise py-10">
       <Alert
         tone="warning"
         title="Không thể tải danh sách phòng"

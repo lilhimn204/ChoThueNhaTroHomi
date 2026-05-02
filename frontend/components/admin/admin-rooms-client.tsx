@@ -19,6 +19,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
 
 import { roomStatusMeta } from "@/constants/status";
+import { roomTypeLabelByValue, roomTypeOptions } from "@/constants/site";
 import { exportCsv } from "@/lib/export-csv";
 import { formatCompactCurrency, formatDate } from "@/lib/format";
 import { ApiError, getErrorMessage } from "@/services/api-client";
@@ -30,7 +31,7 @@ import {
   updateRoomStatus,
 } from "@/services/room-service";
 import type { RoomImageInput } from "@/services/room-service";
-import type { AdminRoomListItem, Amenity, District, PageResponse, RoomStatus } from "@/types";
+import type { AdminRoomListItem, Amenity, District, PageResponse, RoomStatus, RoomType } from "@/types";
 
 const PAGE_SIZE = 8;
 
@@ -41,6 +42,7 @@ const initialForm = {
   districtId: "",
   price: "",
   area: "",
+  roomType: "boarding-room" as RoomType,
   contactName: "",
   contactPhone: "",
   status: "AVAILABLE" as RoomStatus,
@@ -190,6 +192,7 @@ export function AdminRoomsClient() {
         districtId: Number(formData.districtId),
         price: Number(formData.price),
         area: Number(formData.area),
+        roomType: formData.roomType,
         contactName: formData.contactName.trim(),
         contactPhone: formData.contactPhone.trim(),
         status: formData.status,
@@ -270,7 +273,7 @@ export function AdminRoomsClient() {
 
   return (
     <div className="min-w-0 space-y-5">
-      <div className="rounded-[28px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-5 shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] lg:p-6">
+      <div className="motion-panel animate-content-rise rounded-[28px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-5 shadow-[var(--shadow-card)] ring-1 ring-transparent hover:-translate-y-1 hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] lg:p-6">
         <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
           <div className="space-y-3">
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--color-brand-700)]">
@@ -303,10 +306,11 @@ export function AdminRoomsClient() {
                   });
                   exportCsv({
                     filename: "homi-admin-rooms",
-                    headers: ["Mã tin", "Tiêu đề", "Khu vực", "Giá", "Diện tích", "Trạng thái", "Nổi bật", "Người liên hệ", "Ngày đăng", "Ngày tạo"],
+                    headers: ["Mã tin", "Tiêu đề", "Loại phòng", "Khu vực", "Giá", "Diện tích", "Trạng thái", "Nổi bật", "Người liên hệ", "Ngày đăng", "Ngày tạo"],
                     rows: all.content.map((room) => [
                       room.listingCode,
                       room.title,
+                      roomTypeLabelByValue[room.roomType],
                       room.districtName,
                       formatCompactCurrency(room.price),
                       `${room.area} m²`,
@@ -341,7 +345,7 @@ export function AdminRoomsClient() {
 
       <div className="grid min-w-0 gap-5 2xl:grid-cols-[minmax(0,1fr)_380px]">
         <section className="min-w-0 space-y-4">
-          <div className="grid min-w-0 gap-3 rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] lg:grid-cols-3">
+          <div className="motion-panel motion-stagger grid min-w-0 gap-3 rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent hover:-translate-y-0.5 hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] lg:grid-cols-3">
             <Input
               label="Tìm bài đăng / mã tin"
               placeholder="Tên phòng hoặc mã tin..."
@@ -409,7 +413,10 @@ export function AdminRoomsClient() {
                       {room.title}
                     </p>
                     <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--color-brand-700)]">
-                      {room.featured ? "Phòng nổi bật" : "Bài đăng thường"}
+                        {room.featured ? "Phòng nổi bật" : "Bài đăng thường"}
+                    </p>
+                    <p className="line-clamp-1 text-xs text-[var(--color-text-muted)]">
+                      {roomTypeLabelByValue[room.roomType]}
                     </p>
                   </div>,
                   <span key={`${room.id}-district`} className="inline-block max-w-[9rem] leading-5">
@@ -478,7 +485,7 @@ export function AdminRoomsClient() {
           )}
         </section>
 
-        <aside className="min-w-0 rounded-[28px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-5 shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] 2xl:sticky 2xl:top-24 2xl:max-h-[calc(100vh-7rem)] 2xl:overflow-y-auto">
+        <aside className="motion-panel min-w-0 rounded-[28px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-5 shadow-[var(--shadow-card)] ring-1 ring-transparent hover:-translate-y-1 hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] 2xl:sticky 2xl:top-24 2xl:max-h-[calc(100vh-7rem)] 2xl:overflow-y-auto">
           <h2 className="text-2xl font-semibold tracking-tight text-[var(--color-text-strong)]">
             Tạo bài đăng mới
           </h2>
@@ -487,7 +494,7 @@ export function AdminRoomsClient() {
             danh sách và trang chi tiết phòng.
           </p>
 
-          <form className="mt-5 space-y-3" onSubmit={handleCreateRoom}>
+          <form className="motion-stagger mt-5 space-y-3" onSubmit={handleCreateRoom}>
             <Input
               label="Tiêu đề phòng"
               placeholder="Studio gần trường đại học..."
@@ -526,6 +533,19 @@ export function AdminRoomsClient() {
                   setFormData((current) => ({ ...current, districtId: event.target.value }))
                 }
               />
+              <Select
+                label="Loại phòng"
+                options={roomTypeOptions}
+                value={formData.roomType}
+                onChange={(event) =>
+                  setFormData((current) => ({
+                    ...current,
+                    roomType: event.target.value as RoomType,
+                  }))
+                }
+              />
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2">
               <Select
                 label="Trạng thái"
                 options={[
@@ -593,7 +613,7 @@ export function AdminRoomsClient() {
               <p className="text-sm font-semibold text-[var(--color-text-strong)]">
                 Tiện ích nổi bật
               </p>
-              <div className="flex flex-wrap gap-1.5">
+              <div className="motion-stagger flex flex-wrap gap-1.5">
                 {amenities.map((amenity) => {
                   const active = formData.amenityIds.includes(String(amenity.id));
 
@@ -604,8 +624,8 @@ export function AdminRoomsClient() {
                       onClick={() => toggleAmenity(String(amenity.id))}
                       className={
                         active
-                          ? "rounded-full bg-[var(--color-brand-700)] px-3 py-2 text-sm font-medium text-white"
-                          : "rounded-full bg-[var(--color-surface-soft)] px-3 py-2 text-sm font-medium text-[var(--color-text-muted)]"
+                          ? "motion-pressable rounded-full bg-[var(--color-brand-700)] px-3 py-2 text-sm font-medium text-white shadow-sm hover:-translate-y-0.5 hover:shadow-md active:scale-[0.98]"
+                          : "motion-pressable rounded-full bg-[var(--color-surface-soft)] px-3 py-2 text-sm font-medium text-[var(--color-text-muted)] hover:-translate-y-0.5 hover:bg-[var(--badge-brand-bg)] hover:text-[var(--badge-brand-text)] active:scale-[0.98]"
                       }
                     >
                       {amenity.name}
@@ -615,9 +635,10 @@ export function AdminRoomsClient() {
               </div>
             </div>
 
-            <label className="flex items-center gap-3 text-sm text-[var(--color-text-strong)]">
+            <label className="motion-panel flex items-center gap-3 rounded-2xl border border-[var(--color-border-soft)] bg-[var(--color-surface-soft)] px-4 py-3 text-sm text-[var(--color-text-strong)] hover:-translate-y-0.5 hover:border-[var(--color-brand-500)] hover:shadow-sm">
               <input
                 type="checkbox"
+                className="motion-soft size-4 accent-[var(--color-brand-700)]"
                 checked={formData.featured}
                 onChange={(event) =>
                   setFormData((current) => ({ ...current, featured: event.target.checked }))

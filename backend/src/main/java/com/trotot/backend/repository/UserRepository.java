@@ -10,8 +10,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.trotot.backend.entity.User;
 import com.trotot.backend.entity.RoleName;
+import com.trotot.backend.entity.User;
+import com.trotot.backend.entity.UserStatus;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
@@ -33,10 +34,24 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("""
             select u from User u
+            left join u.roles role
             where (:keyword is null
                 or lower(u.fullName) like lower(concat('%', :keyword, '%'))
                 or lower(u.email) like lower(concat('%', :keyword, '%'))
                 or u.phone like concat('%', :keyword, '%'))
+            and (:status is null or u.status = :status)
+            and (:roleName is null or role.name = :roleName)
             """)
-    Page<User> searchUsers(@Param("keyword") String keyword, Pageable pageable);
+    Page<User> searchUsers(
+            @Param("keyword") String keyword,
+            @Param("status") UserStatus status,
+            @Param("roleName") RoleName roleName,
+            Pageable pageable);
+
+    @Query("""
+            select count(distinct u) from User u
+            join u.roles role
+            where role.name = :roleName
+            """)
+    long countDistinctByRoleName(@Param("roleName") RoleName roleName);
 }

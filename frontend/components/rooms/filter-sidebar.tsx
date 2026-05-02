@@ -1,7 +1,7 @@
 "use client";
 
-import type { Amenity, District, RoomStatus } from "@/types";
-import { roomStatusOptions } from "@/constants/site";
+import type { Amenity, District, RoomStatus, RoomType } from "@/types";
+import { roomStatusOptions, roomTypeOptions } from "@/constants/site";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 
@@ -12,6 +12,7 @@ export interface RoomFiltersValue {
   minArea: string;
   maxArea: string;
   status: "" | RoomStatus;
+  roomType: "" | RoomType;
   amenityIds: string[];
 }
 
@@ -72,7 +73,7 @@ export function FilterSidebar({
   };
 
   return (
-    <aside className="rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] sm:rounded-[30px] sm:p-5">
+    <aside className="motion-panel rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent hover:-translate-y-0.5 hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[30px] sm:p-5">
       <div className="flex items-center justify-between gap-3">
         <h3 className="text-lg font-semibold text-[var(--color-text-strong)]">
           {title}
@@ -80,13 +81,13 @@ export function FilterSidebar({
         <button
           type="button"
           onClick={onReset}
-          className="text-sm font-medium text-[var(--color-brand-700)] hover:text-[var(--color-brand-800)]"
+          className="motion-soft rounded-xl text-sm font-medium text-[var(--color-brand-700)] hover:text-[var(--color-brand-800)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus-ring)]"
         >
           Đặt lại
         </button>
       </div>
 
-      <div className="mt-5 space-y-4 sm:space-y-5">
+      <div className="motion-stagger mt-5 space-y-4 sm:space-y-5">
         <Select
           label="Khu vực"
           options={[
@@ -131,6 +132,18 @@ export function FilterSidebar({
         </div>
 
         <Select
+          label="Loại phòng"
+          options={[{ label: "Tất cả loại phòng", value: "" }, ...roomTypeOptions]}
+          value={value.roomType}
+          onChange={(event) =>
+            onChange({
+              ...value,
+              roomType: event.target.value as RoomFiltersValue["roomType"],
+            })
+          }
+        />
+
+        <Select
           label="Trạng thái"
           options={[{ label: "Tất cả", value: "" }, ...roomStatusOptions]}
           value={value.status}
@@ -149,7 +162,7 @@ export function FilterSidebar({
           <p className="text-sm leading-6 text-[var(--color-text-muted)]">
             Khi chọn nhiều tiện ích, kết quả chỉ gồm phòng có đủ các tiện ích đó.
           </p>
-          <div className="flex flex-wrap gap-2">
+          <div className="motion-stagger flex flex-wrap gap-2">
             {amenities.map((amenity) => {
               const active = value.amenityIds.includes(String(amenity.id));
 
@@ -158,10 +171,10 @@ export function FilterSidebar({
                   key={amenity.id}
                   type="button"
                   onClick={() => toggleAmenity(String(amenity.id))}
-                  className={`min-h-10 rounded-full px-3 py-2 text-sm font-medium transition-all duration-200 active:scale-[0.98] ${
+                  className={`motion-pressable min-h-10 rounded-full px-3 py-2 text-sm font-medium active:scale-[0.98] ${
                     active
-                      ? "bg-[var(--color-brand-700)] text-[var(--color-brand-contrast)]"
-                      : "bg-[var(--color-surface-soft)] text-[var(--color-text-muted)] hover:bg-[var(--color-border-soft)]"
+                      ? "bg-[var(--color-brand-700)] text-[var(--color-brand-contrast)] shadow-sm hover:-translate-y-0.5 hover:shadow-md"
+                      : "bg-[var(--color-surface-soft)] text-[var(--color-text-muted)] hover:-translate-y-0.5 hover:bg-[var(--color-border-soft)] hover:text-[var(--color-text-strong)]"
                   }`}
                 >
                   {amenity.name}

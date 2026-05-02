@@ -86,7 +86,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
             <div
               key={t.id}
               className={cn(
-                "pointer-events-auto flex w-80 animate-slide-up items-start gap-3 rounded-2xl border px-4 py-3.5 shadow-lg backdrop-blur-sm",
+                "motion-panel pointer-events-auto flex w-80 animate-slide-up items-start gap-3 rounded-2xl border px-4 py-3.5 shadow-lg backdrop-blur-sm hover:-translate-y-0.5",
                 TONE_STYLES[t.tone],
               )}
             >
@@ -94,7 +94,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
               <p className="flex-1 text-sm font-medium leading-5">{t.message}</p>
               <button
                 type="button"
-                className="mt-0.5 shrink-0 rounded-lg p-0.5 opacity-60 transition hover:opacity-100"
+                className="motion-pressable mt-0.5 shrink-0 rounded-lg p-0.5 opacity-60 hover:opacity-100 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-current"
                 onClick={() => dismiss(t.id)}
               >
                 <X className="size-4" />

@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { fetchBackend } from "@/lib/backend-fetch";
+
 const BACKEND_URL = process.env.BACKEND_URL ?? "http://localhost:8080";
 const FORBIDDEN_PATH_PATTERN = /\.\.|\\|\/\//;
 
@@ -25,7 +27,7 @@ async function publicProxyHandler(
 
   const contentType = request.headers.get("Content-Type");
   const body = await buildBody(request, contentType);
-  const backendResponse = await fetch(url.toString(), {
+  const backendResponse = await fetchBackend(url, {
     method: request.method,
     headers: buildHeaders(contentType),
     body,

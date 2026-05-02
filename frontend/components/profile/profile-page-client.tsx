@@ -23,8 +23,8 @@ export function ProfilePageClient() {
         </div>
       ) : (
         <div className="container-shell grid gap-5 py-8 sm:gap-8 sm:py-12 xl:grid-cols-[0.72fr_1.28fr]">
-          <aside className="rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px] sm:p-6">
-            <div className="relative mx-auto size-28 overflow-hidden rounded-full border-4 border-[var(--color-brand-50)]">
+          <aside className="motion-panel animate-content-rise rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent hover:-translate-y-1 hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px] sm:p-6">
+            <div className="group relative mx-auto size-28 overflow-hidden rounded-full border-4 border-[var(--color-brand-50)]">
               <Image
                 src={normalizeUploadImageSrc(
                   user.avatarUrl
@@ -32,7 +32,7 @@ export function ProfilePageClient() {
                 )}
                 alt={user.fullName}
                 fill
-                className="object-cover"
+                className="motion-soft object-cover group-hover:scale-[1.04]"
                 sizes="112px"
               />
             </div>
@@ -56,7 +56,7 @@ export function ProfilePageClient() {
             </div>
           </aside>
 
-          <div className="min-w-0 space-y-5 sm:space-y-6">
+          <div className="motion-stagger min-w-0 space-y-5 sm:space-y-6">
             <ProfileForm key={user.id} profile={user} />
             <PasswordChangeForm />
           </div>

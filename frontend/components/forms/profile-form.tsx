@@ -106,7 +106,7 @@ export function ProfileForm({ profile }: { profile: UserProfile }) {
 
   return (
     <form
-      className="rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px] sm:p-8"
+      className="motion-panel animate-content-rise rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent hover:-translate-y-1 hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px] sm:p-8"
       onSubmit={handleSubmit}
     >
       <div className="space-y-3">
@@ -131,7 +131,7 @@ export function ProfileForm({ profile }: { profile: UserProfile }) {
         </div>
       ) : null}
 
-      <div className="mt-6 grid gap-5 md:grid-cols-2 sm:mt-8">
+      <div className="motion-stagger mt-6 grid gap-5 md:grid-cols-2 sm:mt-8">
         <Input
           label="Họ tên"
           value={formData.fullName}
@@ -149,20 +149,20 @@ export function ProfileForm({ profile }: { profile: UserProfile }) {
           <span className="text-sm font-semibold text-[var(--color-text-strong)]">
             Ảnh đại diện
           </span>
-          <div className="mt-2 rounded-[22px] border border-[var(--color-border-strong)] bg-[var(--color-surface-soft)] p-3 shadow-sm transition-colors duration-200 hover:border-[var(--color-brand-500)] sm:rounded-[28px] sm:p-4">
+          <div className="motion-panel mt-2 rounded-[22px] border border-[var(--color-border-strong)] bg-[var(--color-surface-soft)] p-3 shadow-sm hover:-translate-y-0.5 hover:border-[var(--color-brand-500)] hover:shadow-[var(--shadow-card)] sm:rounded-[28px] sm:p-4">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-              <div className="relative size-28 shrink-0 overflow-hidden rounded-full border-4 border-[var(--color-surface)] bg-[var(--color-surface)] shadow-[var(--shadow-card)]">
+              <div className="group relative size-28 shrink-0 overflow-hidden rounded-full border-4 border-[var(--color-surface)] bg-[var(--color-surface)] shadow-[var(--shadow-card)]">
                 {formData.avatarUrl ? (
                   <Image
                     src={normalizeUploadImageSrc(formData.avatarUrl)}
                     alt={formData.fullName || "Ảnh đại diện"}
                     fill
-                    className="object-cover"
+                    className="motion-soft object-cover group-hover:scale-[1.04]"
                     sizes="112px"
                   />
                 ) : (
                   <div className="flex h-full w-full items-center justify-center text-[var(--color-brand-700)]">
-                    <ImagePlus className="size-8" />
+                    <ImagePlus className="motion-soft size-8 group-hover:scale-110" />
                   </div>
                 )}
               </div>
@@ -171,7 +171,7 @@ export function ProfileForm({ profile }: { profile: UserProfile }) {
                 <div className="flex flex-col gap-3 sm:flex-row">
                   <label
                     htmlFor="avatar-upload"
-                    className="inline-flex h-12 cursor-pointer items-center justify-center gap-2 rounded-2xl bg-[var(--color-brand-800)] px-5 text-sm font-semibold text-white shadow-sm transition-all duration-200 ease-out hover:-translate-y-0.5 hover:bg-[var(--color-brand-700)] hover:shadow-[var(--shadow-button-hover)] active:scale-[0.98]"
+                    className="motion-pressable inline-flex h-12 cursor-pointer items-center justify-center gap-2 rounded-2xl bg-[var(--color-brand-800)] px-5 text-sm font-semibold text-white shadow-sm hover:-translate-y-0.5 hover:bg-[var(--color-brand-700)] hover:shadow-[var(--shadow-button-hover)] active:scale-[0.98]"
                   >
                     <ImagePlus className="size-4" />
                     {uploadingAvatar ? "Đang tải ảnh..." : "Chọn ảnh từ máy"}
@@ -188,7 +188,7 @@ export function ProfileForm({ profile }: { profile: UserProfile }) {
                   {formData.avatarUrl ? (
                     <button
                       type="button"
-                      className="inline-flex h-12 items-center justify-center gap-2 rounded-2xl border border-[var(--color-border-strong)] bg-[var(--color-surface)] px-5 text-sm font-semibold text-[var(--color-text-strong)] transition-all duration-200 ease-out hover:-translate-y-0.5 hover:border-[var(--color-danger-500)] hover:text-[var(--color-danger-600)] active:scale-[0.98]"
+                      className="motion-pressable inline-flex h-12 items-center justify-center gap-2 rounded-2xl border border-[var(--color-border-strong)] bg-[var(--color-surface)] px-5 text-sm font-semibold text-[var(--color-text-strong)] hover:-translate-y-0.5 hover:border-[var(--color-danger-500)] hover:text-[var(--color-danger-600)] active:scale-[0.98]"
                       onClick={() => handleChange("avatarUrl", "")}
                     >
                       <Trash2 className="size-4" />
@@ -200,7 +200,7 @@ export function ProfileForm({ profile }: { profile: UserProfile }) {
                   Chọn ảnh JPG, PNG hoặc WEBP, tối đa 5MB.
                 </p>
                 {fieldErrors.avatarUrl ? (
-                  <p className="mt-2 text-sm text-[var(--color-danger-600)]">
+                  <p className="animate-slide-up mt-2 text-sm text-[var(--color-danger-600)]">
                     {fieldErrors.avatarUrl}
                   </p>
                 ) : null}

@@ -80,12 +80,33 @@ public class User {
     @Column(name = "otp_last_sent_at")
     private Instant otpLastSentAt;
 
+    @Column(name = "password_reset_otp_hash", length = 255)
+    private String passwordResetOtpHash;
+
+    @Column(name = "password_reset_otp_expires_at")
+    private Instant passwordResetOtpExpiresAt;
+
+    @Column(name = "password_reset_otp_attempts", nullable = false)
+    private int passwordResetOtpAttempts = 0;
+
+    @Column(name = "password_reset_otp_resend_count", nullable = false)
+    private int passwordResetOtpResendCount = 0;
+
+    @Column(name = "password_reset_otp_last_sent_at")
+    private Instant passwordResetOtpLastSentAt;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private UserStatus status = UserStatus.ACTIVE;
 
     @Column(nullable = false)
     private boolean enabled = true;
+
+    @Column(name = "lock_reason", length = 300)
+    private String lockReason;
+
+    @Column(name = "locked_at")
+    private Instant lockedAt;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(

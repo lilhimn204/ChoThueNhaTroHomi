@@ -29,8 +29,15 @@ CREATE TABLE IF NOT EXISTS users (
     otp_attempts INT NOT NULL DEFAULT 0,
     otp_resend_count INT NOT NULL DEFAULT 0,
     otp_last_sent_at TIMESTAMP NULL,
+    password_reset_otp_hash VARCHAR(255),
+    password_reset_otp_expires_at TIMESTAMP NULL,
+    password_reset_otp_attempts INT NOT NULL DEFAULT 0,
+    password_reset_otp_resend_count INT NOT NULL DEFAULT 0,
+    password_reset_otp_last_sent_at TIMESTAMP NULL,
     status ENUM('ACTIVE', 'INACTIVE', 'LOCKED') NOT NULL DEFAULT 'ACTIVE',
     enabled BOOLEAN NOT NULL DEFAULT TRUE,
+    lock_reason VARCHAR(300),
+    locked_at TIMESTAMP NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     UNIQUE KEY uk_users_google_id (google_id),
@@ -97,6 +104,7 @@ CREATE TABLE IF NOT EXISTS rooms (
     contact_name VARCHAR(120) NOT NULL,
     contact_phone VARCHAR(20) NOT NULL,
     status ENUM('AVAILABLE', 'FULL', 'HIDDEN') NOT NULL DEFAULT 'AVAILABLE',
+    room_type ENUM('APARTMENT', 'MINI_APARTMENT', 'PRIVATE_HOUSE', 'BOARDING_ROOM') NOT NULL DEFAULT 'BOARDING_ROOM',
     thumbnail VARCHAR(255),
     is_featured BOOLEAN NOT NULL DEFAULT FALSE,
     created_by BIGINT,
@@ -107,6 +115,7 @@ CREATE TABLE IF NOT EXISTS rooms (
     CONSTRAINT fk_rooms_created_by
         FOREIGN KEY (created_by) REFERENCES users(id),
     INDEX idx_rooms_listing (status, district_id, price),
+    INDEX idx_rooms_type_status (room_type, status),
     INDEX idx_rooms_owner_status_created (created_by, status, created_at),
     INDEX idx_rooms_area (area),
     INDEX idx_rooms_featured (is_featured),
@@ -189,6 +198,73 @@ CREATE TABLE IF NOT EXISTS room_reports (
     INDEX idx_room_reports_reason (reason),
     INDEX idx_room_reports_room_created (room_id, created_at),
     INDEX idx_room_reports_reporter_created (reporter_id, created_at)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS support_tickets (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    type ENUM('ROOM_REPORT', 'CONTACT') NOT NULL,
+    listing_reference VARCHAR(255),
+    reason VARCHAR(120),
+    full_name VARCHAR(120),
+    email VARCHAR(120),
+    phone VARCHAR(20),
+    subject VARCHAR(180) NOT NULL,
+    message VARCHAR(1500) NOT NULL,
+    status ENUM('NEW', 'REVIEWING', 'RESOLVED', 'DISMISSED') NOT NULL DEFAULT 'NEW',
+    admin_note VARCHAR(600),
+    handled_by BIGINT NULL,
+    handled_at TIMESTAMP NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT fk_support_tickets_handler
+        FOREIGN KEY (handled_by) REFERENCES users(id),
+    INDEX idx_support_tickets_type_status_created (type, status, created_at),
+    INDEX idx_support_tickets_status_created (status, created_at)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS news_categories (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(80) NOT NULL UNIQUE,
+    slug VARCHAR(100) NOT NULL UNIQUE,
+    description VARCHAR(300),
+    display_order INT NOT NULL DEFAULT 0,
+    enabled BOOLEAN NOT NULL DEFAULT TRUE,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_news_categories_enabled_order (enabled, display_order, name)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS news_articles (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(180) NOT NULL,
+    slug VARCHAR(220) NOT NULL UNIQUE,
+    seo_title VARCHAR(180),
+    seo_description VARCHAR(320),
+    og_image_url VARCHAR(255),
+    canonical_url VARCHAR(255),
+    summary VARCHAR(360) NOT NULL,
+    content TEXT NOT NULL,
+    thumbnail_url VARCHAR(255),
+    is_featured BOOLEAN NOT NULL DEFAULT FALSE,
+    category VARCHAR(80) NOT NULL,
+    status ENUM('DRAFT', 'PUBLISHED') NOT NULL DEFAULT 'DRAFT',
+    published_at TIMESTAMP NULL,
+    author_name VARCHAR(120) NOT NULL,
+    created_by BIGINT NULL,
+    updated_by BIGINT NULL,
+    last_edited_at TIMESTAMP NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT fk_news_articles_creator
+        FOREIGN KEY (created_by) REFERENCES users(id)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_news_articles_editor
+        FOREIGN KEY (updated_by) REFERENCES users(id)
+        ON DELETE SET NULL,
+    INDEX idx_news_articles_featured_status_published (is_featured, status, published_at),
+    INDEX idx_news_articles_status_published (status, published_at),
+    INDEX idx_news_articles_category_status (category, status),
+    INDEX idx_news_articles_updated (updated_at)
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS saved_rooms (

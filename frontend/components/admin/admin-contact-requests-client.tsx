@@ -151,7 +151,7 @@ export function AdminContactRequestsClient() {
 
   return (
     <div className="space-y-5 sm:space-y-6">
-      <div className="rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px] sm:p-6">
+      <div className="motion-panel animate-content-rise rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent hover:-translate-y-1 hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px] sm:p-6">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div className="space-y-3">
             <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[var(--color-brand-700)]">
@@ -217,7 +217,7 @@ export function AdminContactRequestsClient() {
 
       <div className="grid min-w-0 gap-5 sm:gap-6 xl:grid-cols-[minmax(0,1.1fr)_minmax(320px,0.9fr)]">
         <section className="space-y-4">
-          <div className="grid gap-4 rounded-[22px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[28px] sm:p-5 md:grid-cols-2">
+          <div className="motion-panel motion-stagger grid gap-4 rounded-[22px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent hover:-translate-y-0.5 hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[28px] sm:p-5 md:grid-cols-2">
             <Input
               label="Tìm yêu cầu"
               placeholder="Tìm theo tên, email, phòng..."
@@ -293,14 +293,14 @@ export function AdminContactRequestsClient() {
           )}
         </section>
 
-        <aside className="rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px] sm:p-6">
+        <aside className="motion-panel rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent hover:-translate-y-1 hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px] sm:p-6">
           <h2 className="text-xl font-semibold text-[var(--color-text-strong)] sm:text-2xl">
             Cập nhật yêu cầu
           </h2>
 
           {selectedRequest ? (
             <>
-              <div className="mt-4 space-y-3 rounded-[22px] bg-[var(--color-surface-soft)] p-4 sm:rounded-[28px] sm:p-5">
+              <div className="motion-panel mt-4 space-y-3 rounded-[22px] bg-[var(--color-surface-soft)] p-4 hover:-translate-y-0.5 hover:shadow-sm sm:rounded-[28px] sm:p-5">
                 <div className="flex flex-wrap items-center gap-2">
                   <Badge tone={contactRequestStatusMeta[selectedRequest.status].tone}>
                     {contactRequestStatusMeta[selectedRequest.status].label}
@@ -319,7 +319,7 @@ export function AdminContactRequestsClient() {
                 </p>
               </div>
 
-              <form className="mt-6 space-y-4" onSubmit={handleUpdate}>
+              <form className="motion-stagger mt-6 space-y-4" onSubmit={handleUpdate}>
                 <Select
                     label="Trạng thái mới"
                   options={[

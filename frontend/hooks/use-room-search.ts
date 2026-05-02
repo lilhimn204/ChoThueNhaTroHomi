@@ -18,6 +18,7 @@ const defaultFilters: RoomFiltersValue = {
   minArea: "",
   maxArea: "",
   status: "",
+  roomType: "",
   amenityIds: [],
 };
 
@@ -42,6 +43,7 @@ function parseSearchParams(params: URLSearchParams): {
       minArea: params.get("minArea") ?? "",
       maxArea: params.get("maxArea") ?? "",
       status: (params.get("status") ?? "") as "" | RoomStatus,
+      roomType: (params.get("type") ?? "") as RoomFiltersValue["roomType"],
       amenityIds: amenityIdsParam ? amenityIdsParam.split(",").filter(Boolean) : [],
     },
   };
@@ -64,12 +66,27 @@ function buildSearchParams(state: {
   if (state.activeFilters.minArea) params.set("minArea", state.activeFilters.minArea);
   if (state.activeFilters.maxArea) params.set("maxArea", state.activeFilters.maxArea);
   if (state.activeFilters.status) params.set("status", state.activeFilters.status);
+  if (state.activeFilters.roomType) params.set("type", state.activeFilters.roomType);
   if (state.activeFilters.amenityIds.length > 0) {
     params.set("amenityIds", state.activeFilters.amenityIds.join(","));
   }
 
   const qs = params.toString();
   return qs ? `?${qs}` : "";
+}
+
+function areFiltersEqual(a: RoomFiltersValue, b: RoomFiltersValue) {
+  return (
+    a.districtId === b.districtId &&
+    a.minPrice === b.minPrice &&
+    a.maxPrice === b.maxPrice &&
+    a.minArea === b.minArea &&
+    a.maxArea === b.maxArea &&
+    a.status === b.status &&
+    a.roomType === b.roomType &&
+    a.amenityIds.length === b.amenityIds.length &&
+    a.amenityIds.every((id, index) => id === b.amenityIds[index])
+  );
 }
 
 // ── State ──────────────────────────────────────────────────────────────
@@ -92,6 +109,13 @@ interface RoomSearchState {
 // ── Actions ────────────────────────────────────────────────────────────
 
 type RoomSearchAction =
+  | {
+      type: "SYNC_FROM_URL";
+      query: string;
+      sort: string;
+      page: number;
+      filters: RoomFiltersValue;
+    }
   | { type: "SET_QUERY"; query: string }
   | { type: "SET_SORT"; sort: string }
   | { type: "SET_PAGE"; page: number }
@@ -108,6 +132,27 @@ type RoomSearchAction =
 
 function roomSearchReducer(state: RoomSearchState, action: RoomSearchAction): RoomSearchState {
   switch (action.type) {
+    case "SYNC_FROM_URL":
+      if (
+        state.query === action.query &&
+        state.sort === action.sort &&
+        state.page === action.page &&
+        areFiltersEqual(state.activeFilters, action.filters)
+      ) {
+        return state;
+      }
+
+      return {
+        ...state,
+        query: action.query,
+        sort: action.sort,
+        page: action.page,
+        activeFilters: action.filters,
+        mobileDraftFilters: state.showMobileFilters ? state.mobileDraftFilters : action.filters,
+        roomsLoading: true,
+        errorMessage: "",
+      };
+
     case "SET_QUERY":
       return { ...state, query: action.query, page: 1, roomsLoading: true, errorMessage: "" };
 
@@ -215,6 +260,19 @@ export function useRoomSearch() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.query, state.sort, state.page, state.activeFilters]);
 
+  // Sync URL → state when navigation changes search params from header/menu links
+  useEffect(() => {
+    const next = parseSearchParams(searchParams);
+
+    dispatch({
+      type: "SYNC_FROM_URL",
+      query: next.query,
+      sort: next.sort,
+      page: next.page,
+      filters: next.filters,
+    });
+  }, [searchParams]);
+
   // Fetch lookup data (districts, amenities) once on mount
   useEffect(() => {
     const controller = new AbortController();
@@ -250,6 +308,7 @@ export function useRoomSearch() {
         minArea: state.activeFilters.minArea,
         maxArea: state.activeFilters.maxArea,
         status: state.activeFilters.status,
+        roomType: state.activeFilters.roomType,
         amenityIds: state.activeFilters.amenityIds,
         sort: state.sort,
         page: state.page - 1,

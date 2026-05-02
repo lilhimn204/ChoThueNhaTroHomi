@@ -16,15 +16,15 @@ export function SearchBar({
   onOpenFilters: () => void;
 }) {
   return (
-    <div className="rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-3 shadow-[var(--shadow-card)] sm:rounded-[28px] sm:p-4">
+    <div className="motion-panel rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-3 shadow-[var(--shadow-card)] hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] sm:rounded-[28px] sm:p-4">
       <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-        <label className="relative flex-1">
-          <Search className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-[var(--color-text-muted)]" />
+        <label className="group relative flex-1">
+          <Search className="motion-soft pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-[var(--color-text-muted)] group-focus-within:text-[var(--color-brand-700)]" />
           <input
             value={query}
             onChange={(event) => onQueryChange(event.target.value)}
             aria-label="Tìm phòng"
-            className="h-12 w-full rounded-2xl border border-[var(--color-border-strong)] bg-[var(--color-surface-soft)] pl-11 pr-4 text-base text-[var(--color-text-strong)] outline-none focus:border-[var(--color-brand-500)] focus:bg-[var(--color-surface-elevated)] sm:text-sm"
+            className="motion-soft h-12 w-full rounded-2xl border border-[var(--color-border-strong)] bg-[var(--color-surface-soft)] pl-11 pr-4 text-base text-[var(--color-text-strong)] outline-none hover:border-[var(--color-brand-500)] focus:border-[var(--color-brand-500)] focus:bg-[var(--color-surface-elevated)] focus:shadow-[var(--shadow-focus)] focus:ring-2 focus:ring-[var(--color-focus-ring)] sm:text-sm"
             placeholder="Tìm theo tên phòng, địa chỉ hoặc khu vực"
           />
         </label>

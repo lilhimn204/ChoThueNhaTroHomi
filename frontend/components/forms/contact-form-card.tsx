@@ -93,7 +93,7 @@ function ContactRequestForm({
         </div>
       ) : null}
 
-      <form className="mt-4 space-y-4 sm:mt-6" onSubmit={handleSubmit}>
+      <form className="motion-stagger mt-4 space-y-4 sm:mt-6" onSubmit={handleSubmit}>
         <Select
           label="Loại yêu cầu"
           options={[
@@ -162,7 +162,7 @@ export function ContactFormCard({
   const isOwnRoom = status === "authenticated" && user && ownerId != null && user.id === ownerId;
 
   return (
-    <div className="rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] sm:rounded-[32px] sm:p-6">
+    <div className="motion-panel rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent hover:-translate-y-1 hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px] sm:p-6">
       <div className="space-y-2">
         <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[var(--color-brand-700)]">
           Yêu cầu xem phòng
@@ -176,7 +176,7 @@ export function ContactFormCard({
       </div>
 
       {status !== "authenticated" || !user ? (
-        <div className="mt-4 space-y-4 rounded-[22px] bg-[var(--color-surface-soft)] p-4 sm:mt-6 sm:rounded-[28px] sm:p-5">
+        <div className="motion-panel mt-4 space-y-4 rounded-[22px] bg-[var(--color-surface-soft)] p-4 hover:-translate-y-0.5 hover:shadow-sm sm:mt-6 sm:rounded-[28px] sm:p-5">
           <p className="text-sm leading-7 text-[var(--color-text-muted)]">
             Bạn cần đăng nhập trước khi gửi yêu cầu liên hệ hoặc đặt lịch xem phòng.
           </p>

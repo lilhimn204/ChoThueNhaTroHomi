@@ -18,7 +18,7 @@ export default function AdminError({
 
   return (
     <div
-      className="mx-auto py-10"
+      className="animate-content-rise mx-auto py-10"
       style={{ width: "min(1600px, calc(100% - 2rem))" }}
     >
       <Alert

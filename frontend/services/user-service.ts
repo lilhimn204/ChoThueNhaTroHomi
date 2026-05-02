@@ -1,5 +1,5 @@
 import { proxyRequest } from "@/services/api-client";
-import type { AdminUser, PageResponse, UserProfile, UserStatus } from "@/types";
+import type { AdminUser, PageResponse, UserProfile, UserRole, UserStatus } from "@/types";
 
 interface UpdateProfilePayload {
   fullName: string;
@@ -35,12 +35,20 @@ export function changeMyPassword(payload: ChangePasswordPayload) {
 /* ── Admin user management ── */
 
 export function searchAdminUsers(
-  params: { keyword?: string; page?: number; size?: number },
+  params: {
+    keyword?: string;
+    status?: UserStatus | "";
+    role?: UserRole | "";
+    page?: number;
+    size?: number;
+  },
   signal?: AbortSignal,
 ) {
   return proxyRequest<PageResponse<AdminUser>>("admin/users", {
     query: {
       keyword: params.keyword || undefined,
+      status: params.status || undefined,
+      role: params.role || undefined,
       page: params.page ?? 0,
       size: params.size ?? 10,
     },
@@ -50,10 +58,27 @@ export function searchAdminUsers(
 
 export function updateUserStatus(
   userId: number,
-  data: { status: UserStatus; enabled?: boolean },
+  data: { status: UserStatus; enabled?: boolean; lockReason?: string },
 ) {
   return proxyRequest<AdminUser>(`admin/users/${userId}/status`, {
     method: "PATCH",
     body: data,
+  });
+}
+
+export function getAdminUser(userId: number, signal?: AbortSignal) {
+  return proxyRequest<AdminUser>(`admin/users/${userId}`, { signal });
+}
+
+export function updateUserRoles(userId: number, roles: UserRole[]) {
+  return proxyRequest<AdminUser>(`admin/users/${userId}/roles`, {
+    method: "PATCH",
+    body: { roles },
+  });
+}
+
+export function verifyAdminUserEmail(userId: number) {
+  return proxyRequest<AdminUser>(`admin/users/${userId}/verify-email`, {
+    method: "PATCH",
   });
 }

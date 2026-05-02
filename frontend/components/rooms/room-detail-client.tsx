@@ -3,12 +3,13 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeft, CalendarDays, ExternalLink, Hash, MapPin, PhoneCall, Ruler, WalletCards } from "lucide-react";
+import { ArrowLeft, Building2, CalendarDays, ExternalLink, Hash, MapPin, PhoneCall, Ruler, WalletCards } from "lucide-react";
 
 import { useAuth } from "@/hooks/use-auth";
 import { getErrorMessage } from "@/services/api-client";
 import { getRoomDetail, searchRooms } from "@/services/room-service";
 import { roomStatusMeta } from "@/constants/status";
+import { roomTypeLabelByValue } from "@/constants/site";
 import { ContactFormCard } from "@/components/forms/contact-form-card";
 import { AmenityIcon } from "@/components/shared/amenity-icon";
 import { RoomReportCard } from "@/components/rooms/room-report-card";
@@ -114,6 +115,7 @@ export function RoomDetailClient({ slug }: { slug: string }) {
           minArea: areaRange.min,
           maxArea: areaRange.max,
           amenityIds,
+          roomType: room.roomType,
           status: "AVAILABLE",
           sort: "newest",
           size: 8,
@@ -183,7 +185,7 @@ export function RoomDetailClient({ slug }: { slug: string }) {
       <div className="container-shell py-6 sm:py-10">
         <Link
           href="/rooms"
-          className="inline-flex items-center gap-2 text-sm font-semibold text-[var(--color-brand-700)] hover:text-[var(--color-brand-800)]"
+          className="motion-soft inline-flex items-center gap-2 text-sm font-semibold text-[var(--color-brand-700)] hover:-translate-x-0.5 hover:text-[var(--color-brand-800)]"
         >
           <ArrowLeft className="size-4" />
           Quay lại danh sách phòng
@@ -209,12 +211,13 @@ export function RoomDetailClient({ slug }: { slug: string }) {
     cityName: room.cityName,
   });
   const isOwnRoom = user && room.ownerId != null && user.id === room.ownerId;
+  const roomTypeLabel = roomTypeLabelByValue[room.roomType];
 
   return (
     <div className="container-shell py-6 sm:py-10">
       <Link
         href="/rooms"
-        className="inline-flex items-center gap-2 text-sm font-semibold text-[var(--color-brand-700)] hover:text-[var(--color-brand-800)]"
+        className="motion-soft inline-flex items-center gap-2 text-sm font-semibold text-[var(--color-brand-700)] hover:-translate-x-0.5 hover:text-[var(--color-brand-800)]"
       >
         <ArrowLeft className="size-4" />
         Quay lại danh sách phòng
@@ -222,28 +225,28 @@ export function RoomDetailClient({ slug }: { slug: string }) {
 
       <div className="mt-5 grid min-w-0 gap-5 sm:mt-6 sm:gap-6 xl:grid-cols-[1.2fr_0.8fr]">
         <section className="min-w-0 space-y-5 sm:space-y-6">
-          <div className="grid min-w-0 gap-3 sm:gap-4 lg:grid-cols-[1.2fr_0.8fr]">
-            <div className="relative h-64 overflow-hidden rounded-[24px] shadow-[var(--shadow-card-hover)] sm:h-[28rem] sm:rounded-[32px]">
+          <div className="animate-content-rise grid min-w-0 gap-3 sm:gap-4 lg:grid-cols-[1.2fr_0.8fr]">
+            <div className="group relative h-64 overflow-hidden rounded-[24px] shadow-[var(--shadow-card-hover)] sm:h-[28rem] sm:rounded-[32px]">
               <Image
                 src={normalizeUploadImageSrc(roomImages[0]?.imageUrl ?? room.thumbnail)}
                 alt={room.title}
                 fill
-                className="object-cover"
+                className="object-cover transition-[filter,transform] duration-700 ease-out group-hover:scale-[1.03] group-hover:saturate-[1.08]"
                 sizes="(max-width: 1200px) 100vw, 65vw"
                 priority
               />
             </div>
-            <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-1">
+            <div className="motion-stagger grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-1">
               {roomImages.slice(1, 3).map((image) => (
                 <div
                   key={image.id}
-                  className="relative h-28 overflow-hidden rounded-[20px] border border-white/70 shadow-[var(--shadow-card)] sm:h-44 sm:rounded-[28px]"
+                  className="motion-panel group relative h-28 overflow-hidden rounded-[20px] border border-white/70 shadow-[var(--shadow-card)] hover:-translate-y-0.5 hover:shadow-[var(--shadow-card-hover)] sm:h-44 sm:rounded-[28px]"
                 >
                   <Image
                     src={normalizeUploadImageSrc(image.imageUrl)}
                     alt={image.altText}
                     fill
-                    className="object-cover"
+                    className="object-cover transition-[filter,transform] duration-700 ease-out group-hover:scale-105 group-hover:saturate-[1.08]"
                     sizes="(max-width: 1200px) 50vw, 25vw"
                   />
                 </div>
@@ -251,13 +254,14 @@ export function RoomDetailClient({ slug }: { slug: string }) {
             </div>
           </div>
 
-          <div className="rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px] sm:p-6">
+          <div className="motion-panel rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px] sm:p-6">
             <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between">
               <div className="min-w-0 space-y-3">
                 <div className="flex flex-wrap items-center gap-3">
                   <Badge tone={roomStatusMeta[room.status].tone}>
                     {roomStatusMeta[room.status].label}
                   </Badge>
+                  <Badge tone="muted">{roomTypeLabel}</Badge>
                   {room.featured ? <Badge tone="brand">Phòng nổi bật</Badge> : null}
                 </div>
                 <h1 className="max-w-3xl text-2xl font-semibold tracking-tight text-[var(--color-text-strong)] sm:text-4xl">
@@ -278,8 +282,8 @@ export function RoomDetailClient({ slug }: { slug: string }) {
               </div>
             </div>
 
-            <div className="mt-5 grid grid-cols-2 gap-3 sm:mt-6 sm:gap-4 md:grid-cols-3 xl:grid-cols-6">
-              <div className="rounded-[20px] bg-[var(--color-surface-soft)] px-4 py-3 sm:rounded-[24px] sm:px-5 sm:py-4">
+            <div className="motion-stagger mt-5 grid grid-cols-2 gap-3 sm:mt-6 sm:gap-4 md:grid-cols-3 xl:grid-cols-7">
+              <div className="motion-soft rounded-[20px] bg-[var(--color-surface-soft)] px-4 py-3 hover:-translate-y-0.5 hover:bg-[var(--color-border-soft)] sm:rounded-[24px] sm:px-5 sm:py-4">
                 <p className="flex items-center gap-2 text-sm text-[var(--color-text-muted)]">
                   <Hash className="size-4" />
                   Mã tin
@@ -288,7 +292,7 @@ export function RoomDetailClient({ slug }: { slug: string }) {
                   {room.listingCode}
                 </p>
               </div>
-              <div className="rounded-[20px] bg-[var(--color-surface-soft)] px-4 py-3 sm:rounded-[24px] sm:px-5 sm:py-4">
+              <div className="motion-soft rounded-[20px] bg-[var(--color-surface-soft)] px-4 py-3 hover:-translate-y-0.5 hover:bg-[var(--color-border-soft)] sm:rounded-[24px] sm:px-5 sm:py-4">
                 <p className="flex items-center gap-2 text-sm text-[var(--color-text-muted)]">
                   <CalendarDays className="size-4" />
                   Ngày đăng
@@ -297,7 +301,7 @@ export function RoomDetailClient({ slug }: { slug: string }) {
                   {formatDate(room.postedAt)}
                 </p>
               </div>
-              <div className="rounded-[20px] bg-[var(--color-surface-soft)] px-4 py-3 sm:rounded-[24px] sm:px-5 sm:py-4">
+              <div className="motion-soft rounded-[20px] bg-[var(--color-surface-soft)] px-4 py-3 hover:-translate-y-0.5 hover:bg-[var(--color-border-soft)] sm:rounded-[24px] sm:px-5 sm:py-4">
                 <p className="flex items-center gap-2 text-sm text-[var(--color-text-muted)]">
                   <Ruler className="size-4" />
                   Diện tích
@@ -306,7 +310,7 @@ export function RoomDetailClient({ slug }: { slug: string }) {
                   {formatArea(room.area)}
                 </p>
               </div>
-              <div className="rounded-[20px] bg-[var(--color-surface-soft)] px-4 py-3 sm:rounded-[24px] sm:px-5 sm:py-4">
+              <div className="motion-soft rounded-[20px] bg-[var(--color-surface-soft)] px-4 py-3 hover:-translate-y-0.5 hover:bg-[var(--color-border-soft)] sm:rounded-[24px] sm:px-5 sm:py-4">
                 <p className="flex items-center gap-2 text-sm text-[var(--color-text-muted)]">
                   <MapPin className="size-4" />
                   Khu vực
@@ -315,7 +319,16 @@ export function RoomDetailClient({ slug }: { slug: string }) {
                   {room.districtName}
                 </p>
               </div>
-              <div className="rounded-[20px] bg-[var(--color-surface-soft)] px-4 py-3 sm:rounded-[24px] sm:px-5 sm:py-4">
+              <div className="motion-soft rounded-[20px] bg-[var(--color-surface-soft)] px-4 py-3 hover:-translate-y-0.5 hover:bg-[var(--color-border-soft)] sm:rounded-[24px] sm:px-5 sm:py-4">
+                <p className="flex items-center gap-2 text-sm text-[var(--color-text-muted)]">
+                  <Building2 className="size-4" />
+                  Loại phòng
+                </p>
+                <p className="mt-2 line-clamp-2 text-base font-semibold text-[var(--color-text-strong)] sm:text-lg">
+                  {roomTypeLabel}
+                </p>
+              </div>
+              <div className="motion-soft rounded-[20px] bg-[var(--color-surface-soft)] px-4 py-3 hover:-translate-y-0.5 hover:bg-[var(--color-border-soft)] sm:rounded-[24px] sm:px-5 sm:py-4">
                 <p className="flex items-center gap-2 text-sm text-[var(--color-text-muted)]">
                   <WalletCards className="size-4" />
                   Trạng thái
@@ -328,7 +341,7 @@ export function RoomDetailClient({ slug }: { slug: string }) {
                 href={mapHref}
                 target="_blank"
                 rel="noreferrer"
-                className="rounded-[20px] bg-[var(--color-surface-soft)] px-4 py-3 transition hover:bg-[var(--color-border-soft)] sm:rounded-[24px] sm:px-5 sm:py-4"
+                className="motion-soft rounded-[20px] bg-[var(--color-surface-soft)] px-4 py-3 hover:-translate-y-0.5 hover:bg-[var(--color-border-soft)] sm:rounded-[24px] sm:px-5 sm:py-4"
               >
                 <p className="flex items-center gap-2 text-sm text-[var(--color-text-muted)]">
                   <ExternalLink className="size-4" />
@@ -341,7 +354,7 @@ export function RoomDetailClient({ slug }: { slug: string }) {
             </div>
           </div>
 
-          <div className="rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px] sm:p-6">
+          <div className="motion-panel rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px] sm:p-6">
             <h2 className="text-xl font-semibold text-[var(--color-text-strong)] sm:text-2xl">
               Mô tả phòng
             </h2>
@@ -350,17 +363,17 @@ export function RoomDetailClient({ slug }: { slug: string }) {
             </p>
           </div>
 
-          <div className="rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px] sm:p-6">
+          <div className="motion-panel rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px] sm:p-6">
             <h2 className="text-xl font-semibold text-[var(--color-text-strong)] sm:text-2xl">
               Tiện ích nổi bật
             </h2>
-            <div className="mt-4 grid gap-3 sm:mt-5 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="motion-stagger mt-4 grid gap-3 sm:mt-5 sm:grid-cols-2 lg:grid-cols-3">
               {room.amenities.map((amenity) => (
                 <div
                   key={amenity.id}
-                  className="flex min-w-0 items-center gap-3 rounded-[20px] bg-[var(--color-surface-soft)] px-3 py-3 sm:rounded-[24px] sm:px-4"
+                  className="motion-soft group flex min-w-0 items-center gap-3 rounded-[20px] bg-[var(--color-surface-soft)] px-3 py-3 hover:-translate-y-0.5 hover:bg-[var(--color-border-soft)] sm:rounded-[24px] sm:px-4"
                 >
-                  <div className="flex size-10 shrink-0 items-center justify-center rounded-2xl bg-[var(--color-surface)] text-[var(--color-brand-700)] shadow-sm transition-transform duration-200 group-hover:scale-105">
+                  <div className="motion-soft flex size-10 shrink-0 items-center justify-center rounded-2xl bg-[var(--color-surface)] text-[var(--color-brand-700)] shadow-sm group-hover:scale-105 group-hover:shadow-md">
                     <AmenityIcon iconKey={amenity.iconKey} className="size-4" />
                   </div>
                   <div className="min-w-0">
@@ -378,12 +391,12 @@ export function RoomDetailClient({ slug }: { slug: string }) {
         </section>
 
         <aside className="min-w-0 space-y-4 sm:space-y-6 xl:sticky xl:top-24 xl:self-start">
-          <div className="rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px] sm:p-6">
+          <div className="motion-panel rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px] sm:p-6">
             <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[var(--color-brand-700)]">
               Thông tin bài đăng
             </p>
-            <div className="mt-4 grid gap-3 sm:mt-5 sm:grid-cols-2 xl:grid-cols-1">
-              <div className="flex items-center justify-between gap-4 rounded-[20px] bg-[var(--color-surface-soft)] px-4 py-3 sm:rounded-[24px]">
+            <div className="motion-stagger mt-4 grid gap-3 sm:mt-5 sm:grid-cols-2 xl:grid-cols-1">
+              <div className="motion-soft flex items-center justify-between gap-4 rounded-[20px] bg-[var(--color-surface-soft)] px-4 py-3 hover:bg-[var(--color-border-soft)] sm:rounded-[24px]">
                 <span className="inline-flex items-center gap-2 text-sm font-medium text-[var(--color-text-muted)]">
                   <Hash className="size-4" />
                   Mã tin
@@ -392,7 +405,7 @@ export function RoomDetailClient({ slug }: { slug: string }) {
                   #{room.listingCode}
                 </span>
               </div>
-              <div className="flex items-center justify-between gap-4 rounded-[20px] bg-[var(--color-surface-soft)] px-4 py-3 sm:rounded-[24px]">
+              <div className="motion-soft flex items-center justify-between gap-4 rounded-[20px] bg-[var(--color-surface-soft)] px-4 py-3 hover:bg-[var(--color-border-soft)] sm:rounded-[24px]">
                 <span className="inline-flex items-center gap-2 text-sm font-medium text-[var(--color-text-muted)]">
                   <CalendarDays className="size-4" />
                   Ngày đăng
@@ -404,7 +417,7 @@ export function RoomDetailClient({ slug }: { slug: string }) {
             </div>
           </div>
 
-          <div className="rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px] sm:p-6">
+          <div className="motion-panel rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px] sm:p-6">
             <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[var(--color-brand-700)]">
               Liên hệ nhanh
             </p>
@@ -416,7 +429,7 @@ export function RoomDetailClient({ slug }: { slug: string }) {
               gọi trực tiếp hoặc gửi yêu cầu để được phản hồi.
             </p>
 
-            <div className="mt-5 rounded-[24px] bg-[var(--color-surface-soft)] p-4 sm:mt-6 sm:rounded-[28px] sm:p-5">
+            <div className="motion-soft mt-5 rounded-[24px] bg-[var(--color-surface-soft)] p-4 hover:bg-[var(--color-border-soft)] sm:mt-6 sm:rounded-[28px] sm:p-5">
               <p className="text-sm font-medium text-[var(--color-text-muted)]">
                 Người liên hệ
               </p>
@@ -487,7 +500,7 @@ export function RoomDetailClient({ slug }: { slug: string }) {
           </div>
           <Link
             href="/rooms"
-            className="text-sm font-semibold text-[var(--color-brand-700)] hover:text-[var(--color-brand-800)]"
+            className="motion-soft text-sm font-semibold text-[var(--color-brand-700)] hover:-translate-y-0.5 hover:text-[var(--color-brand-800)]"
           >
             Xem tất cả phòng
           </Link>
@@ -500,13 +513,13 @@ export function RoomDetailClient({ slug }: { slug: string }) {
             ))}
           </div>
         ) : relatedRooms.length ? (
-          <div className="mt-5 grid gap-4 sm:mt-6 sm:gap-5 md:grid-cols-2 xl:grid-cols-4">
+          <div className="motion-stagger mt-5 grid gap-4 sm:mt-6 sm:gap-5 md:grid-cols-2 xl:grid-cols-4">
             {relatedRooms.map((relatedRoom) => (
               <RoomCard key={relatedRoom.id} room={relatedRoom} />
             ))}
           </div>
         ) : (
-          <div className="mt-5 rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 text-sm text-[var(--color-text-muted)] sm:mt-6 sm:rounded-[28px] sm:p-6">
+          <div className="motion-panel mt-5 rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 text-sm text-[var(--color-text-muted)] hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card)] sm:mt-6 sm:rounded-[28px] sm:p-6">
             Hiện chưa có phòng gợi ý phù hợp. Bạn có thể xem thêm tại danh sách phòng đang còn trống.
           </div>
         )}

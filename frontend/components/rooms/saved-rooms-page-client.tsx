@@ -162,21 +162,25 @@ export function SavedRoomsPageClient() {
             onRemove={(roomId) => setSelectedIds((prev) => prev.filter((id) => id !== roomId))}
           />
 
-          <div className="mt-5 grid gap-4 sm:mt-6 sm:gap-5 md:grid-cols-2 xl:grid-cols-3">
+          <div className="motion-stagger mt-5 grid gap-4 sm:mt-6 sm:gap-5 md:grid-cols-2 xl:grid-cols-3">
             {rooms.map((item) => {
               const selected = selectedIds.includes(item.roomId);
 
               return (
                 <article
                   key={item.roomId}
-                  className="group overflow-hidden rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:-translate-y-1 hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[28px]"
+                  className={`motion-panel group overflow-hidden rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] shadow-[var(--shadow-card)] ring-1 ring-transparent hover:-translate-y-1 hover:scale-[1.01] hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] sm:rounded-[28px] ${
+                    selected
+                      ? "ring-[var(--color-brand-500)]"
+                      : "hover:ring-[var(--color-border-soft)]"
+                  }`}
                 >
                   <div className="relative h-48 overflow-hidden">
                     <Image
                       src={normalizeUploadImageSrc(item.thumbnail)}
                       alt={item.title}
                       fill
-                      className="object-cover transition duration-500 group-hover:scale-105"
+                      className="object-cover transition-[filter,transform] duration-700 ease-out group-hover:scale-[1.05] group-hover:saturate-[1.08]"
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     />
                     <div className="absolute inset-x-0 top-0 bg-gradient-to-b from-black/55 via-black/25 to-transparent p-4">
@@ -188,7 +192,7 @@ export function SavedRoomsPageClient() {
                         type="button"
                         onClick={() => handleUnsave(item.roomId)}
                         aria-label="Bỏ lưu phòng"
-                        className="flex size-9 items-center justify-center rounded-full bg-red-500 text-white shadow-lg shadow-red-500/30 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:bg-red-600 hover:shadow-red-500/40 active:scale-95"
+                        className="motion-pressable flex size-9 items-center justify-center rounded-full bg-red-500 text-white shadow-lg shadow-red-500/30 hover:-translate-y-0.5 hover:bg-red-600 hover:shadow-red-500/40 active:scale-95"
                       >
                         <Heart className="size-4 fill-current" />
                       </button>
@@ -201,7 +205,7 @@ export function SavedRoomsPageClient() {
                       <h3 className="line-clamp-2 text-base font-semibold text-[var(--color-text-strong)] sm:text-lg">
                         {item.title}
                       </h3>
-                      <p className="shrink-0 rounded-full bg-[var(--badge-brand-bg)] px-3 py-1 text-sm font-semibold text-[var(--badge-brand-text)]">
+                      <p className="motion-soft shrink-0 rounded-full bg-[var(--badge-brand-bg)] px-3 py-1 text-sm font-semibold text-[var(--badge-brand-text)] group-hover:shadow-md">
                         {formatCompactCurrency(item.price)}
                       </p>
                     </div>
@@ -270,14 +274,14 @@ function SavedRoomComparison({
 }) {
   if (rooms.length < 2) {
     return (
-      <div className="mt-6 rounded-2xl border border-dashed border-[var(--color-border-soft)] bg-[var(--color-surface-muted)] p-4 text-sm text-[var(--color-text-muted)] shadow-sm transition-colors duration-200 hover:border-[var(--color-border-strong)]">
+      <div className="motion-panel mt-6 rounded-2xl border border-dashed border-[var(--color-border-soft)] bg-[var(--color-surface-muted)] p-4 text-sm text-[var(--color-text-muted)] shadow-sm hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card)]">
         Chọn ít nhất 2 phòng để mở bảng so sánh nhanh.
       </div>
     );
   }
 
   return (
-    <section className="mt-6 overflow-hidden rounded-2xl border border-[var(--color-border-card)] bg-[var(--color-surface)] shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)]">
+    <section className="motion-panel animate-content-rise mt-6 overflow-hidden rounded-2xl border border-[var(--color-border-card)] bg-[var(--color-surface)] shadow-[var(--shadow-card)] ring-1 ring-transparent hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)]">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[var(--color-border-soft)] px-4 py-3">
         <div>
           <h2 className="text-base font-semibold text-[var(--color-text-strong)]">
@@ -290,7 +294,7 @@ function SavedRoomComparison({
         <Badge tone="brand">{rooms.length}/3 phòng</Badge>
       </div>
 
-      <div className="grid gap-3 p-3 md:hidden">
+      <div className="motion-stagger grid gap-3 p-3 md:hidden">
         {rooms.map((room) => {
           const priceHighlighted = room.price === bestPrice;
           const areaHighlighted = room.area === largestArea;
@@ -298,7 +302,7 @@ function SavedRoomComparison({
           return (
             <article
               key={room.roomId}
-              className="rounded-[20px] border border-[var(--color-border-soft)] bg-[var(--color-surface-soft)] p-4 shadow-sm"
+              className="motion-panel rounded-[20px] border border-[var(--color-border-soft)] bg-[var(--color-surface-soft)] p-4 shadow-sm hover:-translate-y-0.5 hover:shadow-[var(--shadow-card)]"
             >
               <div className="flex items-start justify-between gap-3">
                 <h3 className="line-clamp-2 text-sm font-semibold text-[var(--color-text-strong)]">
@@ -308,7 +312,7 @@ function SavedRoomComparison({
                   type="button"
                   onClick={() => onRemove(room.roomId)}
                   aria-label="Bỏ khỏi bảng so sánh"
-                  className="flex size-8 shrink-0 items-center justify-center rounded-full text-[var(--color-text-muted)] transition-all duration-200 hover:bg-[var(--color-surface)] hover:text-[var(--color-text-strong)] active:scale-95"
+                  className="motion-pressable flex size-8 shrink-0 items-center justify-center rounded-full text-[var(--color-text-muted)] hover:bg-[var(--color-surface)] hover:text-[var(--color-text-strong)] active:scale-95"
                 >
                   <X className="size-4" />
                 </button>
@@ -382,7 +386,7 @@ function SavedRoomComparison({
                       type="button"
                       onClick={() => onRemove(room.roomId)}
                       aria-label="Bỏ khỏi bảng so sánh"
-                      className="flex size-7 shrink-0 items-center justify-center rounded-full text-[var(--color-text-muted)] transition-all duration-200 hover:bg-[var(--color-surface)] hover:text-[var(--color-text-strong)] active:scale-95"
+                      className="motion-pressable flex size-7 shrink-0 items-center justify-center rounded-full text-[var(--color-text-muted)] hover:bg-[var(--color-surface)] hover:text-[var(--color-text-strong)] active:scale-95"
                     >
                       <X className="size-4" />
                     </button>

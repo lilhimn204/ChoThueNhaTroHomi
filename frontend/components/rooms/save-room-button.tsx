@@ -50,14 +50,14 @@ export function SaveRoomButton({
       onClick={handleToggle}
       disabled={loading}
       aria-label={saved ? "Bỏ lưu phòng" : "Lưu phòng"}
-      className={`${sizeClasses} flex shrink-0 items-center justify-center rounded-full backdrop-blur transition-all duration-200 ${
+      className={`${sizeClasses} motion-pressable group flex shrink-0 items-center justify-center rounded-full backdrop-blur ${
         saved
-          ? "bg-red-500 text-white shadow-lg shadow-red-500/30 hover:bg-red-600"
-          : "bg-[var(--color-surface)]/90 text-[var(--color-text-muted)] shadow-md hover:bg-[var(--color-surface)] hover:text-red-500"
-      } ${loading ? "animate-pulse" : ""}`}
+          ? "bg-red-500 text-white shadow-lg shadow-red-500/30 hover:-translate-y-0.5 hover:bg-red-600 hover:shadow-red-500/40"
+          : "bg-[var(--color-surface)]/90 text-[var(--color-text-muted)] shadow-md hover:-translate-y-0.5 hover:bg-[var(--color-surface)] hover:text-red-500 hover:shadow-[var(--shadow-card)]"
+      } ${loading ? "opacity-70" : ""} disabled:cursor-not-allowed disabled:opacity-70`}
     >
       <Heart
-        className={`${iconClasses} transition-transform duration-200 ${saved ? "fill-current scale-110" : ""}`}
+        className={`${iconClasses} motion-soft ${saved ? "fill-current scale-110" : "group-hover:scale-105"}`}
       />
     </button>
   );

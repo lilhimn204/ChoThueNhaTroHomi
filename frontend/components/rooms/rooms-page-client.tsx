@@ -101,7 +101,7 @@ export function RoomsPageClient() {
               onOpenFilters={openMobileFilters}
             />
 
-            <div className="flex flex-col gap-3 rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] sm:flex-row sm:items-center sm:justify-between sm:rounded-[28px]">
+            <div className="motion-panel flex flex-col gap-3 rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] sm:flex-row sm:items-center sm:justify-between sm:rounded-[28px]">
               <div>
                 <h2 className="text-xl font-semibold text-[var(--color-text-strong)]">
                   Danh sách phòng trọ
@@ -131,7 +131,7 @@ export function RoomsPageClient() {
               <RoomsGridSkeleton />
             ) : rooms.length ? (
               <>
-                <div className="grid gap-4 sm:gap-5 md:grid-cols-2 2xl:grid-cols-3">
+                <div className="motion-stagger grid gap-4 sm:gap-5 md:grid-cols-2 2xl:grid-cols-3">
                   {rooms.map((room) => (
                     <RoomCard
                       key={room.id}
@@ -171,6 +171,7 @@ export function RoomsPageClient() {
           minArea: "",
           maxArea: "",
           status: "",
+          roomType: "",
           amenityIds: [],
         })}
         onClose={closeMobileFilters}
@@ -182,11 +183,11 @@ export function RoomsPageClient() {
 
 export function RoomsGridSkeleton() {
   return (
-    <div className="grid gap-4 sm:gap-5 md:grid-cols-2 2xl:grid-cols-3">
+    <div className="motion-stagger grid gap-4 sm:gap-5 md:grid-cols-2 2xl:grid-cols-3">
       {Array.from({ length: 6 }).map((_, index) => (
         <div
           key={index}
-          className="overflow-hidden rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[var(--shadow-card-hover)] sm:rounded-[30px]"
+          className="motion-panel overflow-hidden rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent hover:-translate-y-0.5 hover:shadow-[var(--shadow-card-hover)] sm:rounded-[30px]"
         >
           <LoadingSkeleton className="h-52 w-full rounded-[24px]" />
           <div className="mt-4 space-y-3">

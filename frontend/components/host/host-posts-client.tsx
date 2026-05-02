@@ -15,6 +15,7 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { roomStatusMeta } from "@/constants/status";
+import { roomTypeLabelByValue } from "@/constants/site";
 
 import { exportCsv } from "@/lib/export-csv";
 import { formatCompactCurrency, formatDate } from "@/lib/format";
@@ -127,7 +128,7 @@ export function HostPostsClient() {
 
   return (
     <div className="space-y-5 sm:space-y-6">
-      <section className="rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px] sm:p-6">
+      <section className="motion-panel animate-content-rise rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent hover:-translate-y-1 hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px] sm:p-6">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--color-brand-700)]">
@@ -161,9 +162,10 @@ export function HostPostsClient() {
                   });
                   exportCsv({
                     filename: "homi-host-posts",
-                    headers: ["Tiêu đề", "Khu vực", "Giá", "Diện tích", "Trạng thái", "Khách quan tâm", "Ngày tạo", "Cập nhật"],
+                    headers: ["Tiêu đề", "Loại phòng", "Khu vực", "Giá", "Diện tích", "Trạng thái", "Khách quan tâm", "Ngày tạo", "Cập nhật"],
                     rows: all.content.map((post) => [
                       post.title,
+                      roomTypeLabelByValue[post.roomType],
                       post.districtName,
                       formatCompactCurrency(post.price),
                       `${post.area} m²`,
@@ -186,7 +188,7 @@ export function HostPostsClient() {
           </div>
         </div>
 
-        <div className="mt-5 grid gap-4 sm:mt-6 lg:grid-cols-[1fr_220px]">
+        <div className="motion-stagger mt-5 grid gap-4 sm:mt-6 lg:grid-cols-[1fr_220px]">
           <Input
             label="Tìm bài đăng / mã tin"
             placeholder="Nhập tên phòng, địa chỉ hoặc mã tin"
@@ -227,7 +229,7 @@ export function HostPostsClient() {
         </div>
       ) : response?.content.length ? (
         <>
-          <div className="space-y-4">
+          <div className="motion-stagger space-y-4">
             {response.content.map((post) => {
               const statusMeta = roomStatusMeta[post.status];
               const nextOccupancyStatus: RoomStatus = post.status === "FULL" ? "AVAILABLE" : "FULL";
@@ -235,7 +237,7 @@ export function HostPostsClient() {
               return (
                 <article
                   key={post.id}
-                  className="group grid min-w-0 gap-4 rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent transition-all duration-300 ease-out hover:-translate-y-1 hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[30px] lg:grid-cols-[190px_minmax(0,1fr)]"
+                  className="motion-panel group grid min-w-0 gap-4 rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent hover:-translate-y-1 hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[30px] lg:grid-cols-[190px_minmax(0,1fr)]"
                 >
                   <div className="relative min-h-40 overflow-hidden rounded-[20px] bg-[var(--color-surface-soft)] sm:min-h-44 sm:rounded-[24px]">
                     {post.thumbnail ? (
@@ -244,7 +246,7 @@ export function HostPostsClient() {
                         alt={post.title}
                         fill
                         sizes="(min-width: 1024px) 190px, 100vw"
-                        className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+                        className="motion-soft object-cover group-hover:scale-[1.04] group-hover:saturate-[1.08]"
                       />
                     ) : (
                       <div className="flex h-full items-center justify-center px-4 text-center text-sm text-[var(--color-text-muted)]">
@@ -257,9 +259,10 @@ export function HostPostsClient() {
                       <div className="min-w-0">
                         <div className="flex flex-wrap items-center gap-2">
                           <Badge tone={statusMeta.tone}>{statusMeta.label}</Badge>
+                          <Badge tone="muted">{roomTypeLabelByValue[post.roomType]}</Badge>
                           <Badge tone="muted">{post.contactRequestCount} khách quan tâm</Badge>
                         </div>
-                        <h2 className="mt-3 line-clamp-2 text-lg font-semibold text-[var(--color-text-strong)] transition-colors duration-200 group-hover:text-[var(--color-brand-700)] sm:text-xl">
+                        <h2 className="motion-soft mt-3 line-clamp-2 text-lg font-semibold text-[var(--color-text-strong)] group-hover:text-[var(--color-brand-700)] sm:text-xl">
                           {post.title}
                         </h2>
                         <p className="mt-2 text-xs font-semibold uppercase tracking-[0.16em] text-[var(--color-brand-700)]">

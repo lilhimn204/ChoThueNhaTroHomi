@@ -37,7 +37,7 @@ export function RequireAuth({
 
   if (status === "loading") {
     return (
-      <div className="space-y-4">
+      <div className="animate-content-rise space-y-4">
         <LoadingSkeleton className="h-24 rounded-[32px]" />
         <LoadingSkeleton className="h-80 rounded-[32px]" />
       </div>

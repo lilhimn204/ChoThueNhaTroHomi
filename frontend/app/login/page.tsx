@@ -25,10 +25,7 @@ export default async function LoginPage({
   return (
     <GuestOnly redirectTo={redirect}>
       <div className="container-shell grid gap-5 py-8 sm:gap-8 sm:py-12 lg:grid-cols-[0.85fr_1.15fr]">
-        <section className="relative overflow-hidden rounded-[24px] bg-[var(--color-brand-950)] p-5 text-white shadow-[var(--shadow-card-hover)] sm:rounded-[32px] sm:p-8">
-          <div className="pointer-events-none absolute -right-16 -top-16 h-52 w-52 rounded-full bg-white/10 blur-2xl" />
-          <div className="pointer-events-none absolute -bottom-20 left-12 h-44 w-44 rounded-full bg-[var(--color-accent-500)]/18 blur-3xl" />
-
+        <section className="motion-panel animate-content-rise relative overflow-hidden rounded-[24px] bg-[var(--color-brand-950)] p-5 text-white shadow-[var(--shadow-card-hover)] hover:-translate-y-1 sm:rounded-[32px] sm:p-8">
           <div className="relative flex min-h-[auto] flex-col sm:min-h-[560px]">
             <p className="text-sm font-semibold uppercase tracking-[0.2em] text-white/60">
               Đăng nhập Homi
@@ -41,19 +38,19 @@ export default async function LoginPage({
               và tiếp tục thao tác nhanh khi tìm phòng trọ tại Hà Nội.
             </p>
 
-            <div className="mt-8 space-y-4">
+            <div className="motion-stagger mt-8 space-y-4">
               {loginBenefits.map((benefit) => (
                 <div
                   key={benefit}
-                  className="flex gap-3 rounded-2xl border border-white/10 bg-white/[0.06] p-4 text-sm leading-6 text-white/82"
+                  className="motion-panel group flex gap-3 rounded-2xl border border-white/10 bg-white/[0.06] p-4 text-sm leading-6 text-white/82 hover:-translate-y-0.5 hover:border-white/20 hover:bg-white/[0.09]"
                 >
-                  <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-[var(--color-accent-400)]" />
+                  <span className="motion-soft mt-2 h-2 w-2 shrink-0 rounded-full bg-[var(--color-accent-400)] group-hover:scale-110" />
                   <span>{benefit}</span>
                 </div>
               ))}
             </div>
 
-            <div className="mt-6 rounded-[22px] border border-white/10 bg-white/[0.08] p-4 backdrop-blur sm:mt-auto sm:rounded-[28px] sm:p-5">
+            <div className="motion-panel mt-6 rounded-[22px] border border-white/10 bg-white/[0.08] p-4 backdrop-blur hover:-translate-y-0.5 hover:border-white/20 sm:mt-auto sm:rounded-[28px] sm:p-5">
               <div className="flex items-center justify-between gap-4">
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/55">
@@ -61,7 +58,7 @@ export default async function LoginPage({
                   </p>
                   <p className="mt-2 text-2xl font-semibold">Sẵn sàng gửi yêu cầu</p>
                 </div>
-                <div className="flex size-20 shrink-0 items-center justify-center rounded-3xl bg-white p-3 shadow-[0_18px_42px_rgba(0,0,0,0.18)] sm:size-24 sm:p-4">
+                <div className="motion-soft flex size-20 shrink-0 items-center justify-center rounded-3xl bg-white p-3 shadow-[0_18px_42px_rgba(0,0,0,0.18)] hover:scale-[1.03] sm:size-24 sm:p-4">
                   <Image
                     src="/logo.png"
                     alt="Logo Homi"

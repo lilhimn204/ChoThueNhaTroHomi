@@ -10,7 +10,7 @@ ON DUPLICATE KEY UPDATE
 
 -- Demo users
 -- Passwords:
--- admin@homi.vn -> admin123
+-- admin.thuenhahomi@gmail.com -> admin123
 -- an.nguyen@example.com -> 123456
 -- binh.tran@example.com -> 123456
 INSERT INTO users (
@@ -30,7 +30,7 @@ INSERT INTO users (
     (
         1,
         'Admin Hệ Thống',
-        'admin@homi.vn',
+        'admin.thuenhahomi@gmail.com',
         '$2b$12$SeZgndXr8fLCE7w5qVpJb.BncibcCLniGtMVyPT5SeVPomi/n10pC',
         '0909000000',
         'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&q=80',
