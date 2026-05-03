@@ -17,10 +17,12 @@ import lombok.extern.slf4j.Slf4j;
 import com.trotot.backend.dto.common.PageResponse;
 import com.trotot.backend.dto.user.AdminUserResponse;
 import com.trotot.backend.dto.user.ChangePasswordRequest;
+import com.trotot.backend.dto.user.SetPasswordRequest;
 import com.trotot.backend.dto.user.UpdateUserProfileRequest;
 import com.trotot.backend.dto.user.UpdateUserRolesRequest;
 import com.trotot.backend.dto.user.UpdateUserStatusRequest;
 import com.trotot.backend.dto.user.UserProfileResponse;
+import com.trotot.backend.entity.AuthProvider;
 import com.trotot.backend.entity.Role;
 import com.trotot.backend.entity.RoleName;
 import com.trotot.backend.entity.User;
@@ -65,6 +67,10 @@ public class UserService {
     public void changeCurrentUserPassword(UserPrincipal principal, ChangePasswordRequest request) {
         User user = getRequiredUserEntity(principal.getId());
 
+        if (!user.isPasswordConfigured()) {
+            throw new BusinessException("Tài khoản chưa có mật khẩu. Vui lòng tạo mật khẩu trước.");
+        }
+
         if (!passwordEncoder.matches(request.currentPassword(), user.getPasswordHash())) {
             throw new BusinessException("Mật khẩu hiện tại không đúng.");
         }
@@ -76,6 +82,28 @@ public class UserService {
         user.setPasswordHash(passwordEncoder.encode(request.newPassword()));
         userRepository.save(user);
         log.info("Password changed: userId={}", user.getId());
+    }
+
+    @Transactional
+    public void setCurrentUserPassword(UserPrincipal principal, SetPasswordRequest request) {
+        User user = getRequiredUserEntity(principal.getId());
+
+        if (user.isPasswordConfigured()) {
+            throw new BusinessException("Tài khoản đã có mật khẩu. Vui lòng dùng chức năng đổi mật khẩu.");
+        }
+
+        if (user.getAuthProvider() != AuthProvider.GOOGLE) {
+            throw new BusinessException("Chỉ tài khoản Google chưa có mật khẩu mới được tạo mật khẩu.");
+        }
+
+        if (!request.newPassword().equals(request.confirmPassword())) {
+            throw new BusinessException("Mật khẩu xác nhận không khớp.");
+        }
+
+        user.setPasswordHash(passwordEncoder.encode(request.newPassword()));
+        user.setPasswordConfigured(true);
+        userRepository.save(user);
+        log.info("Password configured: userId={}", user.getId());
     }
 
     @Transactional(readOnly = true)
@@ -188,6 +216,8 @@ public class UserService {
                 user.getAvatarUrl(),
                 user.getStatus(),
                 user.isEnabled(),
+                user.getAuthProvider(),
+                user.isPasswordConfigured(),
                 toRoleNames(user),
                 user.getCreatedAt());
     }

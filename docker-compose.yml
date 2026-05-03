@@ -35,7 +35,7 @@ services:
       - sh
       - -c
       - |
-        for file in /migrations/04_*.sql /migrations/05_*.sql /migrations/06_*.sql /migrations/07_*.sql /migrations/08_*.sql /migrations/09_*.sql /migrations/10_*.sql /migrations/11_*.sql /migrations/12_*.sql /migrations/13_*.sql /migrations/14_*.sql /migrations/15_*.sql /migrations/16_*.sql /migrations/17_*.sql /migrations/18_*.sql /migrations/19_*.sql; do
+        for file in /migrations/04_*.sql /migrations/05_*.sql /migrations/06_*.sql /migrations/07_*.sql /migrations/08_*.sql /migrations/09_*.sql /migrations/10_*.sql /migrations/11_*.sql /migrations/12_*.sql /migrations/13_*.sql /migrations/14_*.sql /migrations/15_*.sql /migrations/16_*.sql /migrations/17_*.sql /migrations/18_*.sql /migrations/19_*.sql /migrations/20_*.sql; do
           echo "Running $$file"
           mysql -hmysql -uroot rental_room_db < "$$file"
         done

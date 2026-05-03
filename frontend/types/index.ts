@@ -138,8 +138,10 @@ export interface UserProfile {
   id: number;
   fullName: string;
   email: string;
-  phone: string;
-  avatarUrl: string;
+  phone: string | null;
+  avatarUrl: string | null;
+  authProvider: AuthProvider;
+  passwordConfigured: boolean;
   roles: string[];
   status: "ACTIVE" | "INACTIVE" | "LOCKED";
   enabled?: boolean;

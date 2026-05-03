@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.trotot.backend.dto.common.MessageResponse;
 import com.trotot.backend.dto.user.ChangePasswordRequest;
+import com.trotot.backend.dto.user.SetPasswordRequest;
 import com.trotot.backend.dto.user.UpdateUserProfileRequest;
 import com.trotot.backend.dto.user.UserProfileResponse;
 import com.trotot.backend.security.UserPrincipal;
@@ -45,5 +46,13 @@ public class UserController {
             @Valid @RequestBody ChangePasswordRequest request) {
         userService.changeCurrentUserPassword(principal, request);
         return ResponseEntity.ok(new MessageResponse("Đã đổi mật khẩu thành công."));
+    }
+
+    @PutMapping("/me/password/setup")
+    public ResponseEntity<MessageResponse> setPassword(
+            @AuthenticationPrincipal UserPrincipal principal,
+            @Valid @RequestBody SetPasswordRequest request) {
+        userService.setCurrentUserPassword(principal, request);
+        return ResponseEntity.ok(new MessageResponse("Đã tạo mật khẩu cho tài khoản thành công."));
     }
 }

@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS users (
     full_name VARCHAR(120) NOT NULL,
     email VARCHAR(120) NOT NULL UNIQUE,
     password_hash VARCHAR(255) NOT NULL,
+    password_configured BOOLEAN NOT NULL DEFAULT TRUE,
     phone VARCHAR(20),
     avatar_url VARCHAR(255),
     address VARCHAR(255),

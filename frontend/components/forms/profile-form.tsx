@@ -4,15 +4,20 @@ import Image from "next/image";
 import { useState } from "react";
 import { ImagePlus, Trash2 } from "lucide-react";
 
-import { useAuth } from "@/hooks/use-auth";
-import { updateMyProfile } from "@/services/user-service";
-import { ApiError, getErrorMessage } from "@/services/api-client";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useAuth } from "@/hooks/use-auth";
 import { normalizeUploadImageSrc } from "@/lib/images";
+import { ApiError, getErrorMessage } from "@/services/api-client";
 import { uploadAvatarImage } from "@/services/upload-service";
+import { updateMyProfile } from "@/services/user-service";
 import type { UserProfile } from "@/types";
+
+function getAvatarInitial(name: string) {
+  const trimmedName = name.trim();
+  return (trimmedName.charAt(0) || "H").toUpperCase();
+}
 
 export function ProfileForm({ profile }: { profile: UserProfile }) {
   const { replaceUser } = useAuth();
@@ -31,6 +36,7 @@ export function ProfileForm({ profile }: { profile: UserProfile }) {
   const handleChange = (field: keyof typeof formData, value: string) => {
     setFormData((current) => ({ ...current, [field]: value }));
     setFieldErrors((current) => ({ ...current, [field]: "" }));
+    setSuccessMessage("");
     setErrorMessage("");
   };
 
@@ -104,18 +110,29 @@ export function ProfileForm({ profile }: { profile: UserProfile }) {
     }
   };
 
+  const resetForm = () => {
+    setFormData({
+      fullName: profile.fullName,
+      email: profile.email,
+      phone: profile.phone ?? "",
+      avatarUrl: profile.avatarUrl ?? "",
+    });
+    setFieldErrors({});
+    setSuccessMessage("");
+    setErrorMessage("");
+  };
+
   return (
     <form
-      className="motion-panel animate-content-rise rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent hover:-translate-y-1 hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px] sm:p-8"
+      className="motion-panel animate-content-rise rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] sm:rounded-[32px] sm:p-8"
       onSubmit={handleSubmit}
     >
       <div className="space-y-3">
         <h1 className="text-2xl font-semibold tracking-tight text-[var(--color-text-strong)] sm:text-3xl">
-          Hồ sơ cá nhân
+          Chỉnh sửa thông tin
         </h1>
         <p className="text-sm leading-7 text-[var(--color-text-muted)] sm:text-base">
-          Cập nhật các thông tin cơ bản dùng cho việc liên hệ: họ tên, email, số điện
-          thoại và ảnh đại diện.
+          Cập nhật thông tin cơ bản dùng cho liên hệ: họ tên, email, số điện thoại và ảnh đại diện.
         </p>
       </div>
 
@@ -131,7 +148,7 @@ export function ProfileForm({ profile }: { profile: UserProfile }) {
         </div>
       ) : null}
 
-      <div className="motion-stagger mt-6 grid gap-5 md:grid-cols-2 sm:mt-8">
+      <div className="motion-stagger mt-6 grid gap-5 sm:mt-8 md:grid-cols-2">
         <Input
           label="Họ tên"
           value={formData.fullName}
@@ -145,24 +162,25 @@ export function ProfileForm({ profile }: { profile: UserProfile }) {
           onChange={(event) => handleChange("phone", event.target.value)}
           error={fieldErrors.phone}
         />
+
         <div className="md:col-span-2">
           <span className="text-sm font-semibold text-[var(--color-text-strong)]">
             Ảnh đại diện
           </span>
-          <div className="motion-panel mt-2 rounded-[22px] border border-[var(--color-border-strong)] bg-[var(--color-surface-soft)] p-3 shadow-sm hover:-translate-y-0.5 hover:border-[var(--color-brand-500)] hover:shadow-[var(--shadow-card)] sm:rounded-[28px] sm:p-4">
+          <div className="mt-2 rounded-[22px] border border-[var(--color-border-strong)] bg-[var(--color-surface-soft)] p-3 shadow-sm sm:rounded-[28px] sm:p-4">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-              <div className="group relative size-28 shrink-0 overflow-hidden rounded-full border-4 border-[var(--color-surface)] bg-[var(--color-surface)] shadow-[var(--shadow-card)]">
+              <div className="relative size-28 shrink-0 overflow-hidden rounded-full border-4 border-[var(--color-surface)] bg-[var(--color-brand-800)] shadow-[var(--shadow-card)]">
                 {formData.avatarUrl ? (
                   <Image
                     src={normalizeUploadImageSrc(formData.avatarUrl)}
-                    alt={formData.fullName || "Ảnh đại diện"}
+                    alt="Ảnh đại diện"
                     fill
-                    className="motion-soft object-cover group-hover:scale-[1.04]"
+                    className="motion-soft object-cover hover:scale-[1.04]"
                     sizes="112px"
                   />
                 ) : (
-                  <div className="flex h-full w-full items-center justify-center text-[var(--color-brand-700)]">
-                    <ImagePlus className="motion-soft size-8 group-hover:scale-110" />
+                  <div className="flex h-full w-full items-center justify-center text-3xl font-semibold text-white">
+                    {getAvatarInitial(formData.fullName)}
                   </div>
                 )}
               </div>
@@ -212,20 +230,9 @@ export function ProfileForm({ profile }: { profile: UserProfile }) {
 
       <div className="mt-8 flex flex-wrap gap-3">
         <Button type="submit" disabled={submitting || uploadingAvatar}>
-          Lưu thay đổi
+          {submitting ? "Đang lưu..." : "Lưu thay đổi"}
         </Button>
-        <Button
-          type="button"
-          variant="outline"
-          onClick={() =>
-            setFormData({
-              fullName: profile.fullName,
-              email: profile.email,
-              phone: profile.phone ?? "",
-              avatarUrl: profile.avatarUrl ?? "",
-            })
-          }
-        >
+        <Button type="button" variant="outline" onClick={resetForm}>
           Đặt lại
         </Button>
       </div>

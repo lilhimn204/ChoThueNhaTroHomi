@@ -43,6 +43,9 @@ public class User {
     @Column(name = "password_hash", nullable = false, length = 255)
     private String passwordHash;
 
+    @Column(name = "password_configured", nullable = false)
+    private boolean passwordConfigured = true;
+
     @Column(length = 20)
     private String phone;
 

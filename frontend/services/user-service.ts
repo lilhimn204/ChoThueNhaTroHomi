@@ -12,6 +12,11 @@ interface ChangePasswordPayload {
   newPassword: string;
 }
 
+interface SetPasswordPayload {
+  newPassword: string;
+  confirmPassword: string;
+}
+
 export function getMyProfile(signal?: AbortSignal) {
   return proxyRequest<UserProfile>("users/me", {
     signal,
@@ -27,6 +32,13 @@ export function updateMyProfile(payload: UpdateProfilePayload) {
 
 export function changeMyPassword(payload: ChangePasswordPayload) {
   return proxyRequest<{ message: string }>("users/me/password", {
+    method: "PUT",
+    body: payload,
+  });
+}
+
+export function setMyPassword(payload: SetPasswordPayload) {
+  return proxyRequest<{ message: string }>("users/me/password/setup", {
     method: "PUT",
     body: payload,
   });

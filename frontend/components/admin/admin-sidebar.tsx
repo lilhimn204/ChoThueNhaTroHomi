@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   Building2,
+  ExternalLink,
   Flag,
   Headset,
   LayoutDashboard,
@@ -58,6 +59,24 @@ export function AdminSidebar() {
           );
         })}
       </nav>
+
+      <div className="mt-5 border-t border-white/10 pt-4">
+        <a
+          href="https://thuenhahomi.id.vn/cms"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="motion-pressable group flex items-center justify-between gap-3 rounded-[18px] bg-white px-3.5 py-3 text-sm font-semibold text-[var(--color-brand-900)] shadow-sm hover:-translate-y-0.5 hover:bg-[var(--color-brand-50)] hover:shadow-[var(--shadow-button-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/45 active:scale-[0.99]"
+        >
+          <span className="flex items-center gap-3">
+            <Newspaper className="motion-soft size-4 group-hover:scale-110" />
+            <span>CMS</span>
+          </span>
+          <ExternalLink className="size-4 opacity-70" />
+        </a>
+        <p className="mt-2 px-1 text-xs leading-5 text-white/55">
+          Quản lý nội dung và bài viết ở giao diện CMS.
+        </p>
+      </div>
     </aside>
   );
 }

@@ -94,6 +94,7 @@ public class AuthService {
         user.setFullName(request.fullName().trim());
         user.setEmail(email);
         user.setPasswordHash(passwordEncoder.encode(request.password()));
+        user.setPasswordConfigured(true);
         user.setPhone(InputSanitizer.trimToNull(request.phone()));
         user.setStatus(UserStatus.INACTIVE);
         user.setEnabled(false);
@@ -318,6 +319,7 @@ public class AuthService {
         }
 
         user.setPasswordHash(passwordEncoder.encode(request.newPassword()));
+        user.setPasswordConfigured(true);
         user.setEmailVerified(true);
         if (user.getStatus() == UserStatus.INACTIVE) {
             user.setStatus(UserStatus.ACTIVE);
@@ -352,6 +354,7 @@ public class AuthService {
         user.setFullName(resolveGoogleFullName(googleAccount));
         user.setEmail(googleAccount.email());
         user.setPasswordHash(passwordEncoder.encode(generateOpaquePassword()));
+        user.setPasswordConfigured(false);
         user.setAvatarUrl(InputSanitizer.trimToNull(googleAccount.avatarUrl()));
         user.setStatus(UserStatus.ACTIVE);
         user.setEnabled(true);
@@ -563,6 +566,8 @@ public class AuthService {
                         user.getPhone(),
                         user.getAvatarUrl(),
                         user.getStatus(),
+                        user.getAuthProvider(),
+                        user.isPasswordConfigured(),
                         roles));
     }
 
