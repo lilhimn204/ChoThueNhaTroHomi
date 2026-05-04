@@ -571,6 +571,60 @@ canvas {
   }
 }
 
+@keyframes ambient-gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes float-soft {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -8px, 0);
+  }
+}
+
+@keyframes shine-sweep {
+  from {
+    transform: translateX(-120%) skewX(-16deg);
+  }
+  to {
+    transform: translateX(220%) skewX(-16deg);
+  }
+}
+
+@keyframes typing-caret {
+  0%,
+  48% {
+    border-color: currentColor;
+  }
+  49%,
+  100% {
+    border-color: transparent;
+  }
+}
+
+@keyframes heart-pop {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.28) rotate(-8deg);
+  }
+  100% {
+    transform: scale(1.08);
+  }
+}
+
 .animate-slide-up {
   animation: slide-up var(--motion-duration-slow) var(--motion-ease-out) both;
 }
@@ -661,6 +715,77 @@ canvas {
   animation: skeleton-shimmer 1.4s var(--motion-ease-in-out) infinite;
 }
 
+.animate-ambient-gradient {
+  animation: ambient-gradient 12s var(--motion-ease-in-out) infinite;
+  background-size: 220% 220%;
+}
+
+.animate-float-soft {
+  animation: float-soft 5s var(--motion-ease-in-out) infinite;
+}
+
+.animate-heart-pop {
+  animation: heart-pop 360ms var(--motion-ease-spring) both;
+}
+
+.typing-line {
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  border-right: 2px solid currentColor;
+  white-space: nowrap;
+  animation: typing-caret 900ms steps(1, end) infinite;
+}
+
+.shine-surface {
+  position: relative;
+  overflow: hidden;
+}
+
+.shine-surface::after {
+  content: "";
+  position: absolute;
+  inset-block: -35%;
+  left: 0;
+  width: 34%;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.34), transparent);
+  opacity: 0;
+  transform: translateX(-120%) skewX(-16deg);
+}
+
+.shine-surface:hover::after,
+.group:hover .shine-surface::after {
+  opacity: 1;
+  animation: shine-sweep 760ms var(--motion-ease-out) both;
+}
+
+.reveal {
+  opacity: 0;
+  transform: translate3d(0, 20px, 0);
+  transition:
+    opacity var(--motion-duration-slow) var(--motion-ease-out),
+    transform var(--motion-duration-slow) var(--motion-ease-out);
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+.reveal-left {
+  transform: translate3d(-20px, 0, 0);
+}
+
+.reveal-right {
+  transform: translate3d(20px, 0, 0);
+}
+
+.reveal-left.visible,
+.reveal-right.visible {
+  transform: translate3d(0, 0, 0);
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -673,5 +798,17 @@ canvas {
     animation-iteration-count: 1 !important;
     scroll-behavior: auto !important;
     transition-duration: 0.001ms !important;
+  }
+
+  .typing-line {
+    border-right: 0;
+    white-space: normal;
+  }
+
+  .reveal,
+  .reveal-left,
+  .reveal-right {
+    opacity: 1;
+    transform: none;
   }
 }

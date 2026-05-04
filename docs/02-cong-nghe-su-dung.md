@@ -1,186 +1,149 @@
-# 02. Công nghệ sử dụng
+# 02. Công Nghệ Sử Dụng
 
-## 1. Tổng quan stack công nghệ
+## 1. Tổng quan stack
 
-Dự án Homi sử dụng kiến trúc full-stack tách frontend, backend và database. Frontend được xây dựng bằng Next.js và React. Backend được xây dựng bằng Spring Boot. Dữ liệu được lưu trong MySQL. Môi trường chạy có thể được dựng bằng Docker Compose.
+Homi dùng kiến trúc frontend/backend/database tách biệt:
+
+- Frontend: Next.js, React, TypeScript, Tailwind CSS.
+- Backend: Spring Boot, Spring Security, Spring Data JPA.
+- Database: MySQL.
+- DevOps local: Docker Compose, Maven Wrapper, npm.
 
 ## 2. Frontend
 
-Frontend nằm trong thư mục `frontend`.
+Các package chính trong `frontend/package.json`:
 
-| Công nghệ | Phiên bản/Thư viện | Vai trò |
-|---|---|---|
-| Next.js | 16.2.4 | Framework React, App Router, route handler, metadata, sitemap, proxy API |
-| React | 19.2.4 | Xây dựng giao diện người dùng theo component |
-| TypeScript | ^5 | Kiểm tra kiểu dữ liệu, định nghĩa interface cho API response |
-| Tailwind CSS | ^4 | Xây dựng giao diện và hệ thống style utility |
-| lucide-react | ^1.8.0 | Icon cho giao diện |
-| maplibre-gl | ^5.24.0 | Thư viện bản đồ, hỗ trợ liên kết/xử lý vị trí |
-| recharts | ^3.8.1 | Biểu đồ trong dashboard admin |
-| clsx, tailwind-merge | clsx ^2.1.1, tailwind-merge ^3.5.0 | Hỗ trợ ghép class CSS |
-| Vitest | ^4.1.5 | Unit test cho một số hàm frontend |
-| ESLint | ^9 | Kiểm tra chất lượng code frontend |
+| Công nghệ | Phiên bản/ghi chú |
+|---|---|
+| Next.js | `16.2.4`, App Router |
+| React | `19.2.4` |
+| TypeScript | `^5` |
+| Tailwind CSS | `^4` |
+| lucide-react | Icon UI |
+| maplibre-gl | Bản đồ/khu vực nếu cần |
+| recharts | Biểu đồ dashboard |
+| vitest | Test frontend |
 
-### 2.1. Vai trò frontend
+Frontend dùng:
 
-Frontend đảm nhiệm:
-
-- Hiển thị trang chủ, danh sách phòng, chi tiết phòng.
-- Cung cấp form đăng ký, đăng nhập, xác minh OTP, đăng nhập Google.
-- Quản lý trạng thái phiên đăng nhập phía client thông qua `AuthProvider`.
-- Gọi API backend thông qua service layer.
-- Bảo vệ route ở frontend bằng `RequireAuth`.
-- Cung cấp khu host và admin với các màn hình dashboard, bảng dữ liệu, form xử lý.
-- Tạo proxy BFF cho request cần xác thực.
-
-### 2.2. Next.js route handler
-
-Frontend có các route handler trong `frontend/app/api`:
-
-- `api/auth/*`: gọi backend auth, nhận token và lưu vào HttpOnly cookie.
-- `api/proxy/[...path]`: proxy request cần xác thực sang backend, tự gắn `Authorization`.
-- `api/public/[...path]`: proxy request công khai sang backend.
-
-Cách tổ chức này giúp token không cần lưu trực tiếp trong JavaScript client, giảm rủi ro bị đọc token qua XSS.
+- `frontend/app` cho route App Router.
+- `frontend/app/api/auth/*` cho auth BFF.
+- `frontend/app/api/proxy/[...path]` cho proxy API cần đăng nhập.
+- `frontend/app/api/public/[...path]` cho proxy API public.
+- `frontend/components` cho UI theo module.
+- `frontend/constants/site.ts` cho navigation, room type, news category và các option chung.
+- `frontend/lib` cho API client, auth helpers, formatting.
+- `frontend/types` cho type dùng chung.
 
 ## 3. Backend
 
-Backend nằm trong thư mục `backend`.
+Các dependency chính trong `backend/pom.xml`:
 
-| Công nghệ | Phiên bản/Thư viện | Vai trò |
-|---|---|---|
-| Java | 21 | Ngôn ngữ lập trình backend |
-| Spring Boot | 3.5.7 | Framework xây dựng REST API |
-| Spring Web | starter-web | Controller REST, request/response HTTP |
-| Spring Data JPA | starter-data-jpa | ORM, repository, specification |
-| Spring Security | starter-security | Xác thực, phân quyền, security filter |
-| Spring Validation | starter-validation | Validate DTO request |
-| Spring Cache | starter-cache | Cache dữ liệu lookup như quận, tiện ích |
-| Spring Mail | starter-mail | Gửi OTP và thông báo email nếu cấu hình |
-| SpringDoc OpenAPI | 2.8.17 | Sinh tài liệu Swagger/OpenAPI |
-| MySQL Connector/J | runtime | Kết nối MySQL |
-| Lombok | optional | Giảm boilerplate getter/setter |
-| JJWT | 0.12.7 | Sinh và kiểm tra JWT |
-| TwelveMonkeys ImageIO WebP | 3.13.1 | Hỗ trợ xử lý ảnh WebP |
-| H2 | test scope | Database cho test |
+| Công nghệ | Vai trò |
+|---|---|
+| Spring Boot `3.5.7` | Nền tảng backend |
+| Java 21 | Runtime |
+| Spring Web | REST API |
+| Spring Data JPA | ORM với MySQL |
+| Spring Security | Xác thực, phân quyền |
+| Spring Validation | Validate DTO |
+| Spring Mail | Gửi OTP qua SMTP |
+| Spring Cache | Cache nếu cần |
+| JJWT `0.12.7` | Sinh và xác minh JWT |
+| MySQL Connector/J | Kết nối MySQL |
+| Lombok | Giảm boilerplate |
+| springdoc-openapi | Swagger/OpenAPI |
+| TwelveMonkeys WebP | Hỗ trợ xử lý ảnh |
+| H2 | Database test |
 
-### 3.1. Vai trò backend
+Backend chia theo tầng:
 
-Backend đảm nhiệm:
-
-- Cung cấp REST API `/api/v1`.
-- Xử lý đăng ký, OTP, đăng nhập, Google login, refresh token và logout.
-- Xử lý tìm kiếm, lọc, chi tiết phòng.
-- Xử lý bài đăng của host/admin.
-- Xử lý yêu cầu liên hệ, phòng đã lưu, báo cáo tin đăng, thông báo.
-- Kiểm soát phân quyền admin và kiểm soát quyền sở hữu bài đăng của host.
-- Validate dữ liệu đầu vào và chuẩn hóa dữ liệu trước khi lưu.
-- Lưu file ảnh upload, nén ảnh và tạo thumbnail.
+- `controller`: REST endpoints.
+- `service`: nghiệp vụ.
+- `repository`: Spring Data JPA repositories.
+- `entity`: mapping bảng database.
+- `dto`: request/response.
+- `security`: JWT, filter, user details, security config.
+- `config`: cấu hình app, CORS, mail, upload.
+- `exception`: xử lý lỗi tập trung.
+- `util`: helper.
 
 ## 4. Database
 
-Database chính là MySQL 8.4, tên database mặc định `rental_room_db`.
+Database chính là MySQL `rental_room_db`.
 
-Các nhóm bảng chính:
+Schema và migration nằm trong `database/mysql`:
 
-- Người dùng và phân quyền: `users`, `roles`, `user_roles`.
-- Phòng trọ: `rooms`, `room_images`, `room_amenities`, `districts`, `amenities`.
-- Tương tác người thuê: `saved_rooms`, `contact_requests`.
-- Quản trị và kiểm duyệt: `room_reports`, `notifications`.
-- Phiên đăng nhập: `refresh_tokens`.
+- `01_schema.sql`: schema tổng hợp hiện tại.
+- `02_seed.sql`: dữ liệu mẫu.
+- Các file `03_*.sql` đến `20_*.sql`: migration bổ sung như auth Google/OTP, room type, support, news, admin user, reset password, password configured.
 
-Thư mục SQL:
+## 5. Docker Compose
 
-- `database/mysql/01_schema.sql`: schema chính.
-- `database/mysql/02_seed.sql`: dữ liệu mẫu.
-- `database/mysql/03_vietnamese_accents.sql`: cập nhật dữ liệu tiếng Việt.
-- `database/mysql/04_host_upgrade.sql`: nâng cấp dữ liệu hỗ trợ khu host.
-- `database/mysql/05_saved_rooms_notifications.sql`: thêm phòng đã lưu và thông báo.
-- `database/mysql/06_room_reports.sql`: thêm báo cáo tin đăng.
-- `database/mysql/07_refresh_tokens.sql`: thêm refresh token.
-- `database/mysql/08_room_listing_metadata.sql`: thêm mã tin.
-- `database/mysql/09_auth_identity_verification.sql`: thêm OTP, Google identity.
+`docker-compose.yml` có các service:
 
-## 5. Xác thực và bảo mật
+- `frontend`: Next.js ở port `3000`.
+- `backend`: Spring Boot ở port `8080`.
+- `mysql`: MySQL Docker, chỉ chạy khi bật profile `docker-db`.
+- `mysql-migrate`: chạy migration cho MySQL Docker, cũng thuộc profile `docker-db`.
 
-### 5.1. JWT và refresh token
+Mặc định backend Docker trỏ tới MySQL local:
 
-Backend dùng JWT access token và refresh token:
+```env
+DB_URL=jdbc:mysql://host.docker.internal:3306/rental_room_db?...
+```
 
-- Access token chứa email, user id, tên và danh sách role.
-- Refresh token là token opaque, backend chỉ lưu hash SHA-256 trong bảng `refresh_tokens`.
-- Khi refresh, backend rotate refresh token cũ và phát token mới.
-- Khi logout, refresh token bị revoke.
+Điều này giúp MySQL Workbench ở `localhost:3306` và website cùng dùng một database.
 
-### 5.2. Cookie HttpOnly
+## 6. Biến môi trường quan trọng
 
-Frontend BFF lưu token trong cookie:
+Backend:
 
-- `homi_token`: access token.
-- `homi_refresh_token`: refresh token.
+- `DB_URL`, `DB_USERNAME`, `DB_PASSWORD`
+- `JWT_SECRET`, `JWT_EXPIRATION_MINUTES`, `JWT_REFRESH_EXPIRATION_MINUTES`
+- `GOOGLE_CLIENT_ID`
+- `APP_MAIL_ENABLED`, `APP_MAIL_FROM`
+- `MAIL_HOST`, `MAIL_PORT`, `MAIL_USERNAME`, `MAIL_PASSWORD`
+- `OTP_EXPIRATION_MINUTES`, `OTP_MAX_ATTEMPTS`, `OTP_MAX_RESEND_COUNT`, `OTP_RESEND_COOLDOWN_SECONDS`
+- `UPLOAD_DIRECTORY`
+- `CORS_ALLOWED_ORIGINS`
 
-Cookie được đặt `HttpOnly`, `SameSite=Lax`, `path=/`. Ở production, cookie được đặt `secure` theo cấu hình.
+Frontend:
 
-### 5.3. Phân quyền
+- `BACKEND_URL`
+- `NEXT_PUBLIC_API_URL`
+- `NEXT_PUBLIC_SITE_URL`
+- `NEXT_PUBLIC_GOOGLE_CLIENT_ID`
 
-Backend cấu hình:
+Không commit secret thật. Gmail SMTP phải dùng Google App Password.
 
-- Public: `GET /api/v1/rooms/**`, `GET /api/v1/amenities`, `GET /api/v1/districts`, Swagger, uploads.
-- Auth public: `POST /api/v1/auth/**`.
-- Admin: `/api/v1/admin/**` yêu cầu `ROLE_ADMIN`.
-- Các endpoint còn lại yêu cầu đăng nhập.
+## 7. Lệnh thường dùng
 
-Khu host hiện chưa có role `HOST` riêng. Quyền host dựa trên đăng nhập và kiểm tra quyền sở hữu bài đăng bằng `created_by`.
+Chạy Docker frontend/backend:
 
-### 5.4. Bảo vệ endpoint đăng nhập
+```powershell
+docker compose up -d --build backend frontend
+```
 
-Backend có `RateLimitFilter` áp dụng cho `POST /api/v1/auth/**`, giới hạn 10 request trong 60 giây theo IP. Đây là cơ chế giảm rủi ro brute force cho đăng nhập/đăng ký/OTP.
+Chạy Docker kèm MySQL container:
 
-## 6. Upload và xử lý ảnh
+```powershell
+docker compose --profile docker-db up -d --build
+```
 
-Backend hỗ trợ upload:
+Backend test:
 
-- `POST /api/v1/uploads/rooms`
-- `POST /api/v1/uploads/avatars`
+```powershell
+cd backend
+.\mvnw.cmd test
+```
 
-File ảnh được validate loại MIME (`image/jpeg`, `image/png`, `image/webp`) và dung lượng tối đa mặc định 5MB. Service xử lý ảnh nén về JPEG, giới hạn kích thước tối đa, đồng thời tạo thumbnail cho ảnh phòng.
+Frontend dev/build:
 
-## 7. Docker và triển khai
-
-File `docker-compose.yml` định nghĩa:
-
-- `mysql`: MySQL 8.4.
-- `mysql-migrate`: chạy migration SQL bổ sung.
-- `backend`: build từ `backend/Dockerfile`.
-- `frontend`: build từ `frontend/Dockerfile`.
-
-Các biến môi trường quan trọng:
-
-- `DB_URL`, `DB_USERNAME`, `DB_PASSWORD`.
-- `JWT_SECRET`, `JWT_EXPIRATION_MINUTES`, `JWT_REFRESH_EXPIRATION_MINUTES`.
-- `CORS_ALLOWED_ORIGINS`.
-- `GOOGLE_CLIENT_ID`.
-- `APP_MAIL_ENABLED`, `MAIL_HOST`, `MAIL_USERNAME`, `MAIL_PASSWORD`.
-- `BACKEND_URL`, `NEXT_PUBLIC_API_URL`, `NEXT_PUBLIC_SITE_URL`.
-
-## 8. Kiểm thử
-
-Backend có test trong `backend/src/test`, gồm:
-
-- Test controller auth và OpenAPI.
-- Test service auth, room, contact request, refresh token, user.
-- Test util cookie, sanitizer, slug.
-
-Frontend có test trong:
-
-- `frontend/lib/__tests__`
-- `frontend/services/__tests__`
-
-Ngoài ra có script smoke route `frontend/scripts/smoke-routes.mjs`.
-
-## 9. Nhận xét
-
-Stack công nghệ phù hợp với đồ án tốt nghiệp ngành CNTT vì thể hiện đủ các thành phần: frontend hiện đại, backend REST API, cơ sở dữ liệu quan hệ, xác thực bảo mật, upload file, Docker, test và tài liệu API.
-
-Một số phần triển khai vận hành thực tế như CI/CD, logging tập trung, monitoring production và backup database chưa đủ thông tin để đánh giá.
-
+```powershell
+cd frontend
+npm install
+npm run dev
+npm run lint
+npm run build
+```

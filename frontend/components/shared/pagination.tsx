@@ -19,9 +19,11 @@ export function Pagination({
     onPageChange(page);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
+  const pages = Array.from({ length: totalPages }, (_, index) => index + 1)
+    .filter((page) => Math.abs(page - currentPage) <= 1 || page === 1 || page === totalPages);
 
   return (
-    <div className="motion-panel grid grid-cols-[1fr_auto_1fr] items-center gap-2 rounded-3xl border border-[var(--color-border-soft)] bg-[var(--color-surface)] px-3 py-3 shadow-[var(--shadow-card)] hover:-translate-y-0.5 hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] sm:gap-4 sm:px-4">
+    <div className="motion-panel grid gap-3 rounded-3xl border border-[var(--color-border-soft)] bg-[var(--color-surface)] px-3 py-3 shadow-[var(--shadow-card)] hover:-translate-y-0.5 hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] sm:grid-cols-[1fr_auto_1fr] sm:items-center sm:gap-4 sm:px-4">
       <Button
         variant="ghost"
         size="sm"
@@ -32,10 +34,30 @@ export function Pagination({
       >
         Trước
       </Button>
-      <p className="whitespace-nowrap text-center text-sm text-[var(--color-text-muted)]">
-        Trang <span className="font-semibold text-[var(--color-text-strong)]">{currentPage}</span> /{" "}
-        {totalPages}
-      </p>
+      <div className="flex items-center justify-center gap-1.5">
+        {pages.map((page, index) => {
+          const previousPage = pages[index - 1];
+          const showGap = previousPage && page - previousPage > 1;
+
+          return (
+            <span key={page} className="inline-flex items-center gap-1.5">
+              {showGap ? <span className="text-sm text-[var(--color-text-muted)]">...</span> : null}
+              <button
+                type="button"
+                onClick={() => handlePageChange(page)}
+                aria-current={page === currentPage ? "page" : undefined}
+                className={`motion-pressable flex size-9 items-center justify-center rounded-xl text-sm font-semibold ${
+                  page === currentPage
+                    ? "bg-[var(--color-brand-700)] text-[var(--color-brand-contrast)] shadow-sm"
+                    : "text-[var(--color-text-muted)] hover:bg-[var(--color-surface-soft)] hover:text-[var(--color-text-strong)]"
+                }`}
+              >
+                {page}
+              </button>
+            </span>
+          );
+        })}
+      </div>
       <Button
         variant="ghost"
         size="sm"

@@ -2,10 +2,11 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Sparkles } from "lucide-react";
 
 import { RoomCard } from "@/components/rooms/room-card";
 import { RoomsGridSkeleton } from "@/components/rooms/rooms-page-client";
+import { AnimateOnScroll } from "@/components/shared/animate-on-scroll";
 import { EmptyState } from "@/components/shared/empty-state";
 import { SectionHeading } from "@/components/shared/section-heading";
 import { Alert } from "@/components/ui/alert";
@@ -44,14 +45,20 @@ export function FeaturedRoomsSection() {
   }, []);
 
   return (
-    <section className="container-shell mt-20 space-y-8">
+    <AnimateOnScroll as="section" className="container-shell mt-20 space-y-8">
       <div className="motion-panel animate-content-rise rounded-[34px] border border-[var(--color-border-card)] bg-[var(--color-surface)]/80 p-5 shadow-[var(--shadow-card)] backdrop-blur-sm hover:-translate-y-0.5 hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] sm:p-6">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-        <SectionHeading
-          eyebrow="Phòng nổi bật"
-          title="Phòng trọ Hà Nội đang được quan tâm"
-          description="Một số phòng phù hợp sinh viên và người đi làm, ưu tiên khu vực gần trường đại học, giao thông thuận tiện và thông tin rõ ràng."
-        />
+        <div className="relative">
+          <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-[var(--badge-brand-bg)] px-3 py-1 text-sm font-semibold text-[var(--badge-brand-text)]">
+            <Sparkles className="size-4" />
+            Gợi ý đang nổi bật
+          </div>
+          <SectionHeading
+            eyebrow="Phòng nổi bật"
+            title="Phòng trọ Hà Nội đang được quan tâm"
+            description="Một số phòng phù hợp sinh viên và người đi làm, ưu tiên khu vực gần trường đại học, giao thông thuận tiện và thông tin rõ ràng."
+          />
+        </div>
         <Link href="/rooms">
           <Button trailingIcon={<ArrowRight className="size-4" />}>
             Xem toàn bộ danh sách
@@ -80,6 +87,6 @@ export function FeaturedRoomsSection() {
           description="Khi admin đánh dấu nổi bật, khu vực này sẽ hiển thị các bài đăng được ưu tiên."
         />
       )}
-    </section>
+    </AnimateOnScroll>
   );
 }

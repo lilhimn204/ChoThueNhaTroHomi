@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { CheckCircle2, Eye, EyeOff, Loader2 } from "lucide-react";
 
 import { useAuth } from "@/hooks/use-auth";
 import { ApiError, getErrorMessage } from "@/services/api-client";
@@ -201,6 +202,8 @@ export function AuthPanel({
   const [submitting, setSubmitting] = useState(false);
   const [googleSubmitting, setGoogleSubmitting] = useState(false);
   const [resending, setResending] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
@@ -256,6 +259,17 @@ export function AuthPanel({
     setSuccessMessage("Đăng nhập thành công. Đang chuyển trang...");
     router.replace(getRedirectTarget(user, redirectTo));
   };
+
+  const passwordToggle = (visible: boolean, onToggle: () => void, label: string) => (
+    <button
+      type="button"
+      aria-label={label}
+      onClick={onToggle}
+      className="motion-pressable flex size-9 items-center justify-center rounded-xl text-[var(--color-text-muted)] hover:bg-[var(--color-surface-soft)] hover:text-[var(--color-brand-700)]"
+    >
+      {visible ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+    </button>
+  );
 
   const handleCredentialsSubmit = async () => {
     if (mode === "register" && formData.password !== formData.confirmPassword) {
@@ -378,7 +392,7 @@ export function AuthPanel({
 
             <div className="motion-soft flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.16em] text-[var(--color-text-muted)]">
               <span className="h-px flex-1 bg-[var(--color-border-soft)]" />
-              <span>Email</span>
+              <span>Hoặc</span>
               <span className="h-px flex-1 bg-[var(--color-border-soft)]" />
             </div>
           </>
@@ -386,7 +400,13 @@ export function AuthPanel({
 
         <form className="motion-stagger space-y-5" onSubmit={handleSubmit}>
           {successMessage ? (
-            <Alert tone="success" title="Thao tác thành công" description={successMessage} />
+            <div className="animate-scale-in">
+              <Alert
+                tone="success"
+                title="Thao tác thành công"
+                description={successMessage}
+              />
+            </div>
           ) : null}
 
           {errorMessage ? (
@@ -403,6 +423,7 @@ export function AuthPanel({
               <Input
                 label="Mã OTP"
                 name="otp"
+                floatingLabel
                 inputMode="numeric"
                 autoComplete="one-time-code"
                 maxLength={6}
@@ -421,6 +442,7 @@ export function AuthPanel({
                 <Input
                   label="Họ tên"
                   name="fullName"
+                  floatingLabel
                   placeholder="Nguyễn Thị An"
                   hint="Tên này sẽ hiển thị trong hồ sơ và lịch sử yêu cầu."
                   value={formData.fullName}
@@ -432,6 +454,7 @@ export function AuthPanel({
               <Input
                 label="Email"
                 name="email"
+                floatingLabel
                 type="email"
                 placeholder="an.nguyen@example.com"
                 hint="Email sẽ được dùng để đăng nhập."
@@ -444,6 +467,7 @@ export function AuthPanel({
                 <Input
                   label="Số điện thoại"
                   name="phone"
+                  floatingLabel
                   placeholder="0911222333"
                   hint="Dùng cho việc liên hệ khi cần xem phòng."
                   value={formData.phone}
@@ -455,12 +479,18 @@ export function AuthPanel({
               <Input
                 label="Mật khẩu"
                 name="password"
-                type="password"
+                floatingLabel
+                type={showPassword ? "text" : "password"}
                 placeholder="********"
                 hint={mode === "register" ? "Tối thiểu 6 ký tự." : "Nhập mật khẩu đã đăng ký."}
                 value={formData.password}
                 onChange={(event) => handleChange("password", event.target.value)}
                 error={fieldErrors.password}
+                trailingIcon={passwordToggle(
+                  showPassword,
+                  () => setShowPassword((current) => !current),
+                  showPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu",
+                )}
               />
 
               {mode === "login" ? (
@@ -478,17 +508,29 @@ export function AuthPanel({
                 <Input
                   label="Xác nhận mật khẩu"
                   name="confirmPassword"
-                  type="password"
+                  floatingLabel
+                  type={showConfirmPassword ? "text" : "password"}
                   placeholder="********"
                   value={formData.confirmPassword}
                   onChange={(event) => handleChange("confirmPassword", event.target.value)}
                   error={fieldErrors.confirmPassword}
+                  trailingIcon={passwordToggle(
+                    showConfirmPassword,
+                    () => setShowConfirmPassword((current) => !current),
+                    showConfirmPassword ? "Ẩn mật khẩu xác nhận" : "Hiện mật khẩu xác nhận",
+                  )}
                 />
               ) : null}
             </>
           )}
 
-          <Button className="w-full" size="lg" type="submit" disabled={submitting || googleSubmitting}>
+          <Button
+            className="w-full"
+            size="lg"
+            type="submit"
+            disabled={submitting || googleSubmitting}
+            leadingIcon={submitting ? <Loader2 className="size-4 animate-spin" /> : successMessage ? <CheckCircle2 className="size-4" /> : undefined}
+          >
             {submitting ? "Đang xử lý..." : content.cta}
           </Button>
 

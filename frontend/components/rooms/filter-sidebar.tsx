@@ -1,9 +1,15 @@
 "use client";
 
+import { useState, type ReactNode } from "react";
+import { ChevronDown } from "lucide-react";
+
 import type { Amenity, District, RoomStatus, RoomType } from "@/types";
 import { roomStatusOptions, roomTypeOptions } from "@/constants/site";
+import { AmenityIcon } from "@/components/shared/amenity-icon";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
+import { formatArea, formatCompactCurrency } from "@/lib/format";
+import { cn } from "@/lib/utils";
 
 export interface RoomFiltersValue {
   districtId: string;
@@ -27,33 +33,79 @@ interface FilterSidebarProps {
   onApply?: () => void;
 }
 
-const minPriceOptions = [
-  { label: "Không giới hạn", value: "" },
-  { label: "Từ 3 triệu", value: "3000000" },
-  { label: "Từ 4 triệu", value: "4000000" },
-  { label: "Từ 5 triệu", value: "5000000" },
-];
+const PRICE_MAX = 12_000_000;
+const PRICE_STEP = 500_000;
+const AREA_MAX = 60;
+const AREA_STEP = 1;
 
-const maxPriceOptions = [
-  { label: "Không giới hạn", value: "" },
-  { label: "Đến 4 triệu", value: "4000000" },
-  { label: "Đến 5 triệu", value: "5000000" },
-  { label: "Đến 6 triệu", value: "6000000" },
-];
+function CollapsibleFilterGroup({
+  title,
+  defaultOpen = true,
+  children,
+}: {
+  title: string;
+  defaultOpen?: boolean;
+  children: ReactNode;
+}) {
+  const [open, setOpen] = useState(defaultOpen);
 
-const minAreaOptions = [
-  { label: "Không giới hạn", value: "" },
-  { label: "Từ 18 m²", value: "18" },
-  { label: "Từ 20 m²", value: "20" },
-  { label: "Từ 25 m²", value: "25" },
-];
+  return (
+    <section className="rounded-[22px] border border-[var(--color-border-soft)] bg-[var(--color-surface-soft)]">
+      <button
+        type="button"
+        onClick={() => setOpen((current) => !current)}
+        className="motion-pressable flex w-full items-center justify-between gap-3 px-4 py-3 text-left"
+        aria-expanded={open}
+      >
+        <span className="text-sm font-semibold text-[var(--color-text-strong)]">
+          {title}
+        </span>
+        <ChevronDown className={cn("motion-soft size-4 text-[var(--color-text-muted)]", open && "rotate-180")} />
+      </button>
+      {open ? (
+        <div className="animate-fade-in space-y-4 border-t border-[var(--color-border-soft)] p-4">
+          {children}
+        </div>
+      ) : null}
+    </section>
+  );
+}
 
-const maxAreaOptions = [
-  { label: "Không giới hạn", value: "" },
-  { label: "Đến 20 m²", value: "20" },
-  { label: "Đến 25 m²", value: "25" },
-  { label: "Đến 30 m²", value: "30" },
-];
+function RangeControl({
+  label,
+  value,
+  min,
+  max,
+  step,
+  displayValue,
+  onChange,
+}: {
+  label: string;
+  value: number;
+  min: number;
+  max: number;
+  step: number;
+  displayValue: string;
+  onChange: (value: number) => void;
+}) {
+  return (
+    <label className="grid gap-2">
+      <span className="flex items-center justify-between gap-3 text-sm">
+        <span className="font-medium text-[var(--color-text-muted)]">{label}</span>
+        <span className="font-semibold text-[var(--color-text-strong)]">{displayValue}</span>
+      </span>
+      <input
+        type="range"
+        min={min}
+        max={max}
+        step={step}
+        value={value}
+        onChange={(event) => onChange(Number(event.target.value))}
+        className="h-2 w-full cursor-pointer appearance-none rounded-full bg-[var(--color-border-soft)] accent-[var(--color-brand-700)]"
+      />
+    </label>
+  );
+}
 
 export function FilterSidebar({
   title = "Bộ lọc tìm phòng",
@@ -70,6 +122,42 @@ export function FilterSidebar({
       ? value.amenityIds.filter((id) => id !== amenityId)
       : [...value.amenityIds, amenityId];
     onChange({ ...value, amenityIds: nextAmenityIds });
+  };
+  const minPrice = Number(value.minPrice || 0);
+  const maxPrice = Number(value.maxPrice || PRICE_MAX);
+  const minArea = Number(value.minArea || 0);
+  const maxArea = Number(value.maxArea || AREA_MAX);
+
+  const updateMinPrice = (nextValue: number) => {
+    onChange({
+      ...value,
+      minPrice: nextValue <= 0 ? "" : String(nextValue),
+      maxPrice: nextValue > maxPrice ? String(nextValue) : value.maxPrice,
+    });
+  };
+
+  const updateMaxPrice = (nextValue: number) => {
+    onChange({
+      ...value,
+      minPrice: nextValue < minPrice ? String(nextValue) : value.minPrice,
+      maxPrice: nextValue >= PRICE_MAX ? "" : String(nextValue),
+    });
+  };
+
+  const updateMinArea = (nextValue: number) => {
+    onChange({
+      ...value,
+      minArea: nextValue <= 0 ? "" : String(nextValue),
+      maxArea: nextValue > maxArea ? String(nextValue) : value.maxArea,
+    });
+  };
+
+  const updateMaxArea = (nextValue: number) => {
+    onChange({
+      ...value,
+      minArea: nextValue < minArea ? String(nextValue) : value.minArea,
+      maxArea: nextValue >= AREA_MAX ? "" : String(nextValue),
+    });
   };
 
   return (
@@ -101,61 +189,75 @@ export function FilterSidebar({
           onChange={(event) => onChange({ ...value, districtId: event.target.value })}
         />
 
-        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
-          <Select
+        <CollapsibleFilterGroup title="Khoảng giá">
+          <RangeControl
             label="Giá từ"
-            options={minPriceOptions}
-            value={value.minPrice}
-            onChange={(event) => onChange({ ...value, minPrice: event.target.value })}
+            min={0}
+            max={PRICE_MAX}
+            step={PRICE_STEP}
+            value={minPrice}
+            displayValue={minPrice <= 0 ? "Không giới hạn" : formatCompactCurrency(minPrice)}
+            onChange={updateMinPrice}
           />
-          <Select
+          <RangeControl
             label="Giá đến"
-            options={maxPriceOptions}
-            value={value.maxPrice}
-            onChange={(event) => onChange({ ...value, maxPrice: event.target.value })}
+            min={0}
+            max={PRICE_MAX}
+            step={PRICE_STEP}
+            value={maxPrice}
+            displayValue={maxPrice >= PRICE_MAX ? "Không giới hạn" : formatCompactCurrency(maxPrice)}
+            onChange={updateMaxPrice}
           />
-        </div>
+        </CollapsibleFilterGroup>
 
-        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
+        <CollapsibleFilterGroup title="Diện tích">
+          <RangeControl
+            label="Từ"
+            min={0}
+            max={AREA_MAX}
+            step={AREA_STEP}
+            value={minArea}
+            displayValue={minArea <= 0 ? "Không giới hạn" : formatArea(minArea)}
+            onChange={updateMinArea}
+          />
+          <RangeControl
+            label="Đến"
+            min={0}
+            max={AREA_MAX}
+            step={AREA_STEP}
+            value={maxArea}
+            displayValue={maxArea >= AREA_MAX ? "Không giới hạn" : formatArea(maxArea)}
+            onChange={updateMaxArea}
+          />
+        </CollapsibleFilterGroup>
+
+        <CollapsibleFilterGroup title="Loại phòng và trạng thái">
           <Select
-            label="Diện tích từ"
-            options={minAreaOptions}
-            value={value.minArea}
-            onChange={(event) => onChange({ ...value, minArea: event.target.value })}
+            label="Loại phòng"
+            options={[{ label: "Tất cả loại phòng", value: "" }, ...roomTypeOptions]}
+            value={value.roomType}
+            onChange={(event) =>
+              onChange({
+                ...value,
+                roomType: event.target.value as RoomFiltersValue["roomType"],
+              })
+            }
           />
+
           <Select
-            label="Diện tích đến"
-            options={maxAreaOptions}
-            value={value.maxArea}
-            onChange={(event) => onChange({ ...value, maxArea: event.target.value })}
+            label="Trạng thái"
+            options={[{ label: "Tất cả", value: "" }, ...roomStatusOptions]}
+            value={value.status}
+            onChange={(event) =>
+              onChange({
+                ...value,
+                status: event.target.value as RoomFiltersValue["status"],
+              })
+            }
           />
-        </div>
+        </CollapsibleFilterGroup>
 
-        <Select
-          label="Loại phòng"
-          options={[{ label: "Tất cả loại phòng", value: "" }, ...roomTypeOptions]}
-          value={value.roomType}
-          onChange={(event) =>
-            onChange({
-              ...value,
-              roomType: event.target.value as RoomFiltersValue["roomType"],
-            })
-          }
-        />
-
-        <Select
-          label="Trạng thái"
-          options={[{ label: "Tất cả", value: "" }, ...roomStatusOptions]}
-          value={value.status}
-          onChange={(event) =>
-            onChange({
-              ...value,
-              status: event.target.value as RoomFiltersValue["status"],
-            })
-          }
-        />
-
-        <div className="space-y-3">
+        <CollapsibleFilterGroup title="Tiện ích bắt buộc" defaultOpen={false}>
           <p className="text-sm font-semibold text-[var(--color-text-strong)]">
             Tiện ích bắt buộc
           </p>
@@ -177,12 +279,15 @@ export function FilterSidebar({
                       : "bg-[var(--color-surface-soft)] text-[var(--color-text-muted)] hover:-translate-y-0.5 hover:bg-[var(--color-border-soft)] hover:text-[var(--color-text-strong)]"
                   }`}
                 >
+                  <span className="inline-flex items-center gap-1.5">
+                    <AmenityIcon iconKey={amenity.iconKey} className="size-3.5" />
                   {amenity.name}
+                  </span>
                 </button>
               );
             })}
           </div>
-        </div>
+        </CollapsibleFilterGroup>
       </div>
 
       {applyLabel && onApply ? (

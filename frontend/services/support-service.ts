@@ -30,6 +30,8 @@ interface UpdateSupportTicketStatusPayload {
   adminNote: string;
 }
 
+export const SUPPORT_TICKETS_CHANGED_EVENT = "homi-support-tickets-changed";
+
 export function createSupportTicket(payload: CreateSupportTicketPayload) {
   return apiRequest<SupportTicket>("support-tickets", {
     method: "POST",

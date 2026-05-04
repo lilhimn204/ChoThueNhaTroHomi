@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { ChevronDown, Menu, X } from "lucide-react";
+import { ChevronDown, Menu, Search, UserCircle, X } from "lucide-react";
 import { useEffect, useState, type FocusEvent, type MouseEvent, type ReactNode } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -290,6 +290,7 @@ export function SiteHeader() {
   const router = useRouter();
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const [mobileExpandedSections, setMobileExpandedSections] = useState<
     Record<string, boolean>
   >({
@@ -361,16 +362,39 @@ export function SiteHeader() {
     };
   }, [mobileMenuPresent]);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 24);
+    };
+
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
-    <header className="sticky top-0 z-50 border-b border-[var(--color-header-border)] bg-[var(--color-header-bg)] pt-[env(safe-area-inset-top)] shadow-sm backdrop-blur-xl transition-shadow duration-300">
-      <div className="container-shell flex h-16 items-center justify-between gap-3 sm:h-18 sm:gap-6">
+    <header
+      className={cn(
+        "sticky top-0 z-50 border-b border-[var(--color-header-border)] bg-[var(--color-header-bg)] pt-[env(safe-area-inset-top)] backdrop-blur-xl transition-[box-shadow,background-color] duration-300",
+        scrolled ? "shadow-[var(--shadow-card)]" : "shadow-sm",
+      )}
+    >
+      <div
+        className={cn(
+          "container-shell flex items-center justify-between gap-3 transition-[height] duration-300 sm:gap-6",
+          scrolled ? "h-14 sm:h-16" : "h-16 sm:h-18",
+        )}
+      >
         <Link href="/" className="group flex min-w-0 items-center gap-3">
           <Image
             src="/logo.png"
             alt="Homi logo"
             width={44}
             height={44}
-            className="size-11 shrink-0 rounded-2xl shadow-[var(--shadow-card)] transition duration-300 group-hover:-translate-y-0.5 group-hover:shadow-[var(--shadow-card-hover)]"
+            className={cn(
+              "shrink-0 rounded-2xl shadow-[var(--shadow-card)] transition duration-300 group-hover:-translate-y-0.5 group-hover:shadow-[0_0_28px_color-mix(in_srgb,var(--color-brand-500)_34%,transparent)]",
+              scrolled ? "size-10" : "size-11",
+            )}
           />
           <div className="min-w-0">
             <p className="truncate font-heading text-lg font-semibold text-[var(--color-text-strong)]">
@@ -394,6 +418,13 @@ export function SiteHeader() {
         </nav>
 
         <div className="hidden items-center gap-3 xl:flex">
+          <Link
+            href="/rooms"
+            aria-label="Tìm kiếm nhanh"
+            className="motion-pressable inline-flex size-11 items-center justify-center rounded-xl border border-[var(--color-border-soft)] bg-[var(--color-surface)] text-[var(--color-text-muted)] shadow-sm hover:-translate-y-0.5 hover:border-[var(--color-brand-500)] hover:text-[var(--color-brand-700)] hover:shadow-[var(--shadow-card)]"
+          >
+            <Search className="size-[18px]" />
+          </Link>
           <ThemeToggle />
           <NotificationBell />
 
@@ -457,13 +488,43 @@ export function SiteHeader() {
       {mobileMenuPresent ? (
         <div
           className={cn(
-            "max-h-[calc(100dvh_-_4rem_-_env(safe-area-inset-top))] origin-top overflow-y-auto overscroll-contain border-t border-[var(--color-border-soft)] bg-[var(--color-surface)] shadow-[var(--shadow-card)] xl:hidden",
+            "fixed inset-0 z-50 bg-[rgba(8,24,32,0.52)] backdrop-blur-sm xl:hidden",
             mobileMenuLeaving
-              ? "pointer-events-none animate-mobile-menu-out"
-              : "animate-mobile-menu-in",
+              ? "pointer-events-none animate-overlay-out"
+              : "animate-overlay-in",
           )}
         >
-          <div className="container-shell flex flex-col gap-2 pb-[calc(1rem_+_env(safe-area-inset-bottom))] pt-4">
+          <div
+            className={cn(
+              "absolute inset-y-0 right-0 flex w-full max-w-md flex-col overflow-hidden bg-[var(--color-background)] shadow-2xl",
+              mobileMenuLeaving ? "animate-drawer-right-out" : "animate-drawer-right-in",
+            )}
+          >
+            <div className="flex shrink-0 items-center justify-between gap-3 border-b border-[var(--color-border-soft)] px-4 py-3 pt-[calc(0.75rem_+_env(safe-area-inset-top))]">
+              <div className="flex min-w-0 items-center gap-3">
+                <div className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-[var(--badge-brand-bg)] text-[var(--badge-brand-text)]">
+                  <UserCircle className="size-5" />
+                </div>
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-semibold text-[var(--color-text-strong)]">
+                    {isAuthenticated ? user.fullName : "Khách Homi"}
+                  </p>
+                  <p className="truncate text-xs text-[var(--color-text-muted)]">
+                    {isAuthenticated ? user.email : "Đăng nhập để lưu phòng và theo dõi liên hệ"}
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                aria-label="Đóng menu"
+                onClick={closeMobileMenu}
+                className="motion-pressable inline-flex size-11 items-center justify-center rounded-2xl border border-[var(--color-border-soft)] bg-[var(--color-surface)] text-[var(--color-text-strong)] shadow-sm"
+              >
+                <X className="size-5" />
+              </button>
+            </div>
+
+            <div className="min-h-0 flex-1 overflow-y-auto px-4 pb-28 pt-4">
             <div className="flex items-center justify-between">
               <p className="text-sm font-medium text-[var(--color-text-muted)]">Giao diện</p>
               <div className="flex items-center gap-2">
@@ -575,6 +636,35 @@ export function SiteHeader() {
                   ))
                 )}
               </MobileAccordionGroup>
+            </div>
+            </div>
+
+            <div className="fixed bottom-0 right-0 w-full max-w-md border-t border-[var(--color-border-soft)] bg-[var(--color-surface)]/95 px-4 pb-[calc(1rem_+_env(safe-area-inset-bottom))] pt-3 backdrop-blur">
+              {isAuthenticated ? (
+                <div className="grid grid-cols-2 gap-3">
+                  <Link href="/profile" onClick={closeMobileMenu}>
+                    <Button className="w-full" variant="outline">
+                      Hồ sơ
+                    </Button>
+                  </Link>
+                  <Button className="w-full" variant="primary" onClick={handleLogout}>
+                    Đăng xuất
+                  </Button>
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 gap-3">
+                  <Link href="/login" onClick={closeMobileMenu}>
+                    <Button className="w-full" variant="outline">
+                      Đăng nhập
+                    </Button>
+                  </Link>
+                  <Link href="/register" onClick={closeMobileMenu}>
+                    <Button className="w-full">
+                      Đăng ký
+                    </Button>
+                  </Link>
+                </div>
+              )}
             </div>
           </div>
         </div>

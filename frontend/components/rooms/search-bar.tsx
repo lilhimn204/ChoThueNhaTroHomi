@@ -31,8 +31,11 @@ export function SearchBar({
 
         <div className="flex flex-wrap items-center justify-between gap-3 lg:justify-end">
           <p className="min-w-0 text-sm text-[var(--color-text-muted)]">
-            <span className="font-semibold text-[var(--color-text-strong)]">{resultsCount}</span> kết
-            quả phù hợp
+            Tìm thấy{" "}
+            <span className="inline-flex rounded-full bg-[var(--badge-brand-bg)] px-2 py-0.5 font-semibold text-[var(--badge-brand-text)]">
+              {resultsCount}
+            </span>{" "}
+            phòng
           </p>
           <Button
             variant="outline"

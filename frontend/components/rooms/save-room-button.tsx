@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import type { MouseEvent } from "react";
 import { Heart } from "lucide-react";
 
 import { useAuth } from "@/hooks/use-auth";
@@ -18,12 +19,13 @@ export function SaveRoomButton({
   const { user } = useAuth();
   const [saved, setSaved] = useState(initialSaved);
   const [loading, setLoading] = useState(false);
+  const [animate, setAnimate] = useState(false);
 
   if (!user) {
     return null;
   }
 
-  const handleToggle = async (event: React.MouseEvent) => {
+  const handleToggle = async (event: MouseEvent) => {
     event.preventDefault();
     event.stopPropagation();
 
@@ -34,6 +36,8 @@ export function SaveRoomButton({
     try {
       const response = await toggleSaveRoom(roomId);
       setSaved(response.saved);
+      setAnimate(true);
+      window.setTimeout(() => setAnimate(false), 380);
     } catch {
       // Silently fail — user can try again
     } finally {
@@ -57,7 +61,7 @@ export function SaveRoomButton({
       } ${loading ? "opacity-70" : ""} disabled:cursor-not-allowed disabled:opacity-70`}
     >
       <Heart
-        className={`${iconClasses} motion-soft ${saved ? "fill-current scale-110" : "group-hover:scale-105"}`}
+        className={`${iconClasses} motion-soft ${saved ? "fill-current scale-110" : "group-hover:scale-105"} ${animate ? "animate-heart-pop" : ""}`}
       />
     </button>
   );

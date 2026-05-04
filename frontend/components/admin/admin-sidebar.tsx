@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
 import {
   Building2,
   ExternalLink,
@@ -15,6 +16,10 @@ import {
 
 import { adminNavigation } from "@/constants/site";
 import { cn } from "@/lib/utils";
+import {
+  searchAdminSupportTickets,
+  SUPPORT_TICKETS_CHANGED_EVENT,
+} from "@/services/support-service";
 
 const icons = [
   LayoutDashboard,
@@ -28,6 +33,43 @@ const icons = [
 
 export function AdminSidebar() {
   const pathname = usePathname();
+  const [newSupportTicketCount, setNewSupportTicketCount] = useState(0);
+
+  const refreshSupportTicketCount = useCallback((signal?: AbortSignal) => {
+    void searchAdminSupportTickets(
+      {
+        status: "NEW",
+        page: 0,
+        size: 1,
+      },
+      signal,
+    )
+      .then((response) => setNewSupportTicketCount(response.totalElements))
+      .catch(() => {
+        if (!signal?.aborted) {
+          setNewSupportTicketCount(0);
+        }
+      });
+  }, []);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    refreshSupportTicketCount(controller.signal);
+
+    const handleRefresh = () => refreshSupportTicketCount();
+    const handleFocus = () => refreshSupportTicketCount();
+    const interval = window.setInterval(() => refreshSupportTicketCount(), 30_000);
+
+    window.addEventListener(SUPPORT_TICKETS_CHANGED_EVENT, handleRefresh);
+    window.addEventListener("focus", handleFocus);
+
+    return () => {
+      controller.abort();
+      window.clearInterval(interval);
+      window.removeEventListener(SUPPORT_TICKETS_CHANGED_EVENT, handleRefresh);
+      window.removeEventListener("focus", handleFocus);
+    };
+  }, [refreshSupportTicketCount]);
 
   return (
     <aside className="motion-panel animate-content-rise self-start rounded-[28px] border border-white/10 bg-[var(--color-brand-950)] p-4 text-white shadow-[var(--shadow-card)] ring-1 ring-white/10 hover:-translate-y-0.5 hover:border-white/20 hover:shadow-[var(--shadow-card-hover)] xl:sticky xl:top-24">
@@ -54,7 +96,15 @@ export function AdminSidebar() {
               )}
             >
               <Icon className="motion-soft size-4 group-hover:scale-110" />
-              <span>{item.label}</span>
+              <span className="min-w-0 flex-1">{item.label}</span>
+              {item.href === "/admin/support-tickets" && newSupportTicketCount > 0 ? (
+                <span
+                  aria-label={`${newSupportTicketCount} yêu cầu hỗ trợ mới`}
+                  className="ml-auto inline-flex min-w-6 items-center justify-center rounded-full bg-[var(--color-accent-500)] px-2 py-0.5 text-xs font-bold text-[var(--color-warm-text)] shadow-sm"
+                >
+                  {newSupportTicketCount > 99 ? "99+" : newSupportTicketCount}
+                </span>
+              ) : null}
             </Link>
           );
         })}

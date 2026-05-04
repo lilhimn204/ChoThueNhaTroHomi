@@ -1,17 +1,17 @@
-# Homi Auth: Google Login and Gmail OTP
+# Auth Google, OTP Và Reset Password Guide
 
-## Environment variables
+## 1. Biến môi trường
 
 Backend:
 
 ```env
-GOOGLE_CLIENT_ID=your-google-oauth-client-id.apps.googleusercontent.com
+GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
 APP_MAIL_ENABLED=true
-APP_MAIL_FROM=your-gmail-address@gmail.com
+APP_MAIL_FROM=Homi <your-email@gmail.com>
 MAIL_HOST=smtp.gmail.com
 MAIL_PORT=587
-MAIL_USERNAME=your-gmail-address@gmail.com
-MAIL_PASSWORD=your-gmail-app-password
+MAIL_USERNAME=your-email@gmail.com
+MAIL_PASSWORD=your-google-app-password
 MAIL_SMTP_AUTH=true
 MAIL_SMTP_STARTTLS=true
 OTP_EXPIRATION_MINUTES=10
@@ -23,103 +23,104 @@ OTP_RESEND_COOLDOWN_SECONDS=60
 Frontend:
 
 ```env
-NEXT_PUBLIC_GOOGLE_CLIENT_ID=your-google-oauth-client-id.apps.googleusercontent.com
-BACKEND_URL=http://localhost:8080
-NEXT_PUBLIC_API_URL=http://localhost:8080/api/v1
+NEXT_PUBLIC_GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
 ```
 
-Use the same Google OAuth client ID for `GOOGLE_CLIENT_ID` and `NEXT_PUBLIC_GOOGLE_CLIENT_ID`.
+Không commit giá trị secret thật.
 
-## Google OAuth setup
+## 2. Đăng ký local bằng OTP
 
-1. Open Google Cloud Console and create or select a project.
-2. Configure OAuth consent screen.
-3. Create an OAuth Client ID with type `Web application`.
-4. Add authorized JavaScript origins:
-   - `http://localhost:3000`
-   - production domain, for example `https://thuenhahomi.id.vn`
-5. Copy the client ID into backend and frontend env variables.
+Endpoint:
 
-The backend verifies the Google ID token against Google token info and rejects tokens with the wrong audience, missing Google user id, unverified email, or expired token.
+- `POST /api/v1/auth/register`
+- `POST /api/v1/auth/verify-otp`
+- `POST /api/v1/auth/resend-otp`
 
-## Gmail SMTP setup
+Luồng:
 
-1. Use a Gmail account with 2-Step Verification enabled.
-2. Create an App Password for Mail.
-3. Set `MAIL_PASSWORD` to that App Password, not the normal Gmail password.
-4. Set `APP_MAIL_ENABLED=true`; otherwise OTP emails are skipped.
+1. User đăng ký bằng email/password.
+2. Backend tạo OTP và lưu hash.
+3. Backend gửi OTP qua Gmail SMTP.
+4. User nhập OTP.
+5. Backend xác minh và kích hoạt tài khoản.
 
-For local tests without sending real mail, leave `APP_MAIL_ENABLED=false`. The backend still creates OTP data, but users will not receive email.
+## 3. Đăng nhập Google
 
-## Database migration
+Endpoint:
 
-Fresh Docker databases pick up the new auth columns from `database/mysql/01_schema.sql`.
+- `POST /api/v1/auth/google`
 
-Existing MySQL databases must run:
+Luồng:
 
-```sql
-source database/mysql/09_auth_identity_verification.sql;
-```
+1. Frontend hiển thị nút Google.
+2. Google trả ID token.
+3. Frontend gửi ID token cho backend.
+4. Backend xác minh token với `GOOGLE_CLIENT_ID`.
+5. Backend tạo hoặc liên kết user.
+6. Backend cấp JWT.
 
-When using `docker compose up`, the `mysql-migrate` service runs migration scripts `04` through `09` before backend starts. Run the migration manually only when starting backend outside Docker Compose.
+Google login không cần OTP vì email đã được Google xác minh.
 
-Run migrations before starting backend with `SPRING_PROFILES_ACTIVE=prod`, because production uses `ddl-auto=validate`.
+## 4. Quên mật khẩu
 
-## Docker Compose ports
+Endpoint:
 
-Default ports:
+- `POST /api/v1/auth/forgot-password`
+- `POST /api/v1/auth/resend-password-reset-otp`
+- `POST /api/v1/auth/reset-password`
 
-```env
-MYSQL_PORT=3307
-BACKEND_PORT=8080
-FRONTEND_PORT=3000
-```
+Luồng:
 
-If port `3000` is already used, start Compose with another frontend port:
+1. User nhập email.
+2. Backend gửi OTP reset password.
+3. User nhập OTP và mật khẩu mới.
+4. Backend đổi password hash và đặt `passwordConfigured=true`.
 
-```powershell
-$env:FRONTEND_PORT="3001"
-docker compose up --build
-```
+## 5. User Google tạo password local
 
-## Auth flows
+Endpoint:
 
-Email/password register:
+- `PUT /api/v1/users/me/password/setup`
 
-1. `POST /api/v1/auth/register` creates an inactive local account and sends OTP.
-2. `POST /api/v1/auth/verify-otp` activates the account and returns tokens.
-3. `POST /api/v1/auth/login` rejects local accounts with `emailVerified=false`.
+Điều kiện:
 
-Google login:
+- User đã đăng nhập.
+- `authProvider=GOOGLE`.
+- `passwordConfigured=false`.
 
-1. Frontend gets a Google ID token from Google Identity Services.
-2. BFF `POST /api/auth/google` forwards the token to backend.
-3. Backend creates a user when email is new, or links/logs in the existing email.
-4. Google accounts are marked `emailVerified=true`, `enabled=true`, `status=ACTIVE`, with default role `USER` if no role exists.
+Sau khi setup thành công, user có thể đăng nhập bằng Google hoặc email/password.
 
-## Manual test checklist
+## 6. Lỗi thường gặp
 
-Email OTP:
+### Không gửi được OTP
 
-1. Register with a new Gmail address.
-2. Confirm the UI switches to the OTP form.
-3. Login before OTP verification; it should be rejected.
-4. Enter a wrong OTP; it should show a clear error and keep the account unverified.
-5. Click resend OTP after cooldown; it should send a new code.
-6. Enter the valid OTP; the user should be logged in and redirected.
-7. Try an expired OTP by lowering `OTP_EXPIRATION_MINUTES` temporarily or editing `otp_expires_at` in DB.
+Kiểm tra:
 
-Google:
+- `APP_MAIL_ENABLED=true`.
+- `MAIL_USERNAME` đúng email gửi.
+- `MAIL_PASSWORD` là Google App Password.
+- Gmail đã bật 2-Step Verification để tạo App Password.
+- Backend container đã nhận biến môi trường mới, cần recreate nếu đổi `.env`.
 
-1. Click Google on login/register page with a new Google email.
-2. Confirm the account is created with name, email, avatar, `USER` role.
-3. Log out, then login with Google again; it should reuse the same account.
-4. Register a local account but do not verify OTP, then use Google with the same email; it should link and activate the account.
-5. Confirm existing admin account roles are not replaced when linked.
+### Google login báo chưa cấu hình
 
-Regression:
+Kiểm tra:
 
-1. Existing verified local users can still login with password.
-2. Wrong password still returns unauthorized.
-3. Admin routes still require `ADMIN`.
-4. Host/user pages still work with existing roles.
+- `NEXT_PUBLIC_GOOGLE_CLIENT_ID` ở frontend.
+- `GOOGLE_CLIENT_ID` ở backend.
+- Rebuild frontend nếu biến môi trường được inject lúc build Docker.
+
+### Invalid Google token
+
+Kiểm tra:
+
+- Client ID frontend và backend phải cùng OAuth client.
+- Domain hiện tại phải được thêm vào Google Cloud Console.
+
+## 7. Quy tắc bảo mật
+
+- Không lưu OTP plain text.
+- Không log OTP/password/token.
+- Không lưu JWT trong localStorage.
+- Không dùng mật khẩu Gmail thật cho SMTP.
+- Token Google phải được backend xác minh, không tin dữ liệu client tự gửi.

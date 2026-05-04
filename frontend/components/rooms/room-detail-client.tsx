@@ -3,7 +3,20 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeft, Building2, CalendarDays, ExternalLink, Hash, MapPin, PhoneCall, Ruler, WalletCards } from "lucide-react";
+import {
+  ArrowLeft,
+  Building2,
+  CalendarDays,
+  ChevronLeft,
+  ChevronRight,
+  ExternalLink,
+  Hash,
+  MapPin,
+  PhoneCall,
+  Ruler,
+  WalletCards,
+  X,
+} from "lucide-react";
 
 import { useAuth } from "@/hooks/use-auth";
 import { getErrorMessage } from "@/services/api-client";
@@ -14,6 +27,7 @@ import { ContactFormCard } from "@/components/forms/contact-form-card";
 import { AmenityIcon } from "@/components/shared/amenity-icon";
 import { RoomReportCard } from "@/components/rooms/room-report-card";
 import { RoomCard } from "@/components/rooms/room-card";
+import { SaveRoomButton } from "@/components/rooms/save-room-button";
 import { LoadingSkeleton } from "@/components/shared/loading-skeleton";
 import { Alert } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
@@ -21,6 +35,7 @@ import { Button } from "@/components/ui/button";
 import { formatArea, formatCurrency, formatDate } from "@/lib/format";
 import { normalizeUploadImageSrc } from "@/lib/images";
 import { buildMapSearchUrl } from "@/lib/maps";
+import { checkRoomSaved } from "@/services/saved-room-service";
 import type { Room, RoomSummary } from "@/types";
 
 function uniqueImages(images: Room["images"]) {
@@ -69,6 +84,10 @@ export function RoomDetailClient({ slug }: { slug: string }) {
   const [relatedLoading, setRelatedLoading] = useState(false);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [touchStartX, setTouchStartX] = useState<number | null>(null);
+  const [initialSaved, setInitialSaved] = useState(false);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -77,6 +96,8 @@ export function RoomDetailClient({ slug }: { slug: string }) {
       .then((response) => {
         setRelatedRooms([]);
         setRelatedLoading(true);
+        setActiveImageIndex(0);
+        setInitialSaved(false);
         setRoom(response);
         setErrorMessage("");
       })
@@ -95,6 +116,24 @@ export function RoomDetailClient({ slug }: { slug: string }) {
 
     return () => controller.abort();
   }, [slug]);
+
+  useEffect(() => {
+    if (!user || !room) {
+      return;
+    }
+
+    const controller = new AbortController();
+
+    void checkRoomSaved(room.id, controller.signal)
+      .then((response) => setInitialSaved(response.saved))
+      .catch(() => {
+        if (!controller.signal.aborted) {
+          setInitialSaved(false);
+        }
+      });
+
+    return () => controller.abort();
+  }, [room, user]);
 
   useEffect(() => {
     if (!room) {
@@ -161,6 +200,18 @@ export function RoomDetailClient({ slug }: { slug: string }) {
     return () => controller.abort();
   }, [room]);
 
+  useEffect(() => {
+    if (!lightboxOpen) {
+      return;
+    }
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [lightboxOpen]);
+
   if (loading) {
     return (
       <div className="container-shell py-6 sm:py-10">
@@ -205,6 +256,16 @@ export function RoomDetailClient({ slug }: { slug: string }) {
   }
 
   const roomImages = uniqueImages(room.images);
+  const galleryImages = roomImages.length
+    ? roomImages
+    : [{
+        id: -1,
+        imageUrl: room.thumbnail,
+        altText: room.title,
+        sortOrder: 0,
+        isThumbnail: true,
+      }];
+  const activeImage = galleryImages[Math.min(activeImageIndex, galleryImages.length - 1)];
   const mapHref = buildMapSearchUrl({
     address: room.address,
     districtName: room.districtName,
@@ -212,6 +273,27 @@ export function RoomDetailClient({ slug }: { slug: string }) {
   });
   const isOwnRoom = user && room.ownerId != null && user.id === room.ownerId;
   const roomTypeLabel = roomTypeLabelByValue[room.roomType];
+  const showPreviousImage = () => {
+    setActiveImageIndex((current) => (current - 1 + galleryImages.length) % galleryImages.length);
+  };
+  const showNextImage = () => {
+    setActiveImageIndex((current) => (current + 1) % galleryImages.length);
+  };
+  const handleTouchEnd = (clientX: number) => {
+    if (touchStartX == null) {
+      return;
+    }
+
+    const deltaX = touchStartX - clientX;
+    if (Math.abs(deltaX) > 36) {
+      if (deltaX > 0) {
+        showNextImage();
+      } else {
+        showPreviousImage();
+      }
+    }
+    setTouchStartX(null);
+  };
 
   return (
     <div className="container-shell py-6 sm:py-10">
@@ -225,31 +307,47 @@ export function RoomDetailClient({ slug }: { slug: string }) {
 
       <div className="mt-5 grid min-w-0 gap-5 sm:mt-6 sm:gap-6 xl:grid-cols-[1.2fr_0.8fr]">
         <section className="min-w-0 space-y-5 sm:space-y-6">
-          <div className="animate-content-rise grid min-w-0 gap-3 sm:gap-4 lg:grid-cols-[1.2fr_0.8fr]">
-            <div className="group relative h-64 overflow-hidden rounded-[24px] shadow-[var(--shadow-card-hover)] sm:h-[28rem] sm:rounded-[32px]">
+          <div className="animate-content-rise min-w-0 space-y-3 sm:space-y-4">
+            <button
+              type="button"
+              className="group relative h-64 w-full overflow-hidden rounded-[24px] text-left shadow-[var(--shadow-card-hover)] sm:h-[28rem] sm:rounded-[32px]"
+              onClick={() => setLightboxOpen(true)}
+              onTouchStart={(event) => setTouchStartX(event.touches[0]?.clientX ?? null)}
+              onTouchEnd={(event) => handleTouchEnd(event.changedTouches[0]?.clientX ?? 0)}
+            >
               <Image
-                src={normalizeUploadImageSrc(roomImages[0]?.imageUrl ?? room.thumbnail)}
-                alt={room.title}
+                src={normalizeUploadImageSrc(activeImage.imageUrl)}
+                alt={activeImage.altText || room.title}
                 fill
                 className="object-cover transition-[filter,transform] duration-700 ease-out group-hover:scale-[1.03] group-hover:saturate-[1.08]"
                 sizes="(max-width: 1200px) 100vw, 65vw"
                 priority
               />
-            </div>
-            <div className="motion-stagger grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-1">
-              {roomImages.slice(1, 3).map((image) => (
-                <div
+              <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-black/15" />
+              <div className="absolute bottom-4 left-4 rounded-full bg-black/55 px-3 py-1.5 text-sm font-semibold text-white backdrop-blur">
+                {activeImageIndex + 1}/{galleryImages.length}
+              </div>
+            </button>
+            <div className="flex gap-3 overflow-x-auto pb-1">
+              {galleryImages.map((image, index) => (
+                <button
                   key={image.id}
-                  className="motion-panel group relative h-28 overflow-hidden rounded-[20px] border border-white/70 shadow-[var(--shadow-card)] hover:-translate-y-0.5 hover:shadow-[var(--shadow-card-hover)] sm:h-44 sm:rounded-[28px]"
+                  type="button"
+                  onClick={() => setActiveImageIndex(index)}
+                  className={`motion-pressable relative h-20 w-28 shrink-0 overflow-hidden rounded-2xl border shadow-sm sm:h-24 sm:w-36 ${
+                    activeImageIndex === index
+                      ? "border-[var(--color-brand-500)] ring-2 ring-[var(--color-focus-ring)]"
+                      : "border-[var(--color-border-card)] hover:-translate-y-0.5 hover:border-[var(--color-border-strong)]"
+                  }`}
                 >
                   <Image
                     src={normalizeUploadImageSrc(image.imageUrl)}
-                    alt={image.altText}
+                    alt={image.altText || room.title}
                     fill
-                    className="object-cover transition-[filter,transform] duration-700 ease-out group-hover:scale-105 group-hover:saturate-[1.08]"
-                    sizes="(max-width: 1200px) 50vw, 25vw"
+                    className="object-cover"
+                    sizes="144px"
                   />
-                </div>
+                </button>
               ))}
             </div>
           </div>
@@ -443,6 +541,19 @@ export function RoomDetailClient({ slug }: { slug: string }) {
             </div>
 
             <div className="mt-5 grid gap-3 sm:mt-6">
+              {user ? (
+                <div className="flex items-center gap-3 rounded-[22px] bg-[var(--color-surface-soft)] px-4 py-3">
+                  <SaveRoomButton
+                    key={`${room.id}-${initialSaved}`}
+                    roomId={room.id}
+                    initialSaved={initialSaved}
+                    size="md"
+                  />
+                  <span className="text-sm font-semibold text-[var(--color-text-strong)]">
+                    Lưu phòng để quay lại so sánh sau
+                  </span>
+                </div>
+              ) : null}
               <a href={`tel:${room.contactPhone}`}>
                 <Button size="lg" className="w-full">
                   Gọi ngay
@@ -488,6 +599,60 @@ export function RoomDetailClient({ slug }: { slug: string }) {
         </aside>
       </div>
 
+      {lightboxOpen ? (
+        <div
+          className="fixed inset-0 z-[80] bg-black/88 p-3 backdrop-blur-sm animate-overlay-in sm:p-6"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Xem ảnh phòng"
+          onTouchStart={(event) => setTouchStartX(event.touches[0]?.clientX ?? null)}
+          onTouchEnd={(event) => handleTouchEnd(event.changedTouches[0]?.clientX ?? 0)}
+        >
+          <button
+            type="button"
+            aria-label="Đóng ảnh"
+            onClick={() => setLightboxOpen(false)}
+            className="motion-pressable absolute right-4 top-4 z-10 flex size-11 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur hover:bg-white/18"
+          >
+            <X className="size-5" />
+          </button>
+
+          {galleryImages.length > 1 ? (
+            <>
+              <button
+                type="button"
+                aria-label="Ảnh trước"
+                onClick={showPreviousImage}
+                className="motion-pressable absolute left-4 top-1/2 z-10 flex size-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur hover:bg-white/18"
+              >
+                <ChevronLeft className="size-6" />
+              </button>
+              <button
+                type="button"
+                aria-label="Ảnh sau"
+                onClick={showNextImage}
+                className="motion-pressable absolute right-4 top-1/2 z-10 flex size-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur hover:bg-white/18"
+              >
+                <ChevronRight className="size-6" />
+              </button>
+            </>
+          ) : null}
+
+          <div className="relative mx-auto flex h-full max-w-6xl items-center justify-center">
+            <Image
+              src={normalizeUploadImageSrc(activeImage.imageUrl)}
+              alt={activeImage.altText || room.title}
+              fill
+              className="object-contain"
+              sizes="100vw"
+            />
+          </div>
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full bg-white/10 px-3 py-1.5 text-sm font-semibold text-white backdrop-blur">
+            {activeImageIndex + 1}/{galleryImages.length}
+          </div>
+        </div>
+      ) : null}
+
       <section className="mt-8 sm:mt-10">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
           <div>
@@ -513,9 +678,11 @@ export function RoomDetailClient({ slug }: { slug: string }) {
             ))}
           </div>
         ) : relatedRooms.length ? (
-          <div className="motion-stagger mt-5 grid gap-4 sm:mt-6 sm:gap-5 md:grid-cols-2 xl:grid-cols-4">
+          <div className="motion-stagger mt-5 flex snap-x gap-4 overflow-x-auto pb-2 sm:mt-6 sm:gap-5">
             {relatedRooms.map((relatedRoom) => (
-              <RoomCard key={relatedRoom.id} room={relatedRoom} />
+              <div key={relatedRoom.id} className="w-[min(22rem,85vw)] shrink-0 snap-start">
+                <RoomCard room={relatedRoom} />
+              </div>
             ))}
           </div>
         ) : (

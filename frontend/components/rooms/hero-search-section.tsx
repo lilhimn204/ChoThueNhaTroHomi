@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, MapPin, ShieldCheck, Sparkles } from "lucide-react";
 
+import { AnimatedCounter } from "@/components/shared/animated-counter";
 import { Button } from "@/components/ui/button";
 import { getRoomStats } from "@/services/room-service";
 import type { RoomStats } from "@/types";
@@ -27,7 +28,10 @@ export function HeroSearchSection() {
 
   return (
     <section className="container-shell pt-8 sm:pt-12">
-      <div className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
+      <div className="relative overflow-hidden rounded-[32px] border border-[var(--color-border-card)] bg-[linear-gradient(135deg,var(--color-surface),var(--color-brand-50),var(--color-surface-soft),var(--color-surface))] p-4 shadow-[var(--shadow-card)] animate-ambient-gradient sm:rounded-[40px] sm:p-6 lg:p-8">
+        <div className="pattern-grid pointer-events-none absolute inset-0 opacity-70" />
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[var(--color-brand-500)] to-transparent opacity-70" />
+      <div className="relative grid gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
         <div className="animate-content-rise space-y-6">
           <p className="motion-soft inline-flex items-center gap-2 rounded-full border border-white/35 bg-[var(--badge-brand-bg)] px-4 py-2 text-sm font-semibold text-[var(--badge-brand-text)] shadow-sm backdrop-blur-sm hover:-translate-y-0.5 hover:shadow-[var(--shadow-card)]">
             <Sparkles className="size-4" />
@@ -42,9 +46,12 @@ export function HeroSearchSection() {
               hiển thị rõ giá thuê, địa chỉ, trạng thái còn phòng và thông tin liên hệ
               để bạn chủ động hẹn xem.
             </p>
+            <p className="typing-line text-sm font-semibold text-[var(--color-brand-700)] sm:text-base">
+              Ưu tiên phòng rõ giá, rõ vị trí, dễ liên hệ.
+            </p>
           </div>
 
-          <div className="motion-panel surface-panel pattern-grid rounded-[32px] border border-white/80 p-4 shadow-[var(--shadow-card)] hover:-translate-y-0.5 hover:shadow-[var(--shadow-card-hover)] sm:p-5">
+          <div className="motion-panel surface-panel pattern-grid shine-surface rounded-[32px] border border-white/80 p-4 shadow-[var(--shadow-card)] hover:-translate-y-0.5 hover:border-[var(--color-brand-500)] hover:shadow-[var(--shadow-card-hover)] sm:p-5">
             <div className="motion-stagger grid gap-3 md:grid-cols-[1.2fr_0.9fr_0.9fr_auto]">
               <label className="motion-soft space-y-2 rounded-[24px] bg-[var(--color-surface-elevated)] px-4 py-3 shadow-sm hover:-translate-y-0.5 hover:shadow-[var(--shadow-card)]">
                 <span className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--color-text-muted)]">
@@ -101,7 +108,7 @@ export function HeroSearchSection() {
               <div className="motion-soft rounded-[28px] bg-[var(--color-brand-700)] p-5 text-white shadow-[var(--shadow-button)] hover:-translate-y-0.5">
                 <p className="text-sm font-medium text-white/75">Phòng đang hiển thị</p>
                 <p className="mt-3 text-4xl font-semibold" aria-live="polite">
-                  {stats ? stats.visibleRooms : "..."}
+                  {stats ? <AnimatedCounter value={stats.visibleRooms} /> : "..."}
                 </p>
                 <p className="mt-3 text-sm leading-6 text-white/80">
                   Tính theo số bài đăng đang được hiển thị công khai.
@@ -110,7 +117,7 @@ export function HeroSearchSection() {
               <div className="motion-soft rounded-[28px] bg-[var(--color-surface-soft)] p-5 shadow-sm hover:-translate-y-0.5 hover:shadow-[var(--shadow-card)]">
                 <p className="text-sm font-medium text-[var(--color-text-muted)]">Tỷ lệ phòng còn trống</p>
                 <p className="mt-3 text-4xl font-semibold text-[var(--color-text-strong)]">
-                  {stats ? `${stats.availableRate}%` : "..."}
+                  {stats ? <AnimatedCounter value={stats.availableRate} suffix="%" /> : "..."}
                 </p>
                 <p className="mt-3 text-sm leading-6 text-[var(--color-text-muted)]">
                   Dựa trên tỷ lệ phòng còn trống trong danh sách đang hiển thị.
@@ -130,6 +137,7 @@ export function HeroSearchSection() {
             </div>
           </div>
         </div>
+      </div>
       </div>
     </section>
   );

@@ -1,114 +1,69 @@
-# Rental Room Website - Step 4 Frontend Design System
+# Frontend Design System Notes
 
-## Frontend stack
+Frontend Homi dùng Next.js App Router, React, TypeScript và Tailwind CSS. Giao diện hướng tới sản phẩm tìm phòng: rõ ràng, dễ quét thông tin, hỗ trợ light/dark mode và responsive.
 
-- Next.js 16
-- React 19
-- TailwindCSS 4
-- TypeScript
+## 1. Nguyên tắc UI
 
-## Design direction applied
+- Form có label, validate, loading, success/error.
+- Button có hover/focus/active state.
+- Card phòng ưu tiên ảnh, giá, khu vực, trạng thái và CTA.
+- Admin/CMS ưu tiên bảng, filter, action rõ.
+- Mobile menu phải hiển thị đầy đủ các dropdown: Tìm phòng, Khám phá, Tin tức, Hỗ trợ.
+- Không đặt text quá lớn trong panel nhỏ.
 
-Style chosen:
+## 2. Navigation
 
-- calm utility
-- light surfaces
-- blue-teal primary palette
-- warm accent used sparingly
-- clear typography hierarchy
-- rounded cards with soft elevation
+Nguồn dữ liệu điều hướng nằm ở `frontend/constants/site.ts`:
 
-Why this works for a rental room website:
+- `headerNavigation`
+- `roomSearchNavigation`
+- `exploreNavigation`
+- `supportNavigation`
+- `adminNavigation`
+- `cmsNavigation`
+- `hostNavigation`
 
-- users need trust and clarity more than decorative visuals
-- room cards must be easy to scan quickly
-- filters must feel structured, not crowded
-- admin pages need density and control, not marketing visuals
+Khi sửa menu, ưu tiên sửa constant chung thay vì hard-code trong component.
 
-## Typography
+## 3. Room type UI
 
-- Heading font: `Plus Jakarta Sans`
-- Body font: `Inter`
+Các option tìm phòng:
 
-## Color system
+- Tất cả phòng.
+- Cho thuê căn hộ chung cư.
+- Cho thuê chung cư mini, căn hộ dịch vụ.
+- Cho thuê nhà riêng.
+- Cho thuê nhà trọ, phòng trọ.
+- Phòng đã lưu.
+- Lịch sử liên hệ.
 
-- Brand deep: `#0F4C5C`
-- Brand support: `#1F7A8C`
-- Accent warm: `#E59F3A`
-- Background: `#F6F8FB`
-- Surface: `#FFFFFF`
-- Text strong: `#102A43`
-- Text muted: `#627D98`
+Frontend query dùng:
 
-## Core UI components completed
+- `apartment`
+- `mini-apartment`
+- `private-house`
+- `boarding-room`
 
-- Header
-- Footer
-- Hero search section
-- Search bar
-- Room card
-- Filter sidebar
-- Mobile filter drawer
-- Pagination
-- Empty state
-- Loading skeleton
-- Alert feedback
-- Login form
-- Register form
-- Profile form
-- Admin sidebar
-- Admin stat card
-- Admin table
+## 4. Auth UI
 
-## Main pages completed
+- Login/register có nút Google thống nhất.
+- Register local chuyển sang bước nhập OTP.
+- Forgot password có bước gửi OTP và reset password.
+- Profile có 2 tab: chỉnh sửa thông tin và cài đặt tài khoản.
 
-- Home
-- Room listing
-- Room detail
-- Login
-- Register
-- Profile
-- Contact history
-- Admin dashboard
-- Admin room management
-- Admin contact request management
+## 5. Admin/CMS UI
 
-## UX rules applied
+- Admin sidebar có các mục quản lý chính.
+- Admin có nút mở CMS cho role admin.
+- CMS có layout riêng cho bài viết, danh mục, media, settings.
 
-- labels are always visible on forms
-- CTA buttons are clear and consistent
-- card information is prioritized instead of overloaded
-- mobile filter uses a drawer with apply/reset actions
-- empty states explain what to do next
-- hover and focus states are visible but restrained
-- admin area is visually distinct from the public site
+## 6. Kiểm tra UI
 
-## Anti-patterns avoided
+Khi sửa UI nên kiểm tra:
 
-- no oversized meaningless hero
-- no rainbow gradients or flashy neon color usage
-- no overloaded room cards
-- no bootstrap-like admin panel styling
-- no placeholder-only forms
-- no filter layout that collapses into chaos on mobile
-- no public/admin visual duplication
-
-## Build verification
-
-Frontend verification completed with:
-
-- `npm run lint`
-- `npm test`
-- `npm run build`
-
-All commands passed successfully after the frontend build/lint/test fixes.
-
-## Current integration note
-
-Current frontend pages are wired to real backend APIs through:
-
-- public API calls for room/district/amenity data
-- Next.js API proxy for authenticated user, host and admin calls
-- authentication state
-- protected routes
-- backend-driven loading, error, and empty states
+- Desktop 1440px.
+- Tablet.
+- Mobile.
+- Light/dark mode.
+- Empty state.
+- Loading/error state.

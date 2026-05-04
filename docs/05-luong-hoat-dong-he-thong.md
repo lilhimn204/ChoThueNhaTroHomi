@@ -1,345 +1,207 @@
-# 05. Luồng hoạt động hệ thống
+# 05. Luồng Hoạt Động Hệ Thống
 
-## 1. Luồng đăng ký bằng email và OTP
+## 1. Luồng đăng ký email bằng OTP
 
-### Mô tả
-
-Người dùng nhập thông tin đăng ký. Backend tạo tài khoản tạm ở trạng thái chưa kích hoạt, sinh OTP và gửi email nếu cấu hình mail được bật. Sau khi người dùng nhập OTP hợp lệ, backend kích hoạt tài khoản và cấp token.
-
-```mermaid
-sequenceDiagram
-    actor User as Người dùng
-    participant FE as Frontend
-    participant BFF as Next.js Auth Route
-    participant BE as Spring Boot API
-    participant DB as MySQL
-    participant Mail as Email Service
-
-    User->>FE: Nhập thông tin đăng ký
-    FE->>BFF: POST /api/auth/register
-    BFF->>BE: POST /api/v1/auth/register
-    BE->>DB: Kiểm tra email và tạo user INACTIVE
-    BE->>DB: Lưu OTP hash, hạn OTP
-    BE->>Mail: Gửi OTP nếu mail enabled
-    BE-->>BFF: RegistrationOtpResponse
-    BFF-->>FE: Thông tin OTP
-    FE-->>User: Hiển thị form nhập OTP
-
-    User->>FE: Nhập OTP
-    FE->>BFF: POST /api/auth/verify-otp
-    BFF->>BE: POST /api/v1/auth/verify-otp
-    BE->>DB: Kiểm tra OTP hash, hạn, số lần nhập
-    BE->>DB: Kích hoạt user ACTIVE
-    BE->>DB: Tạo refresh token hash
-    BE-->>BFF: AuthResponse
-    BFF->>BFF: Lưu HttpOnly cookies
-    BFF-->>FE: User profile
-    FE-->>User: Chuyển đến trang phù hợp
+```text
+User nhập form đăng ký
+  -> Frontend gọi /api/auth/register
+  -> Next.js BFF gọi POST /api/v1/auth/register
+  -> Backend validate dữ liệu và email trùng
+  -> Tạo/cập nhật user local chưa xác minh
+  -> Sinh OTP 6 số, hash OTP, lưu hạn dùng
+  -> Gửi OTP qua Gmail SMTP
+  -> Frontend chuyển sang bước nhập OTP
+  -> User nhập OTP
+  -> POST /api/v1/auth/verify-otp
+  -> Backend kiểm tra hash, hạn dùng, số lần thử
+  -> Kích hoạt tài khoản, cấp access/refresh token
 ```
 
-### Luồng lỗi
+Điểm cần kiểm tra:
 
-- Email đã tồn tại: backend trả lỗi nghiệp vụ.
-- OTP sai: tăng số lần nhập sai.
-- OTP hết hạn: yêu cầu gửi lại OTP.
-- Vượt số lần gửi lại: backend chặn resend.
-- Mail chưa cấu hình: chưa đủ thông tin để đánh giá trong môi trường production; code có xử lý báo lỗi/ghi log tùy cấu hình.
+- OTP không lưu plain text.
+- OTP có thời hạn, số lần nhập sai và số lần gửi lại.
+- Nếu gửi mail thất bại, frontend hiển thị lỗi rõ.
+- User local chưa verify không được đăng nhập.
 
-## 2. Luồng đăng nhập
+## 2. Luồng gửi lại OTP đăng ký
 
-```mermaid
-sequenceDiagram
-    actor User as Người dùng
-    participant FE as Frontend
-    participant BFF as Next.js Auth Route
-    participant BE as Spring Boot API
-    participant DB as MySQL
-
-    User->>FE: Nhập email và mật khẩu
-    FE->>BFF: POST /api/auth/login
-    BFF->>BE: POST /api/v1/auth/login
-    BE->>DB: Tải user theo email
-    BE->>BE: Xác thực mật khẩu bằng Spring Security
-    BE->>BE: Kiểm tra trạng thái ACTIVE/enabled
-    BE->>DB: Tạo refresh token hash
-    BE-->>BFF: AuthResponse
-    BFF->>BFF: Set cookie homi_token và homi_refresh_token
-    BFF-->>FE: User profile
-    FE-->>User: Cập nhật trạng thái đăng nhập
+```text
+User bấm gửi lại OTP
+  -> Frontend gọi /api/auth/resend-otp
+  -> Backend kiểm tra email, trạng thái verify, cooldown, resend count
+  -> Sinh OTP mới, hash và gửi mail
 ```
 
-### Refresh phiên đăng nhập
+Nếu quá số lần gửi hoặc đang trong cooldown, backend trả lỗi nghiệp vụ để frontend hiển thị.
 
-```mermaid
-sequenceDiagram
-    participant FE as Frontend
-    participant Proxy as Next.js Proxy
-    participant BE as Spring Boot API
-    participant DB as MySQL
+## 3. Luồng đăng nhập email/password
 
-    FE->>Proxy: Gọi API cần xác thực
-    Proxy->>Proxy: Đọc homi_token
-    alt Không có token hoặc backend trả 401
-        Proxy->>BE: POST /api/v1/auth/refresh
-        BE->>DB: Kiểm tra refresh token hash
-        BE->>DB: Revoke token cũ, tạo token mới
-        BE-->>Proxy: AuthResponse mới
-        Proxy->>Proxy: Cập nhật cookie
-    end
-    Proxy->>BE: Forward request với Authorization Bearer
-    BE-->>Proxy: Response nghiệp vụ
-    Proxy-->>FE: Response
+```text
+User nhập email/password
+  -> Frontend gọi /api/auth/login
+  -> Backend xác thực password hash
+  -> Kiểm tra user không bị khóa
+  -> Kiểm tra emailVerified=true
+  -> Cấp access token và refresh token
+  -> Next.js lưu token vào HttpOnly cookie
+  -> Điều hướng về trang phù hợp
 ```
 
-## 3. Luồng tìm kiếm và xem chi tiết phòng
+## 4. Luồng đăng nhập Google
 
-### Tìm kiếm/lọc phòng
-
-```mermaid
-flowchart TD
-    A["Người dùng mở /rooms"] --> B["Frontend tải lookup districts và amenities"]
-    B --> C["Người dùng nhập từ khóa hoặc bộ lọc"]
-    C --> D["useRoomSearch đồng bộ state vào URL query"]
-    D --> E["Frontend gọi GET /api/v1/rooms"]
-    E --> F["Backend RoomController nhận query params"]
-    F --> G["RoomService gọi RoomSpecifications.publicSearch"]
-    G --> H["MySQL lọc phòng không HIDDEN và theo tiêu chí"]
-    H --> I["Backend trả PageResponse<RoomSummary>"]
-    I --> J["Frontend hiển thị RoomCard và phân trang"]
+```text
+User bấm Đăng nhập bằng Google
+  -> Google Identity trả ID token
+  -> Frontend gọi /api/auth/google
+  -> Backend xác minh ID token với Google client id
+  -> Tìm user theo googleId hoặc email
+  -> Nếu chưa có, tạo user authProvider=GOOGLE, emailVerified=true, role USER
+  -> Nếu đã có, đăng nhập/liên kết theo email
+  -> Cấp token
+  -> Frontend cập nhật trạng thái đăng nhập
 ```
 
-### Xem chi tiết phòng
+Google login không cần OTP vì email đã được Google xác thực. Nếu user Google chưa có mật khẩu local, hồ sơ sẽ hiển thị chức năng tạo mật khẩu.
 
-```mermaid
-flowchart TD
-    A["Người dùng chọn Xem chi tiết"] --> B["Frontend mở /rooms/[slug]"]
-    B --> C["Gọi GET /api/v1/rooms/{slug}"]
-    C --> D["Backend tìm phòng theo slug và status != HIDDEN"]
-    D --> E{"Tìm thấy phòng?"}
-    E -- "Không" --> F["Trả 404"]
-    E -- "Có" --> G["Trả RoomDetailResponse"]
-    G --> H["Frontend hiển thị ảnh, tiện ích, giá, liên hệ"]
-    H --> I["Frontend tải phòng gợi ý liên quan"]
+## 5. Luồng quên mật khẩu
+
+```text
+User nhập email
+  -> POST /api/v1/auth/forgot-password
+  -> Backend kiểm tra user tồn tại
+  -> Sinh OTP reset password, hash, lưu hạn dùng
+  -> Gửi email
+  -> User nhập OTP + mật khẩu mới
+  -> POST /api/v1/auth/reset-password
+  -> Backend kiểm tra OTP, đổi password hash
+  -> Đánh dấu passwordConfigured=true
 ```
 
-## 4. Luồng lưu phòng
+## 6. Luồng tạo mật khẩu cho user Google
 
-```mermaid
-sequenceDiagram
-    actor User as Người thuê phòng
-    participant FE as Frontend
-    participant Proxy as Next.js Proxy
-    participant BE as Spring Boot API
-    participant DB as MySQL
-
-    User->>FE: Bấm nút lưu phòng
-    FE->>Proxy: POST /api/proxy/saved-rooms/{roomId}
-    Proxy->>BE: POST /api/v1/saved-rooms/{roomId}
-    BE->>DB: Tìm saved_rooms theo user_id và room_id
-    alt Đã lưu
-        BE->>DB: Xóa bản ghi saved_rooms
-        BE-->>Proxy: {"saved": false}
-    else Chưa lưu
-        BE->>DB: Kiểm tra phòng tồn tại
-        BE->>DB: Tạo bản ghi saved_rooms
-        BE-->>Proxy: {"saved": true}
-    end
-    Proxy-->>FE: Kết quả toggle
-    FE-->>User: Cập nhật trạng thái nút trái tim
+```text
+User Google vào /profile
+  -> Frontend lấy /api/v1/users/me
+  -> Nếu authProvider=GOOGLE và passwordConfigured=false
+  -> Hiển thị form tạo mật khẩu
+  -> PUT /api/v1/users/me/password/setup
+  -> Backend validate mật khẩu mới
+  -> Lưu password hash, passwordConfigured=true
+  -> User có thể đăng nhập bằng Google hoặc email/password
 ```
 
-### Xem danh sách phòng đã lưu
+Nếu user đã có password, frontend hiển thị form đổi mật khẩu truyền thống.
 
-```mermaid
-flowchart TD
-    A["Người dùng mở /saved-rooms"] --> B["RequireAuth kiểm tra đăng nhập"]
-    B --> C["Frontend gọi GET /api/v1/saved-rooms qua proxy"]
-    C --> D["Backend lấy saved_rooms theo user hiện tại"]
-    D --> E["Join thông tin room và district"]
-    E --> F["Trả PageResponse<SavedRoomResponse>"]
-    F --> G["Frontend hiển thị danh sách phòng đã lưu"]
+## 7. Luồng tìm phòng
+
+```text
+User mở /rooms hoặc click dropdown Tìm phòng
+  -> Frontend đọc query: type, district, price, area, amenities, status, sort
+  -> Gọi GET /api/v1/rooms qua public proxy hoặc API client
+  -> Backend lọc bằng RoomService/repository
+  -> Trả danh sách phòng
+  -> Frontend render cards hoặc empty state
 ```
 
-## 5. Luồng gửi yêu cầu xem phòng/liên hệ
+Query loại phòng:
 
-```mermaid
-sequenceDiagram
-    actor Tenant as Người thuê phòng
-    participant FE as Trang chi tiết phòng
-    participant Proxy as Next.js Proxy
-    participant BE as ContactRequestService
-    participant DB as MySQL
-    participant Noti as NotificationService
-    participant Mail as Email Service
+- `type=apartment`
+- `type=mini-apartment`
+- `type=private-house`
+- `type=boarding-room`
 
-    Tenant->>FE: Nhập form yêu cầu xem phòng
-    FE->>Proxy: POST /api/proxy/contact-requests
-    Proxy->>BE: POST /api/v1/contact-requests
-    BE->>DB: Tải user hiện tại
-    BE->>DB: Tải phòng theo roomId
-    BE->>BE: Kiểm tra phòng không HIDDEN
-    BE->>BE: Kiểm tra user không phải chủ bài đăng
-    BE->>DB: Lưu contact_requests
-    BE->>Noti: Tạo thông báo cho host/admin
-    Noti->>DB: Lưu notifications
-    Noti->>Mail: Gửi email nếu app.mail.enabled=true
-    BE-->>Proxy: ContactRequestResponse
-    Proxy-->>FE: ContactRequestResponse
-    FE-->>Tenant: Hiển thị gửi thành công
+Backend map sang enum:
+
+- `APARTMENT`
+- `MINI_APARTMENT`
+- `PRIVATE_HOUSE`
+- `BOARDING_ROOM`
+
+## 8. Luồng lưu phòng
+
+```text
+User bấm lưu phòng
+  -> Nếu chưa đăng nhập, điều hướng đăng nhập
+  -> Nếu đã đăng nhập, gọi POST /api/v1/saved-rooms/{roomId}
+  -> Backend toggle hoặc lưu trạng thái
+  -> Frontend cập nhật icon/trạng thái
 ```
 
-### Luồng thay thế/lỗi
+Danh sách phòng đã lưu lấy từ `GET /api/v1/saved-rooms`.
 
-- Chưa đăng nhập: frontend yêu cầu đăng nhập trước khi gửi.
-- Phòng không tồn tại hoặc bị ẩn: backend trả lỗi không tìm thấy.
-- Người gửi là chủ bài đăng: backend trả lỗi nghiệp vụ.
-- Dữ liệu form sai định dạng: backend trả validation error.
+## 9. Luồng gửi yêu cầu liên hệ
 
-## 6. Luồng chủ trọ đăng và quản lý bài viết
-
-### Tạo bài đăng
-
-```mermaid
-flowchart TD
-    A["Người đăng tin mở /host/posts/create"] --> B["RequireAuth kiểm tra đăng nhập"]
-    B --> C["Frontend tải districts và amenities"]
-    C --> D["Người dùng nhập thông tin phòng và ảnh"]
-    D --> E["Nếu upload ảnh: POST /api/v1/uploads/rooms qua proxy"]
-    E --> F["Backend lưu ảnh, nén JPEG, tạo thumbnail"]
-    F --> G["Frontend nhận URL ảnh"]
-    G --> H["Submit POST /api/v1/host/rooms"]
-    H --> I["HostService tạo phòng với created_by=userId"]
-    I --> J["RoomService tạo listing_code, slug, lưu amenities/images"]
-    J --> K["MySQL lưu rooms, room_images, room_amenities"]
-    K --> L["Frontend chuyển về /host/posts"]
+```text
+User gửi form liên hệ/xem phòng
+  -> POST /api/v1/contact-requests
+  -> Backend lưu request, liên kết user/room nếu có
+  -> Host xem trong /host/customers
+  -> Admin xem trong /admin/contact-requests
 ```
 
-### Quản lý bài đăng
+## 10. Luồng báo cáo tin sai và liên hệ Homi
 
-```mermaid
-flowchart TD
-    A["Host mở /host/posts"] --> B["GET /api/v1/host/rooms"]
-    B --> C["Backend lọc rooms theo created_by=userId"]
-    C --> D["Frontend hiển thị danh sách bài đăng"]
-    D --> E{"Host chọn thao tác"}
-    E -- "Sửa" --> F["GET /host/rooms/{id}, PUT /host/rooms/{id}"]
-    E -- "Ẩn/hiện" --> G["PATCH /host/rooms/{id}/status"]
-    E -- "Còn/hết phòng" --> G
-    E -- "Xóa" --> H["DELETE /host/rooms/{id}"]
-    F --> I["Backend ensureOwnedRoom"]
-    G --> I
-    H --> I
-    I --> J["Chỉ thao tác nếu bài thuộc user hiện tại"]
+Báo cáo tin sai:
+
+```text
+/support/bao-cao-tin-sai hoặc chi tiết phòng
+  -> POST /api/v1/room-reports
+  -> Admin xử lý tại /admin/room-reports
 ```
 
-### Quản lý khách liên hệ
+Liên hệ Homi:
 
-```mermaid
-flowchart TD
-    A["Host mở /host/customers"] --> B["GET /api/v1/host/contact-requests"]
-    B --> C["Backend lấy contact_requests theo room.created_by=userId"]
-    C --> D["Frontend hiển thị khách quan tâm"]
-    D --> E["Host cập nhật trạng thái"]
-    E --> F["PATCH /api/v1/host/contact-requests/{id}/status"]
-    F --> G["Backend kiểm tra request thuộc bài của host"]
-    G --> H["Cập nhật status, note, handled_by, handled_at"]
+```text
+/support/lien-he
+  -> POST /api/v1/support-tickets
+  -> Admin xử lý tại /admin/support-tickets
 ```
 
-## 7. Luồng admin quản lý hệ thống
+## 11. Luồng đăng tin host
 
-### Truy cập admin
-
-```mermaid
-flowchart TD
-    A["Admin mở /admin"] --> B["RequireAuth roles ADMIN"]
-    B --> C{"User có ADMIN?"}
-    C -- "Không" --> D["Redirect về trang chủ"]
-    C -- "Có" --> E["Gọi API /api/v1/admin/** qua proxy"]
-    E --> F["Backend SecurityConfig kiểm tra ROLE_ADMIN"]
-    F --> G["Trả dữ liệu admin"]
+```text
+Host mở /host/posts/create
+  -> Nhập thông tin phòng, loại phòng, giá, diện tích, khu vực, tiện ích
+  -> Upload ảnh nếu có
+  -> POST /api/v1/host/rooms
+  -> Backend validate và lưu rooms, room_images, room_amenities
+  -> Phòng xuất hiện ở danh sách nếu trạng thái phù hợp
 ```
 
-### Dashboard admin
+Sửa phòng dùng `PUT /api/v1/host/rooms/{roomId}`. Xóa phòng dùng `DELETE /api/v1/host/rooms/{roomId}`.
 
-```mermaid
-flowchart TD
-    A["Admin mở dashboard"] --> B["GET /api/v1/admin/dashboard"]
-    B --> C["AdminDashboardService đếm rooms/users/contact_requests"]
-    C --> D["Trả tổng quan và danh sách gần đây"]
-    A --> E["GET /api/v1/admin/dashboard/charts"]
-    E --> F["Đếm phòng theo quận, phòng theo trạng thái, yêu cầu theo trạng thái"]
-    F --> G["Frontend hiển thị Recharts"]
+## 12. Luồng admin quản lý người dùng
+
+```text
+Admin mở /admin/users
+  -> GET /api/v1/admin/users
+  -> Tìm kiếm/lọc trạng thái
+  -> Xem chi tiết user
+  -> PATCH status để khóa/mở khóa
+  -> PATCH roles để phân quyền
+  -> PATCH verify-email để xác minh email thủ công
 ```
 
-### Quản lý phòng
+Backend phải chặn thao tác nguy hiểm như tự khóa chính admin hiện tại nếu có logic bảo vệ.
 
-```mermaid
-flowchart TD
-    A["Admin mở /admin/rooms"] --> B["GET /api/v1/admin/rooms"]
-    B --> C["Lọc theo keyword, status, district"]
-    C --> D["Admin xem bảng bài đăng"]
-    D --> E{"Thao tác"}
-    E -- "Tạo" --> F["POST /api/v1/admin/rooms"]
-    E -- "Cập nhật trạng thái" --> G["PATCH /api/v1/admin/rooms/{id}/status"]
-    E -- "Xóa" --> H["DELETE /api/v1/admin/rooms/{id}"]
-    F --> I["RoomService xử lý toàn hệ thống"]
-    G --> I
-    H --> I
+## 13. Luồng tin tức/CMS
+
+Public:
+
+```text
+User mở /news
+  -> GET /api/v1/news
+  -> Hiển thị bài đã xuất bản
+  -> Click bài -> /news/[slug] -> GET /api/v1/news/{slug}
 ```
 
-### Quản lý yêu cầu liên hệ
+Admin/CMS:
 
-```mermaid
-flowchart TD
-    A["Admin mở /admin/contact-requests"] --> B["GET /api/v1/admin/contact-requests"]
-    B --> C["Lọc theo status và keyword"]
-    C --> D["Admin chọn yêu cầu"]
-    D --> E["PATCH /api/v1/admin/contact-requests/{id}/status"]
-    E --> F["Backend cập nhật status, admin_note, handled_by, handled_at"]
+```text
+Admin mở /cms/articles hoặc /admin/news
+  -> GET /api/v1/admin/news
+  -> Tạo/sửa/xóa/cập nhật trạng thái bài viết
+  -> Upload ảnh bằng /api/v1/uploads/news
+  -> Public chỉ thấy bài đã xuất bản
 ```
-
-### Quản lý người dùng
-
-```mermaid
-flowchart TD
-    A["Admin mở /admin/users"] --> B["GET /api/v1/admin/users"]
-    B --> C["Tìm kiếm người dùng"]
-    C --> D["Admin khóa hoặc mở khóa tài khoản"]
-    D --> E["PATCH /api/v1/admin/users/{id}/status"]
-    E --> F["Backend cập nhật UserStatus và enabled"]
-```
-
-### Quản lý báo cáo tin đăng
-
-```mermaid
-flowchart TD
-    A["Admin mở /admin/room-reports"] --> B["GET /api/v1/admin/room-reports"]
-    B --> C["Lọc theo status, reason, keyword"]
-    C --> D["Admin chọn báo cáo"]
-    D --> E["PATCH /api/v1/admin/room-reports/{id}/status"]
-    E --> F["Backend cập nhật trạng thái và ghi chú xử lý"]
-```
-
-## 8. Luồng dữ liệu tổng quát
-
-```mermaid
-flowchart LR
-    UI["React Components"] --> Services["Frontend services"]
-    Services --> Public["apiRequest /api/public hoặc backend public"]
-    Services --> Proxy["proxyRequest /api/proxy"]
-    Public --> Controller["Spring Controller"]
-    Proxy --> Controller
-    Controller --> Service["Service nghiệp vụ"]
-    Service --> Repo["Repository/Specification"]
-    Repo --> DB["MySQL"]
-    Service --> DTO["DTO Response"]
-    DTO --> UI
-```
-
-## 9. Ghi chú về giới hạn hiện tại
-
-- Khu host chưa dùng role `HOST` riêng; quyền quản lý dựa trên đăng nhập và `created_by`.
-- Chưa thấy luồng duyệt bài trước khi công khai.
-- Chưa thấy luồng thanh toán hoặc gói nâng cấp tin.
-- Chưa đủ thông tin để đánh giá luồng vận hành production như backup, monitoring, CI/CD.
-

@@ -1,98 +1,93 @@
 # Hướng Dẫn Dọn File Nặng Và Cài Lại
 
-Tài liệu này dùng khi thư mục dự án quá nặng, làm IDE như Antigravity quét chậm hoặc không mở được.
+Tài liệu này dùng khi thư mục dự án quá nặng, làm IDE như Antigravity quét chậm hoặc không mở được. Các lệnh dưới đây chỉ xóa cache, dependencies hoặc build output có thể tạo lại.
 
-## 1. Các thư mục có thể xóa an toàn
+## 1. Những thư mục có thể xóa an toàn
 
-Các thư mục/file dưới đây là cache, build output hoặc dependencies có thể tạo lại:
+Có thể xóa:
 
-```text
-frontend/.next
-frontend/node_modules
-frontend/tsconfig.tsbuildinfo
-backend/target
-*.log
-```
+- `frontend/node_modules`
+- `frontend/.next`
+- `backend/target`
+- `.next` nếu có ở thư mục gốc
+- log tạm như `*.log`
 
-Không xóa các file này:
+Không nên xóa:
 
-```text
-frontend/package.json
-frontend/package-lock.json
-backend/pom.xml
-docker-compose.yml
-database/mysql
-```
+- `database/mysql`
+- `frontend/app`, `frontend/components`, `frontend/lib`, `frontend/types`
+- `backend/src`
+- `.env` nếu đang chứa cấu hình local
+- thư mục upload nếu đang dùng dữ liệu ảnh thật
 
-## 2. Xóa cache nhẹ trước
+## 2. Lệnh xóa an toàn trên PowerShell
 
-Chạy trong PowerShell:
+Chạy ở thư mục gốc dự án:
 
 ```powershell
-cd C:\Users\Minh\Documents\ChoThuePhongTroHomi
-
-Remove-Item -Recurse -Force frontend\.next -ErrorAction SilentlyContinue
-Remove-Item -Force frontend\tsconfig.tsbuildinfo -ErrorAction SilentlyContinue
-Remove-Item -Recurse -Force backend\target -ErrorAction SilentlyContinue
-Remove-Item -Force frontend\codex-dev-server.log -ErrorAction SilentlyContinue
-Remove-Item -Force frontend\codex-dev-server.err.log -ErrorAction SilentlyContinue
-Remove-Item -Force backend\backend-run.log -ErrorAction SilentlyContinue
+Remove-Item -Recurse -Force .\frontend\node_modules -ErrorAction SilentlyContinue
+Remove-Item -Recurse -Force .\frontend\.next -ErrorAction SilentlyContinue
+Remove-Item -Recurse -Force .\backend\target -ErrorAction SilentlyContinue
+Remove-Item -Recurse -Force .\.next -ErrorAction SilentlyContinue
+Get-ChildItem -Recurse -Filter *.log | Remove-Item -Force -ErrorAction SilentlyContinue
 ```
 
-Sau bước này source code, database và Docker không bị ảnh hưởng.
+Mức này thường giảm dung lượng nhiều nhất mà không ảnh hưởng source code.
 
-## 3. Nếu vẫn nặng, xóa node_modules
+## 3. Cài lại sau khi xóa
 
-`frontend/node_modules` thường nặng khoảng 500MB trở lên. Có thể xóa:
-
-```powershell
-cd C:\Users\Minh\Documents\ChoThuePhongTroHomi
-
-Remove-Item -Recurse -Force frontend\node_modules -ErrorAction SilentlyContinue
-```
-
-Sau khi xóa `node_modules`, nếu chạy frontend local thì phải cài lại dependencies.
-
-## 4. Cài lại và chạy frontend local
+Frontend:
 
 ```powershell
-cd C:\Users\Minh\Documents\ChoThuePhongTroHomi\frontend
-
+cd frontend
 npm install
 npm run dev
 ```
 
-Frontend local thường chạy ở:
-
-```text
-http://localhost:3000
-```
-
-## 5. Chạy lại bằng Docker
-
-Nếu chỉ chạy bằng Docker thì không cần `npm install` ngoài máy host. Chạy:
+Backend:
 
 ```powershell
-cd C:\Users\Minh\Documents\ChoThuePhongTroHomi
+cd backend
+.\mvnw.cmd test
+.\mvnw.cmd spring-boot:run
+```
 
+Docker:
+
+```powershell
 docker compose up -d --build backend frontend
 ```
 
-Sau đó mở:
+Nếu muốn chạy kèm MySQL Docker:
 
-```text
-http://localhost:3000
+```powershell
+docker compose --profile docker-db up -d --build
 ```
 
-## 6. Cấu hình Antigravity nên bỏ qua
+## 4. Exclude trong IDE
 
-Trong Antigravity, nếu có mục Exclude, Ignore Files hoặc Indexing, thêm:
+Nên exclude các thư mục sau khỏi index của Antigravity/IDE:
 
-```text
-frontend/.next
-frontend/node_modules
-backend/target
-backups
+- `frontend/node_modules`
+- `frontend/.next`
+- `backend/target`
+- `.git`
+- Docker volumes nếu nằm trong workspace
+
+## 5. Kiểm tra dung lượng
+
+PowerShell:
+
+```powershell
+Get-ChildItem -Directory | ForEach-Object {
+  $size = (Get-ChildItem $_.FullName -Recurse -Force -ErrorAction SilentlyContinue | Measure-Object Length -Sum).Sum
+  [PSCustomObject]@{ Name = $_.Name; SizeMB = [math]::Round($size / 1MB, 2) }
+} | Sort-Object SizeMB -Descending
 ```
 
-Các thư mục này không cần quét để hiểu source code.
+## 6. Ghi chú
+
+- Xóa `node_modules` xong bắt buộc chạy lại `npm install`.
+- Xóa `.next` xong Next.js sẽ build lại khi `npm run dev` hoặc `npm run build`.
+- Xóa `backend/target` xong Maven sẽ compile lại.
+- Không xóa database nếu muốn giữ dữ liệu hiện tại.

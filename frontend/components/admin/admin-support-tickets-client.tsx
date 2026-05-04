@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { Download } from "lucide-react";
 
 import { AdminTable } from "@/components/admin/admin-table";
@@ -22,6 +23,7 @@ import { formatDate } from "@/lib/format";
 import { getErrorMessage } from "@/services/api-client";
 import {
   searchAdminSupportTickets,
+  SUPPORT_TICKETS_CHANGED_EVENT,
   updateAdminSupportTicketStatus,
 } from "@/services/support-service";
 import type {
@@ -45,11 +47,28 @@ const statusOptions: Array<{ value: SupportTicketStatus; label: string }> = [
   { value: "DISMISSED", label: supportTicketStatusMeta.DISMISSED.label },
 ];
 
+function normalizeFilterParam<T extends string>(
+  value: string | null,
+  allowedValues: T[],
+): T | "" {
+  return allowedValues.includes(value as T) ? (value as T) : "";
+}
+
 export function AdminSupportTicketsClient() {
+  const searchParams = useSearchParams();
+  const lastSearchKeyRef = useRef("");
+  const initialType = normalizeFilterParam(
+    searchParams.get("type"),
+    typeOptions.map((option) => option.value),
+  );
+  const initialStatus = normalizeFilterParam(
+    searchParams.get("status"),
+    statusOptions.map((option) => option.value),
+  );
   const [filters, setFilters] = useState({
     keyword: "",
-    type: "",
-    status: "",
+    type: initialType,
+    status: initialStatus,
   });
   const [page, setPage] = useState(1);
   const [response, setResponse] = useState<PageResponse<SupportTicket> | null>(null);
@@ -63,6 +82,40 @@ export function AdminSupportTicketsClient() {
     status: "NEW" as SupportTicketStatus,
     adminNote: "",
   });
+
+  useEffect(() => {
+    const searchKey = searchParams.toString();
+    if (lastSearchKeyRef.current === searchKey) {
+      return;
+    }
+
+    lastSearchKeyRef.current = searchKey;
+    const nextType = normalizeFilterParam(
+      searchParams.get("type"),
+      typeOptions.map((option) => option.value),
+    );
+    const nextStatus = normalizeFilterParam(
+      searchParams.get("status"),
+      statusOptions.map((option) => option.value),
+    );
+
+    queueMicrotask(() => {
+      setPage(1);
+      setLoading(true);
+      setErrorMessage("");
+      setFilters((current) => {
+        if (current.type === nextType && current.status === nextStatus) {
+          return current;
+        }
+
+        return {
+          ...current,
+          type: nextType,
+          status: nextStatus,
+        };
+      });
+    });
+  }, [searchParams]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -152,6 +205,7 @@ export function AdminSupportTicketsClient() {
         status: updatedTicket.status,
         adminNote: updatedTicket.adminNote ?? "",
       });
+      window.dispatchEvent(new Event(SUPPORT_TICKETS_CHANGED_EVENT));
     } catch (error) {
       setErrorMessage(getErrorMessage(error));
     } finally {
@@ -250,7 +304,10 @@ export function AdminSupportTicketsClient() {
               onChange={(event) => {
                 setLoading(true);
                 setErrorMessage("");
-                setFilters((current) => ({ ...current, type: event.target.value }));
+                setFilters((current) => ({
+                  ...current,
+                  type: event.target.value as SupportTicketType | "",
+                }));
                 setPage(1);
               }}
             />
@@ -261,7 +318,10 @@ export function AdminSupportTicketsClient() {
               onChange={(event) => {
                 setLoading(true);
                 setErrorMessage("");
-                setFilters((current) => ({ ...current, status: event.target.value }));
+                setFilters((current) => ({
+                  ...current,
+                  status: event.target.value as SupportTicketStatus | "",
+                }));
                 setPage(1);
               }}
             />

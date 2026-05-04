@@ -27,12 +27,15 @@ public class SupportTicketService {
 
     private final SupportTicketRepository supportTicketRepository;
     private final UserService userService;
+    private final NotificationService notificationService;
 
     public SupportTicketService(
             SupportTicketRepository supportTicketRepository,
-            UserService userService) {
+            UserService userService,
+            NotificationService notificationService) {
         this.supportTicketRepository = supportTicketRepository;
         this.userService = userService;
+        this.notificationService = notificationService;
     }
 
     @Transactional
@@ -47,7 +50,10 @@ public class SupportTicketService {
         ticket.setSubject(resolveSubject(request));
         ticket.setMessage(resolveMessage(request));
 
-        return toResponse(supportTicketRepository.save(ticket));
+        SupportTicket savedTicket = supportTicketRepository.save(ticket);
+        notificationService.createNotificationsForSupportTicket(savedTicket);
+
+        return toResponse(savedTicket);
     }
 
     @Transactional(readOnly = true)
