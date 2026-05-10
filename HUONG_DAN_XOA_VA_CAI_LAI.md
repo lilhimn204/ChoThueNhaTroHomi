@@ -75,7 +75,6 @@ Get-ChildItem -Directory | ForEach-Object {
 
 ### Bước 1: Cài lại Frontend (Next.js)
 
-```powershell
 # Di chuyển vào folder frontend
 cd C:\Users\Minh\Documents\ChoThuePhongTroHomi\frontend
 
@@ -84,13 +83,12 @@ npm install
 
 # Chạy website frontend (tự tạo lại .next)
 npm run dev
-```
+
 
 > 🌐 Frontend sẽ chạy tại: **http://localhost:3000**
 
 ### Bước 2: Build lại Backend (Java/Spring Boot)
 
-```powershell
 # Di chuyển vào folder backend
 cd C:\Users\Minh\Documents\ChoThuePhongTroHomi\backend
 
@@ -99,7 +97,6 @@ cd C:\Users\Minh\Documents\ChoThuePhongTroHomi\backend
 
 # Hoặc chạy trực tiếp
 ./mvnw spring-boot:run
-```
 
 > 🌐 Backend sẽ chạy tại: **http://localhost:8080**
 
@@ -107,12 +104,9 @@ cd C:\Users\Minh\Documents\ChoThuePhongTroHomi\backend
 
 Nếu bạn dùng Docker:
 
-```powershell
 cd C:\Users\Minh\Documents\ChoThuePhongTroHomi
 docker-compose up --build
-```
 
----
 
 ## 💡 Mẹo Hữu Ích
 

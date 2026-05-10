@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@SuppressWarnings("null")
 @ActiveProfiles("test")
 @DisplayName("SupportTicketController - support forms")
 class SupportTicketControllerIntegrationTest {

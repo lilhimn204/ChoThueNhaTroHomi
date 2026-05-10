@@ -22,6 +22,7 @@ import com.trotot.backend.repository.NewsArticleRepository;
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@SuppressWarnings("null")
 @ActiveProfiles("test")
 @DisplayName("NewsArticleController - public news API")
 class NewsArticleControllerIntegrationTest {

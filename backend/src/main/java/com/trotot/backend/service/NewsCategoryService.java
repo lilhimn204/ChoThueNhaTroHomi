@@ -15,6 +15,7 @@ import com.trotot.backend.repository.NewsCategoryRepository;
 import com.trotot.backend.util.InputSanitizer;
 import com.trotot.backend.util.SlugUtils;
 
+@SuppressWarnings("null")
 @Service
 public class NewsCategoryService {
 

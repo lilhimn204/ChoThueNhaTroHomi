@@ -1,5 +1,4 @@
--- Move the default admin account to the real Homi admin Gmail account.
--- Keeps the original user id when possible so existing foreign keys remain valid.
+
 
 SET @admin_role_id := (SELECT id FROM roles WHERE name = 'ADMIN' LIMIT 1);
 

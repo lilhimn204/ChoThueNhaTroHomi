@@ -10,6 +10,7 @@ import { ApiError, getErrorMessage } from "@/services/api-client";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { getSafeAuthRedirect } from "@/lib/safe-redirect";
 import type { UserProfile } from "@/types";
 
 type AuthStep = "credentials" | "otp";
@@ -48,10 +49,6 @@ interface GoogleAccountsApi {
 const GOOGLE_SCRIPT_ID = "google-identity-services";
 const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
 const GOOGLE_AUTH_ENABLED = Boolean(GOOGLE_CLIENT_ID);
-
-function getRedirectTarget(user: UserProfile, redirectTo?: string) {
-  return redirectTo ?? (user.roles.includes("ADMIN") ? "/admin" : "/profile");
-}
 
 function GoogleAuthButton({
   mode,
@@ -257,7 +254,7 @@ export function AuthPanel({
 
   const finishAuthentication = (user: UserProfile) => {
     setSuccessMessage("Đăng nhập thành công. Đang chuyển trang...");
-    router.replace(getRedirectTarget(user, redirectTo));
+    router.replace(getSafeAuthRedirect(user, redirectTo));
   };
 
   const passwordToggle = (visible: boolean, onToggle: () => void, label: string) => (

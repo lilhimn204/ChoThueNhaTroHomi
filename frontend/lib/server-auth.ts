@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 
 import { fetchBackend } from "@/lib/backend-fetch";
+import { resolveSecureCookieFlag } from "@/lib/auth-cookie-config";
 
 const BACKEND_URL = process.env.BACKEND_URL ?? "http://localhost:8080";
 
@@ -19,7 +20,7 @@ export interface BackendAuthResponse {
 }
 
 export function setAuthCookies(cookieStore: CookieStore, data: BackendAuthResponse) {
-  const secure = process.env.NODE_ENV === "production";
+  const secure = resolveSecureCookieFlag();
 
   cookieStore.set(ACCESS_COOKIE_NAME, data.accessToken, {
     httpOnly: true,

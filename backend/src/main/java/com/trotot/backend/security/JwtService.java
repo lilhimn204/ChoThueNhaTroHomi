@@ -2,6 +2,7 @@ package com.trotot.backend.security;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -9,6 +10,7 @@ import javax.crypto.SecretKey;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import com.trotot.backend.config.AppProperties;
@@ -24,12 +26,17 @@ public class JwtService {
 
     private static final Logger log = LoggerFactory.getLogger(JwtService.class);
     private static final int MIN_SECRET_LENGTH = 32;
-    private static final String DEFAULT_SECRET_PREFIX = "change-this";
+    private static final List<String> PLACEHOLDER_MARKERS = List.of(
+            "change-this",
+            "please-change",
+            "rental-room-demo-secret");
 
     private final AppProperties appProperties;
+    private final Environment environment;
 
-    public JwtService(AppProperties appProperties) {
+    public JwtService(AppProperties appProperties, Environment environment) {
         this.appProperties = appProperties;
+        this.environment = environment;
     }
 
     @PostConstruct
@@ -39,13 +46,30 @@ public class JwtService {
         if (secret == null || secret.length() < MIN_SECRET_LENGTH) {
             throw new IllegalStateException(
                     "JWT secret must be at least " + MIN_SECRET_LENGTH + " characters. "
-                    + "Set a strong value via APP_JWT_SECRET environment variable.");
+                    + "Set a strong value via JWT_SECRET environment variable.");
         }
 
-        if (secret.toLowerCase().startsWith(DEFAULT_SECRET_PREFIX)) {
-            log.warn("⚠ JWT secret appears to be the default placeholder. "
-                    + "Change it before deploying to production!");
+        if (isPlaceholderSecret(secret)) {
+            String message = "JWT secret appears to be a placeholder. Set a strong JWT_SECRET before deploying.";
+
+            if (isProductionProfile()) {
+                throw new IllegalStateException(message);
+            }
+
+            log.warn("{}", message);
         }
+    }
+
+    private boolean isProductionProfile() {
+        return Arrays.stream(environment.getActiveProfiles())
+                .map(String::toLowerCase)
+                .anyMatch(profile -> profile.equals("prod") || profile.equals("production"));
+    }
+
+    private boolean isPlaceholderSecret(String secret) {
+        String normalizedSecret = secret.toLowerCase();
+
+        return PLACEHOLDER_MARKERS.stream().anyMatch(normalizedSecret::contains);
     }
 
     public String generateToken(UserPrincipal principal) {

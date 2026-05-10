@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 
 import { Alert } from "@/components/ui/alert";
 import { useAuth } from "@/hooks/use-auth";
+import { getSafeAuthRedirect } from "@/lib/safe-redirect";
 
 export function GuestOnly({
   children,
@@ -21,10 +22,7 @@ export function GuestOnly({
       return;
     }
 
-    const redirectTarget =
-      redirectTo ?? (user.roles.includes("ADMIN") ? "/admin" : "/profile");
-
-    router.replace(redirectTarget);
+    router.replace(getSafeAuthRedirect(user, redirectTo));
   }, [redirectTo, router, status, user]);
 
   if (status === "authenticated") {
