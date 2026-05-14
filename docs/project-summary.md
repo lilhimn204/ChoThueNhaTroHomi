@@ -245,6 +245,44 @@ URL mac dinh:
 - Backend: `http://localhost:8080`
 - Swagger: `http://localhost:8080/swagger-ui.html`
 
+Neu can demo bang domain public, giu cua so Docker Compose dang chay, mo them PowerShell thu hai va chay Cloudflare Tunnel:
+
+```powershell
+cloudflared tunnel run homi
+```
+
+Sau do truy cap:
+
+- Website public: `https://thuenhahomi.id.vn`
+
+Thu tu demo day du:
+
+```text
+1. Mo Docker Desktop.
+2. Chay docker compose up --build.
+3. Chay cloudflared tunnel run homi.
+4. Mo https://thuenhahomi.id.vn.
+```
+
+Neu can demo bang domain public, giu cua so Docker Compose dang chay, mo them PowerShell thu hai va chay Cloudflare Tunnel:
+
+```powershell
+cloudflared tunnel run homi
+```
+
+Sau do truy cap:
+
+- Website public: `https://thuenhahomi.id.vn`
+
+Thu tu demo day du:
+
+```text
+1. Mo Docker Desktop.
+2. Chay docker compose up --build.
+3. Chay cloudflared tunnel run homi.
+4. Mo https://thuenhahomi.id.vn.
+```
+
 Chay dev rieng:
 
 ```powershell
