@@ -51,7 +51,7 @@ export function RoomReportCard({ roomId }: { roomId: number }) {
         details: formData.details.trim(),
       });
 
-      setSuccessMessage("Da gui bao cao. Admin se xem xet va cap nhat lai tin dang neu can.");
+      setSuccessMessage("Đã gửi báo cáo. Admin sẽ xem xét và cập nhật lại tin đăng nếu cần.");
       setFormData((current) => ({ ...current, details: "" }));
     } catch (error) {
       if (error instanceof ApiError) {
@@ -72,36 +72,36 @@ export function RoomReportCard({ roomId }: { roomId: number }) {
     <div className="motion-panel rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent hover:-translate-y-1 hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px] sm:p-6">
       <div className="space-y-2">
         <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[var(--color-brand-700)]">
-          Bao cao tin dang
+          Báo cáo tin đăng
         </p>
         <h3 className="text-xl font-semibold text-[var(--color-text-strong)] sm:text-2xl">
-          Tin dang co van de?
+          Tin đăng có vấn đề?
         </h3>
       </div>
 
       {status !== "authenticated" ? (
         <div className="motion-panel mt-4 space-y-4 rounded-[22px] bg-[var(--color-surface-soft)] p-4 hover:-translate-y-0.5 hover:shadow-sm sm:mt-6 sm:rounded-[28px] sm:p-5">
           <p className="text-sm leading-7 text-[var(--color-text-muted)]">
-            Dang nhap de gui bao cao va giup admin xac minh chat luong tin dang.
+            Đăng nhập để gửi báo cáo và giúp admin xác minh chất lượng tin đăng.
           </p>
           <Link href={loginHref}>
             <Button className="w-full" leadingIcon={<Flag className="size-4" />}>
-              Dang nhap de bao cao
+              Đăng nhập để báo cáo
             </Button>
           </Link>
         </div>
       ) : (
         <form className="motion-stagger mt-4 space-y-4 sm:mt-6" onSubmit={handleSubmit}>
           {successMessage ? (
-            <Alert tone="success" title="Da ghi nhan bao cao" description={successMessage} />
+            <Alert tone="success" title="Đã ghi nhận báo cáo" description={successMessage} />
           ) : null}
 
           {errorMessage ? (
-            <Alert tone="warning" title="Khong the gui bao cao" description={errorMessage} />
+            <Alert tone="warning" title="Không thể gửi báo cáo" description={errorMessage} />
           ) : null}
 
           <Select
-            label="Ly do"
+            label="Lý do"
             options={reportReasonOptions}
             value={formData.reason}
             onChange={(event) =>
@@ -112,7 +112,7 @@ export function RoomReportCard({ roomId }: { roomId: number }) {
             }
           />
           <Textarea
-            label="Chi tiet"
+            label="Chi tiết"
             value={formData.details}
             onChange={(event) => {
               setFormData((current) => ({ ...current, details: event.target.value }));
@@ -120,7 +120,7 @@ export function RoomReportCard({ roomId }: { roomId: number }) {
               setErrorMessage("");
             }}
             error={fieldErrors.details}
-            placeholder="Vi du: so dien thoai khong dung, gia thuc te khac, phong da het..."
+            placeholder="Ví dụ: số điện thoại không đúng, giá thực tế khác, phòng đã hết..."
             maxLength={1000}
           />
           <Button
@@ -130,7 +130,7 @@ export function RoomReportCard({ roomId }: { roomId: number }) {
             variant="outline"
             leadingIcon={<Flag className="size-4" />}
           >
-            {submitting ? "Dang gui..." : "Gui bao cao"}
+            {submitting ? "Đang gửi..." : "Gửi báo cáo"}
           </Button>
         </form>
       )}

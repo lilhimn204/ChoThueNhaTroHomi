@@ -31,11 +31,11 @@ class SupportTicketControllerIntegrationTest {
                 .content("""
                         {
                           "type": "CONTACT",
-                          "fullName": "Nguyen Van An",
+                          "fullName": "Nguyễn Văn An",
                           "email": "an@example.com",
                           "phone": "0901234567",
-                          "subject": "Can ho tro tai khoan",
-                          "message": "Toi can Homi ho tro ve tai khoan."
+                          "subject": "Cần hỗ trợ tài khoản",
+                          "message": "Tôi cần Homi hỗ trợ về tài khoản."
                         }
                         """))
                 .andExpect(status().isCreated())
@@ -51,8 +51,8 @@ class SupportTicketControllerIntegrationTest {
                 .content("""
                         {
                           "type": "ROOM_REPORT",
-                          "reason": "Thong tin sai",
-                          "message": "Tin dang sai dia chi."
+                          "reason": "Thông tin sai",
+                          "message": "Tin đăng sai địa chỉ."
                         }
                         """))
                 .andExpect(status().isBadRequest())

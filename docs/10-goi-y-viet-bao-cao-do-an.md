@@ -48,8 +48,8 @@ Có thể lấy ý từ:
 
 Nội dung nên có:
 
-- Actor.
-- Use case.
+- Tác nhân.
+- Trường hợp sử dụng.
 - Luồng nghiệp vụ.
 - Yêu cầu chức năng.
 - Yêu cầu phi chức năng.
@@ -78,7 +78,7 @@ Có thể lấy ý từ:
 
 Sơ đồ nên vẽ:
 
-- Use case diagram.
+- Sơ đồ trường hợp sử dụng.
 - ERD database.
 - Sequence diagram đăng ký OTP.
 - Sequence diagram đăng nhập Google.
@@ -101,7 +101,8 @@ Có thể lấy ý từ:
 
 - `02-cong-nghe-su-dung.md`
 - `03-cau-truc-thu-muc.md`
-- `06-run-deploy-test-guide.md`
+- `02-cong-nghe-su-dung.md`
+- `huong-dan-don-file-nang-va-cai-lai.md`
 
 ### Chương 6: Kết quả đạt được
 
@@ -178,13 +179,31 @@ Website có:
 - Empty state, loading, error/success message.
 - Form có validate.
 
-## 4. Gợi ý mô tả kỹ thuật ngắn
+## 4. Mẫu yêu cầu tiếng Việt cho AI viết báo cáo
+
+Bạn có thể dùng mẫu yêu cầu sau khi muốn nhờ AI viết hoặc chỉnh báo cáo đồ án:
+
+```text
+Bạn là giảng viên hướng dẫn đồ án ngành Công nghệ thông tin.
+Hãy đọc bộ tài liệu Homi trong thư mục docs, đặc biệt là:
+- 00-ai-context-homi.md
+- 01-tong-quan-du-an.md
+- 04-phan-tich-chuc-nang.md
+- 05-luong-hoat-dong-he-thong.md
+- 07-database-va-api.md
+- 08-phan-quyen-nguoi-dung.md
+
+Sau đó hãy giúp tôi viết báo cáo đồ án bằng tiếng Việt, văn phong học thuật, dễ hiểu, đúng với source code hiện tại.
+Không tự bịa chức năng chưa có. Nếu thiếu thông tin, hãy ghi rõ giả định.
+```
+
+## 5. Gợi ý mô tả kỹ thuật ngắn
 
 Đoạn có thể dùng trong báo cáo:
 
 > Hệ thống Homi được xây dựng theo kiến trúc client-server, trong đó frontend sử dụng Next.js App Router để xây dựng giao diện và các API route trung gian, backend sử dụng Spring Boot để cung cấp REST API, xử lý xác thực, phân quyền và nghiệp vụ. Dữ liệu được lưu trữ trong MySQL với các bảng quan hệ cho người dùng, phòng, tiện ích, liên hệ, báo cáo và tin tức. Hệ thống hỗ trợ đăng ký xác minh OTP qua email, đăng nhập Google, JWT access token, refresh token và phân quyền admin.
 
-## 5. Checklist trước khi nộp đồ án
+## 6. Checklist trước khi nộp đồ án
 
 - Chạy được frontend và backend.
 - Database có dữ liệu demo đủ đẹp.
@@ -192,7 +211,7 @@ Website có:
 - Google login hoạt động với domain/callback hợp lệ.
 - Admin login được bằng tài khoản admin đúng.
 - Các trang chính không lỗi giao diện.
-- Chạy backend test.
+- Chạy kiểm thử backend.
 - Chạy frontend lint/build nếu máy đủ tài nguyên.
 - Ảnh chụp màn hình trong báo cáo rõ ràng.
 - Không để secret thật trong báo cáo hoặc mã nguồn nộp công khai.

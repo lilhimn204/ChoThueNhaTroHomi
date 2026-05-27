@@ -53,7 +53,7 @@ export function RoomImageManager({
 
   const addImages = (nextImages: RoomImageInput[]) => {
     if (images.length + nextImages.length > MAX_IMAGES) {
-      setErrorMessage(`Chi duoc toi da ${MAX_IMAGES} anh cho mot bai dang.`);
+      setErrorMessage(`Chỉ được tối đa ${MAX_IMAGES} ảnh cho một bài đăng.`);
       return;
     }
 
@@ -69,19 +69,19 @@ export function RoomImageManager({
     }
 
     if (images.length + files.length > MAX_IMAGES) {
-      setErrorMessage(`Chi duoc toi da ${MAX_IMAGES} anh cho mot bai dang.`);
+      setErrorMessage(`Chỉ được tối đa ${MAX_IMAGES} ảnh cho một bài đăng.`);
       return;
     }
 
     const invalidFile = files.find((file) => !ALLOWED_IMAGE_TYPES.includes(file.type));
     if (invalidFile) {
-      setErrorMessage("Chi ho tro anh JPG, PNG hoac WEBP.");
+      setErrorMessage("Chỉ hỗ trợ ảnh JPG, PNG hoặc WEBP.");
       return;
     }
 
     const oversizedFile = files.find((file) => file.size > 5 * 1024 * 1024);
     if (oversizedFile) {
-      setErrorMessage("Moi anh khong duoc vuot qua 5MB.");
+      setErrorMessage("Mỗi ảnh không được vượt quá 5MB.");
       return;
     }
 
@@ -93,7 +93,7 @@ export function RoomImageManager({
       addImages(
         uploadedImages.map((image, index) => ({
           imageUrl: image.url,
-          altText: roomTitle.trim() || `Anh phong ${images.length + index + 1}`,
+          altText: roomTitle.trim() || `Ảnh phòng ${images.length + index + 1}`,
           sortOrder: images.length + index + 1,
           isThumbnail: images.length === 0 && index === 0,
         })),
@@ -109,14 +109,14 @@ export function RoomImageManager({
     const imageUrl = manualUrl.trim();
 
     if (!imageUrl) {
-      setErrorMessage("Nhap URL anh truoc khi them.");
+      setErrorMessage("Nhập URL ảnh trước khi thêm.");
       return;
     }
 
     addImages([
       {
         imageUrl,
-        altText: roomTitle.trim() || `Anh phong ${images.length + 1}`,
+        altText: roomTitle.trim() || `Ảnh phòng ${images.length + 1}`,
         sortOrder: images.length + 1,
         isThumbnail: images.length === 0,
       },
@@ -127,7 +127,7 @@ export function RoomImageManager({
   return (
     <div className="space-y-4">
       {errorMessage ? (
-        <Alert tone="warning" title="Khong the cap nhat anh" description={errorMessage} />
+        <Alert tone="warning" title="Không thể cập nhật ảnh" description={errorMessage} />
       ) : null}
 
       <div className="motion-panel rounded-[22px] border border-[var(--color-border-strong)] bg-[var(--color-surface-soft)] p-3 hover:-translate-y-0.5 hover:border-[var(--color-brand-500)] hover:shadow-[var(--shadow-card)] sm:rounded-[28px] sm:p-4">
@@ -141,7 +141,7 @@ export function RoomImageManager({
                 <div className="relative aspect-[16/10]">
                   <Image
                     src={normalizeUploadImageSrc(image.imageUrl)}
-                    alt={image.altText || roomTitle || "Anh phong tro"}
+                    alt={image.altText || roomTitle || "Ảnh phòng trọ"}
                     fill
                     className="motion-soft object-cover group-hover:scale-[1.04] group-hover:saturate-[1.08]"
                     sizes="(min-width: 1280px) 260px, 50vw"
@@ -149,7 +149,7 @@ export function RoomImageManager({
                 </div>
                 <div className="space-y-3 p-3">
                   <Input
-                    label="Mo ta anh"
+                    label="Mô tả ảnh"
                     value={image.altText}
                     onChange={(event) =>
                       commitImages(
@@ -177,7 +177,7 @@ export function RoomImageManager({
                         )
                       }
                     >
-                      {image.isThumbnail ? "Anh dai dien" : "Chon dai dien"}
+                      {image.isThumbnail ? "Ảnh đại diện" : "Chọn đại diện"}
                     </Button>
                     <Button
                       type="button"
@@ -189,7 +189,7 @@ export function RoomImageManager({
                         commitImages(images.filter((_, itemIndex) => itemIndex !== index))
                       }
                     >
-                      Xoa
+                      Xóa
                     </Button>
                   </div>
                 </div>
@@ -200,10 +200,10 @@ export function RoomImageManager({
           <div className="motion-panel group flex aspect-[16/8] flex-col items-center justify-center rounded-3xl border border-dashed border-[var(--color-border-strong)] bg-[var(--color-surface)] text-center hover:-translate-y-0.5 hover:border-[var(--color-brand-500)] hover:shadow-sm">
             <ImagePlus className="motion-soft size-8 text-[var(--color-brand-700)] group-hover:scale-110" />
             <p className="mt-3 text-sm font-semibold text-[var(--color-text-strong)]">
-              Chua co anh phong
+              Chưa có ảnh phòng
             </p>
             <p className="mt-1 text-xs text-[var(--color-text-muted)]">
-              Anh that, ro sang giup nguoi thue tin tuong bai dang hon.
+              Ảnh thật, rõ nét giúp người thuê tin tưởng bài đăng hơn.
             </p>
           </div>
         )}
@@ -217,7 +217,7 @@ export function RoomImageManager({
             )}
           >
             <ImagePlus className="size-4" />
-            {uploading ? "Dang tai anh..." : "Chon anh tu may"}
+            {uploading ? "Đang tải ảnh..." : "Chọn ảnh từ máy"}
             <input
               id="room-gallery-upload"
               type="file"
@@ -231,7 +231,7 @@ export function RoomImageManager({
 
           <div className="motion-stagger grid gap-3 sm:grid-cols-[1fr_auto]">
             <Input
-              label="Them anh bang URL"
+              label="Thêm ảnh bằng URL"
               placeholder="https://images.unsplash.com/..."
               value={manualUrl}
               onChange={(event) => setManualUrl(event.target.value)}
@@ -243,14 +243,14 @@ export function RoomImageManager({
               disabled={images.length >= MAX_IMAGES}
               onClick={addManualUrl}
             >
-              Them URL
+              Thêm URL
             </Button>
           </div>
         </div>
       </div>
 
       <p className="text-sm text-[var(--color-text-muted)]">
-        Toi da {MAX_IMAGES} anh, moi anh toi da 5MB. Anh duoc chon lam dai dien se hien tren card phong.
+        Tối đa {MAX_IMAGES} ảnh, mỗi ảnh tối đa 5MB. Ảnh được chọn làm đại diện sẽ hiển thị trên thẻ phòng.
       </p>
     </div>
   );

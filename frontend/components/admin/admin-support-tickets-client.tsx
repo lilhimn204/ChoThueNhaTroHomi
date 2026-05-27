@@ -242,14 +242,14 @@ export function AdminSupportTicketsClient() {
                 exportCsv({
                   filename: "homi-admin-support-tickets",
                   headers: [
-                    "Loai",
-                    "Tieu de",
-                    "Ma tin/link",
-                    "Nguoi gui",
+                    "Loại",
+                    "Tiêu đề",
+                    "Mã tin/link",
+                    "Người gửi",
                     "Email",
-                    "So dien thoai",
-                    "Trang thai",
-                    "Ngay gui",
+                    "Số điện thoại",
+                    "Trạng thái",
+                    "Ngày gửi",
                   ],
                   rows: all.content.map((ticket) => [
                     supportTicketTypeLabel[ticket.type],

@@ -148,7 +148,7 @@ export function AdminRoomReportsClient() {
         adminNote: editor.adminNote.trim(),
       });
 
-      setSuccessMessage("Da cap nhat trang thai bao cao.");
+      setSuccessMessage("Đã cập nhật trạng thái báo cáo.");
       setResponse((current) =>
         current
           ? {
@@ -176,10 +176,10 @@ export function AdminRoomReportsClient() {
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div className="space-y-3">
             <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[var(--color-brand-700)]">
-              Quan ly bao cao
+              Quản lý báo cáo
             </p>
             <h1 className="text-3xl font-semibold tracking-tight text-[var(--color-text-strong)] sm:text-4xl">
-              Bao cao tin dang
+              Báo cáo tin đăng
             </h1>
           </div>
           <Button
@@ -199,13 +199,13 @@ export function AdminRoomReportsClient() {
                 exportCsv({
                   filename: "homi-admin-room-reports",
                   headers: [
-                    "Phong",
-                    "Nguoi bao cao",
+                    "Phòng",
+                    "Người báo cáo",
                     "Email",
-                    "Ly do",
-                    "Trang thai",
-                    "Ghi chu admin",
-                    "Ngay gui",
+                    "Lý do",
+                    "Trạng thái",
+                    "Ghi chú admin",
+                    "Ngày gửi",
                   ],
                   rows: all.content.map((report) => [
                     report.roomTitle,
@@ -225,25 +225,25 @@ export function AdminRoomReportsClient() {
             }}
             leadingIcon={<Download className="size-4" />}
           >
-            {exporting ? "Dang xuat..." : "Xuat CSV"}
+            {exporting ? "Đang xuất..." : "Xuất CSV"}
           </Button>
         </div>
       </div>
 
       {successMessage ? (
-        <Alert tone="success" title="Thao tac thanh cong" description={successMessage} />
+        <Alert tone="success" title="Thao tác thành công" description={successMessage} />
       ) : null}
 
       {errorMessage ? (
-        <Alert tone="warning" title="Khong the tiep tuc" description={errorMessage} />
+        <Alert tone="warning" title="Không thể tiếp tục" description={errorMessage} />
       ) : null}
 
       <div className="grid min-w-0 gap-5 sm:gap-6 xl:grid-cols-[minmax(0,1.1fr)_minmax(320px,0.9fr)]">
         <section className="space-y-4">
           <div className="motion-panel motion-stagger grid gap-4 rounded-[22px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent hover:-translate-y-0.5 hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[28px] sm:p-5 lg:grid-cols-3">
             <Input
-              label="Tim bao cao"
-              placeholder="Ten phong, email, noi dung..."
+              label="Tìm báo cáo"
+              placeholder="Tên phòng, email, nội dung..."
               value={filters.keyword}
               onChange={(event) => {
                 setLoading(true);
@@ -253,8 +253,8 @@ export function AdminRoomReportsClient() {
               }}
             />
             <Select
-              label="Trang thai"
-              options={[{ label: "Tat ca", value: "" }, ...statusOptions]}
+              label="Trạng thái"
+              options={[{ label: "Tất cả", value: "" }, ...statusOptions]}
               value={filters.status}
               onChange={(event) => {
                 setLoading(true);
@@ -264,8 +264,8 @@ export function AdminRoomReportsClient() {
               }}
             />
             <Select
-              label="Ly do"
-              options={[{ label: "Tat ca", value: "" }, ...reasonOptions]}
+              label="Lý do"
+              options={[{ label: "Tất cả", value: "" }, ...reasonOptions]}
               value={filters.reason}
               onChange={(event) => {
                 setLoading(true);
@@ -281,7 +281,7 @@ export function AdminRoomReportsClient() {
           ) : response?.content.length ? (
             <>
               <AdminTable
-                headers={["Phong", "Nguoi bao cao", "Ly do", "Trang thai", "Ngay gui", "Tac vu"]}
+                headers={["Phòng", "Người báo cáo", "Lý do", "Trạng thái", "Ngày gửi", "Tác vụ"]}
                 rows={response.content.map((report) => [
                   <Link
                     key={`${report.id}-room`}
@@ -305,7 +305,7 @@ export function AdminRoomReportsClient() {
                     size="sm"
                     onClick={() => chooseReport(report)}
                   >
-                    Xu ly
+                    Xử lý
                   </Button>,
                 ])}
               />
@@ -321,15 +321,15 @@ export function AdminRoomReportsClient() {
             </>
           ) : (
             <EmptyState
-              title="Khong co bao cao phu hop"
-              description="Thu bo bot dieu kien loc hoac kiem tra lai sau khi co nguoi dung gui bao cao moi."
+              title="Không có báo cáo phù hợp"
+              description="Thử bỏ bớt điều kiện lọc hoặc kiểm tra lại sau khi có người dùng gửi báo cáo mới."
             />
           )}
         </section>
 
         <aside className="motion-panel rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent hover:-translate-y-1 hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px] sm:p-6">
           <h2 className="text-xl font-semibold text-[var(--color-text-strong)] sm:text-2xl">
-            Xu ly bao cao
+            Xử lý báo cáo
           </h2>
 
           {selectedReport ? (
@@ -350,18 +350,18 @@ export function AdminRoomReportsClient() {
                   {selectedReport.reporterName} - {selectedReport.reporterEmail}
                 </p>
                 <p className="text-sm leading-7 text-[var(--color-text-strong)]">
-                  {selectedReport.details || "Khong co noi dung bo sung."}
+                  {selectedReport.details || "Không có nội dung bổ sung."}
                 </p>
                 {selectedReport.handledByName ? (
                   <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--color-text-muted)]">
-                    Xu ly boi {selectedReport.handledByName}
+                    Xử lý bởi {selectedReport.handledByName}
                   </p>
                 ) : null}
               </div>
 
               <form className="motion-stagger mt-6 space-y-4" onSubmit={handleUpdate}>
                 <Select
-                  label="Trang thai moi"
+                  label="Trạng thái mới"
                   options={statusOptions}
                   value={editor.status}
                   onChange={(event) =>
@@ -372,22 +372,22 @@ export function AdminRoomReportsClient() {
                   }
                 />
                 <Textarea
-                  label="Ghi chu admin"
+                  label="Ghi chú admin"
                   value={editor.adminNote}
                   onChange={(event) =>
                     setEditor((current) => ({ ...current, adminNote: event.target.value }))
                   }
-                  placeholder="Da lien he chu tro, da an tin, hoac bo qua vi khong du bang chung..."
+                  placeholder="Đã liên hệ chủ trọ, đã ẩn tin, hoặc bỏ qua vì không đủ bằng chứng..."
                   maxLength={500}
                 />
                 <Button className="w-full" type="submit" disabled={submitting}>
-                  {submitting ? "Dang luu..." : "Luu cap nhat"}
+                  {submitting ? "Đang lưu..." : "Lưu cập nhật"}
                 </Button>
               </form>
             </>
           ) : (
             <p className="mt-4 text-sm leading-7 text-[var(--color-text-muted)]">
-              Chon mot bao cao tu bang ben trai de cap nhat trang thai va ghi chu xu ly.
+              Chọn một báo cáo từ bảng bên trái để cập nhật trạng thái và ghi chú xử lý.
             </p>
           )}
         </aside>

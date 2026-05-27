@@ -1,8 +1,8 @@
-# 06. Use Case Hệ Thống Homi
+# 06. Trường Hợp Sử Dụng Hệ Thống Homi
 
-## 1. Actor
+## 1. Tác nhân
 
-| Actor | Mô tả |
+| Tác nhân | Mô tả |
 |---|---|
 | Khách | Chưa đăng nhập, xem nội dung công khai |
 | Người dùng | Đã đăng nhập, tìm/lưu phòng, liên hệ, quản lý hồ sơ |
@@ -10,7 +10,7 @@
 | Admin | Quản trị toàn bộ hệ thống |
 | Biên tập/CMS | Quản lý nội dung tin tức/bài viết trong CMS |
 
-## 2. Use case của khách
+## 2. Trường hợp sử dụng của khách
 
 ### UC-01: Xem trang chủ
 
@@ -41,7 +41,7 @@
 - Mục tiêu: đọc thông tin hỗ trợ thuê phòng.
 - Route: `/news`, `/news/[slug]`, `/support/*`, `/explore/*`.
 
-## 3. Use case của người dùng
+## 3. Trường hợp sử dụng của người dùng
 
 ### UC-05: Đăng ký bằng email/password
 
@@ -107,7 +107,7 @@
 - User Google chưa có password: tạo mật khẩu mới.
 - User Google đã có password: đổi mật khẩu như user thường.
 
-## 4. Use case của người đăng tin
+## 4. Trường hợp sử dụng của người đăng tin
 
 ### UC-13: Tạo bài đăng phòng
 
@@ -130,7 +130,7 @@
 - Route: `/host/customers`.
 - Host xem yêu cầu và cập nhật trạng thái xử lý.
 
-## 5. Use case của admin
+## 5. Trường hợp sử dụng của admin
 
 ### UC-17: Quản lý phòng
 
@@ -161,7 +161,7 @@
 - Cập nhật trạng thái xử lý.
 - Dùng dữ liệu để kiểm duyệt phòng và hỗ trợ người dùng.
 
-## 6. Use case của CMS
+## 6. Trường hợp sử dụng của CMS
 
 ### UC-21: Quản lý bài viết chuyên sâu
 

@@ -15,9 +15,9 @@ Frontend form
   -> Frontend gọi API cần auth qua /api/proxy/*
 ```
 
-## 2. Role hiện tại
+## 2. Vai trò hiện tại
 
-| Role | Mô tả |
+| Vai trò | Mô tả |
 |---|---|
 | `USER` | Người dùng thường, có thể tìm phòng, lưu phòng, gửi liên hệ, dùng khu host hiện tại |
 | `ADMIN` | Quản trị toàn hệ thống, truy cập admin và CMS |
@@ -71,7 +71,7 @@ User có các yếu tố kiểm soát truy cập:
 
 ## 6. Quyền theo API
 
-Public:
+Công khai:
 
 - `GET /api/v1/rooms`
 - `GET /api/v1/rooms/{slug}`
@@ -81,7 +81,7 @@ Public:
 - `GET /api/v1/amenities`
 - Các endpoint auth public như login/register/forgot-password.
 
-Authenticated:
+Cần đăng nhập:
 
 - `/api/v1/users/me`
 - `/api/v1/saved-rooms`
@@ -89,7 +89,7 @@ Authenticated:
 - `/api/v1/host/*`
 - Notifications.
 
-Admin:
+Quản trị:
 
 - `/api/v1/admin/*`
 
@@ -120,7 +120,7 @@ Các thao tác nên có bảo vệ:
 - Không log OTP, app password, JWT secret.
 - Gmail SMTP dùng Google App Password.
 
-## 9. Bảo mật frontend
+## 9. Bảo mật phía frontend
 
 - Không lưu token trong localStorage.
 - Không hiển thị thông tin nhạy cảm ở console.

@@ -353,7 +353,7 @@ export function RoomDetailClient({ slug }: { slug: string }) {
           </div>
 
           <div className="motion-panel rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px] sm:p-6">
-            <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between">
+            <div className="space-y-5">
               <div className="min-w-0 space-y-3">
                 <div className="flex flex-wrap items-center gap-3">
                   <Badge tone={roomStatusMeta[room.status].tone}>
@@ -370,85 +370,115 @@ export function RoomDetailClient({ slug }: { slug: string }) {
                   <span>{room.address}, {room.districtName}</span>
                 </p>
               </div>
-              <div className="w-full rounded-[22px] bg-[var(--color-brand-50)] px-4 py-4 text-left sm:w-auto sm:rounded-[28px] sm:px-5 sm:text-right">
-                <p className="text-sm font-medium text-[var(--color-text-muted)]">
-                  Giá thuê / tháng
-                </p>
-                <p className="mt-2 text-2xl font-semibold text-[var(--color-brand-800)]">
-                  {formatCurrency(room.price)}
-                </p>
+
+              <div className="grid gap-3 lg:grid-cols-[minmax(220px,0.8fr)_minmax(0,1.6fr)]">
+                <div className="rounded-[22px] bg-[var(--color-brand-50)] px-4 py-4 text-left sm:rounded-[28px] sm:px-5">
+                  <p className="text-sm font-medium text-[var(--color-text-muted)]">
+                    Giá thuê / tháng
+                  </p>
+                  <p className="mt-2 text-2xl font-semibold text-[var(--color-brand-800)]">
+                    {formatCurrency(room.price)}
+                  </p>
+                </div>
+
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <div className="motion-soft flex min-h-24 items-center justify-between gap-4 rounded-[22px] bg-[var(--color-surface-soft)] px-4 py-3 hover:-translate-y-0.5 hover:bg-[var(--color-border-soft)] sm:rounded-[28px] sm:px-5">
+                    <span className="inline-flex items-center gap-2 text-sm font-medium text-[var(--color-text-muted)]">
+                      <Hash className="size-4" />
+                      Mã tin
+                    </span>
+                    <span className="font-mono text-lg font-semibold text-[var(--color-text-strong)]">
+                      #{room.listingCode}
+                    </span>
+                  </div>
+
+                  <div className="motion-soft flex min-h-24 items-center justify-between gap-4 rounded-[22px] bg-[var(--color-surface-soft)] px-4 py-3 hover:-translate-y-0.5 hover:bg-[var(--color-border-soft)] sm:rounded-[28px] sm:px-5">
+                    <span className="inline-flex items-center gap-2 text-sm font-medium text-[var(--color-text-muted)]">
+                      <CalendarDays className="size-4" />
+                      Ngày đăng
+                    </span>
+                    <span className="text-right text-lg font-semibold text-[var(--color-text-strong)]">
+                      {formatDate(room.postedAt)}
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
 
-            <div className="motion-stagger mt-5 grid grid-cols-2 gap-3 sm:mt-6 sm:gap-4 md:grid-cols-3 xl:grid-cols-7">
-              <div className="motion-soft rounded-[20px] bg-[var(--color-surface-soft)] px-4 py-3 hover:-translate-y-0.5 hover:bg-[var(--color-border-soft)] sm:rounded-[24px] sm:px-5 sm:py-4">
-                <p className="flex items-center gap-2 text-sm text-[var(--color-text-muted)]">
-                  <Hash className="size-4" />
-                  Mã tin
-                </p>
-                <p className="mt-2 text-base font-semibold text-[var(--color-text-strong)] sm:text-lg">
-                  {room.listingCode}
-                </p>
+            {/* Card tổng bao quanh */}
+            <div className="mt-6 rounded-[28px] border border-[var(--color-border-card)] bg-[var(--color-surface-soft)]/35 p-5 shadow-sm sm:p-6">
+              <div className="motion-stagger grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5 sm:gap-4">
+                {/* Diện tích */}
+                <div className="motion-soft flex min-h-[110px] flex-col justify-between rounded-2xl border border-[var(--color-border-soft)]/60 bg-[var(--color-surface)] p-4 shadow-[var(--shadow-sm)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md">
+                  <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[var(--color-brand-50)] text-[var(--color-brand-700)] shadow-sm">
+                    <Ruler className="size-4" />
+                  </div>
+                  <div className="mt-3 min-w-0">
+                    <p className="text-[11px] font-medium uppercase tracking-wider text-[var(--color-text-muted)]">Diện tích</p>
+                    <p className="mt-0.5 text-sm font-semibold leading-tight text-[var(--color-text-strong)] sm:text-base">
+                      {formatArea(room.area)}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Khu vực */}
+                <div className="motion-soft flex min-h-[110px] flex-col justify-between rounded-2xl border border-[var(--color-border-soft)]/60 bg-[var(--color-surface)] p-4 shadow-[var(--shadow-sm)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md">
+                  <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[var(--color-brand-50)] text-[var(--color-brand-700)] shadow-sm">
+                    <MapPin className="size-4" />
+                  </div>
+                  <div className="mt-3 min-w-0">
+                    <p className="text-[11px] font-medium uppercase tracking-wider text-[var(--color-text-muted)]">Khu vực</p>
+                    <p className="mt-0.5 text-sm font-semibold leading-tight text-[var(--color-text-strong)] sm:text-base break-words">
+                      {room.districtName}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Loại phòng */}
+                <div className="motion-soft flex min-h-[110px] flex-col justify-between rounded-2xl border border-[var(--color-border-soft)]/60 bg-[var(--color-surface)] p-4 shadow-[var(--shadow-sm)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md">
+                  <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[var(--color-brand-50)] text-[var(--color-brand-700)] shadow-sm">
+                    <Building2 className="size-4" />
+                  </div>
+                  <div className="mt-3 min-w-0">
+                    <p className="text-[11px] font-medium uppercase tracking-wider text-[var(--color-text-muted)]">Loại phòng</p>
+                    <p className="mt-0.5 text-sm font-semibold leading-tight text-[var(--color-text-strong)] sm:text-base break-words">
+                      {roomTypeLabel}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Trạng thái */}
+                <div className="motion-soft flex min-h-[110px] flex-col justify-between rounded-2xl border border-[var(--color-border-soft)]/60 bg-[var(--color-surface)] p-4 shadow-[var(--shadow-sm)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md">
+                  <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[var(--color-brand-50)] text-[var(--color-brand-700)] shadow-sm">
+                    <WalletCards className="size-4" />
+                  </div>
+                  <div className="mt-3 min-w-0">
+                    <p className="text-[11px] font-medium uppercase tracking-wider text-[var(--color-text-muted)]">Trạng thái</p>
+                    <p className="mt-0.5 text-sm font-semibold leading-tight text-[var(--color-text-strong)] sm:text-base">
+                      {roomStatusMeta[room.status].label}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Bản đồ / Mở vị trí */}
+                <a
+                  href={mapHref}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="motion-soft col-span-2 flex min-h-[110px] flex-col justify-between rounded-2xl border border-[var(--color-brand-100)] bg-[var(--color-brand-50)]/70 p-4 shadow-[var(--shadow-sm)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[var(--color-brand-100)]/90 hover:shadow-md sm:col-span-1"
+                >
+                  <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[var(--color-surface)] text-[var(--color-brand-700)] shadow-sm">
+                    <ExternalLink className="size-4" />
+                  </div>
+                  <div className="mt-3 min-w-0">
+                    <p className="text-[11px] font-medium uppercase tracking-wider text-[var(--color-brand-700)]">Bản đồ</p>
+                    <p className="mt-0.5 inline-flex items-center gap-1 text-sm font-semibold leading-tight text-[var(--color-brand-900)] sm:text-base">
+                      Mở vị trí
+                      <ExternalLink className="size-3.5 shrink-0 opacity-70" />
+                    </p>
+                  </div>
+                </a>
               </div>
-              <div className="motion-soft rounded-[20px] bg-[var(--color-surface-soft)] px-4 py-3 hover:-translate-y-0.5 hover:bg-[var(--color-border-soft)] sm:rounded-[24px] sm:px-5 sm:py-4">
-                <p className="flex items-center gap-2 text-sm text-[var(--color-text-muted)]">
-                  <CalendarDays className="size-4" />
-                  Ngày đăng
-                </p>
-                <p className="mt-2 text-base font-semibold text-[var(--color-text-strong)] sm:text-lg">
-                  {formatDate(room.postedAt)}
-                </p>
-              </div>
-              <div className="motion-soft rounded-[20px] bg-[var(--color-surface-soft)] px-4 py-3 hover:-translate-y-0.5 hover:bg-[var(--color-border-soft)] sm:rounded-[24px] sm:px-5 sm:py-4">
-                <p className="flex items-center gap-2 text-sm text-[var(--color-text-muted)]">
-                  <Ruler className="size-4" />
-                  Diện tích
-                </p>
-                <p className="mt-2 text-base font-semibold text-[var(--color-text-strong)] sm:text-lg">
-                  {formatArea(room.area)}
-                </p>
-              </div>
-              <div className="motion-soft rounded-[20px] bg-[var(--color-surface-soft)] px-4 py-3 hover:-translate-y-0.5 hover:bg-[var(--color-border-soft)] sm:rounded-[24px] sm:px-5 sm:py-4">
-                <p className="flex items-center gap-2 text-sm text-[var(--color-text-muted)]">
-                  <MapPin className="size-4" />
-                  Khu vực
-                </p>
-                <p className="mt-2 text-base font-semibold text-[var(--color-text-strong)] sm:text-lg">
-                  {room.districtName}
-                </p>
-              </div>
-              <div className="motion-soft rounded-[20px] bg-[var(--color-surface-soft)] px-4 py-3 hover:-translate-y-0.5 hover:bg-[var(--color-border-soft)] sm:rounded-[24px] sm:px-5 sm:py-4">
-                <p className="flex items-center gap-2 text-sm text-[var(--color-text-muted)]">
-                  <Building2 className="size-4" />
-                  Loại phòng
-                </p>
-                <p className="mt-2 line-clamp-2 text-base font-semibold text-[var(--color-text-strong)] sm:text-lg">
-                  {roomTypeLabel}
-                </p>
-              </div>
-              <div className="motion-soft rounded-[20px] bg-[var(--color-surface-soft)] px-4 py-3 hover:-translate-y-0.5 hover:bg-[var(--color-border-soft)] sm:rounded-[24px] sm:px-5 sm:py-4">
-                <p className="flex items-center gap-2 text-sm text-[var(--color-text-muted)]">
-                  <WalletCards className="size-4" />
-                  Trạng thái
-                </p>
-                <p className="mt-2 text-base font-semibold text-[var(--color-text-strong)] sm:text-lg">
-                  {roomStatusMeta[room.status].label}
-                </p>
-              </div>
-              <a
-                href={mapHref}
-                target="_blank"
-                rel="noreferrer"
-                className="motion-soft rounded-[20px] bg-[var(--color-surface-soft)] px-4 py-3 hover:-translate-y-0.5 hover:bg-[var(--color-border-soft)] sm:rounded-[24px] sm:px-5 sm:py-4"
-              >
-                <p className="flex items-center gap-2 text-sm text-[var(--color-text-muted)]">
-                  <ExternalLink className="size-4" />
-                  Bản đồ
-                </p>
-                <p className="mt-2 text-base font-semibold text-[var(--color-text-strong)] sm:text-lg">
-                  Mở vị trí
-                </p>
-              </a>
             </div>
           </div>
 
@@ -489,32 +519,6 @@ export function RoomDetailClient({ slug }: { slug: string }) {
         </section>
 
         <aside className="min-w-0 space-y-4 sm:space-y-6 xl:sticky xl:top-24 xl:self-start">
-          <div className="motion-panel rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px] sm:p-6">
-            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[var(--color-brand-700)]">
-              Thông tin bài đăng
-            </p>
-            <div className="motion-stagger mt-4 grid gap-3 sm:mt-5 sm:grid-cols-2 xl:grid-cols-1">
-              <div className="motion-soft flex items-center justify-between gap-4 rounded-[20px] bg-[var(--color-surface-soft)] px-4 py-3 hover:bg-[var(--color-border-soft)] sm:rounded-[24px]">
-                <span className="inline-flex items-center gap-2 text-sm font-medium text-[var(--color-text-muted)]">
-                  <Hash className="size-4" />
-                  Mã tin
-                </span>
-                <span className="font-mono text-base font-semibold text-[var(--color-text-strong)]">
-                  #{room.listingCode}
-                </span>
-              </div>
-              <div className="motion-soft flex items-center justify-between gap-4 rounded-[20px] bg-[var(--color-surface-soft)] px-4 py-3 hover:bg-[var(--color-border-soft)] sm:rounded-[24px]">
-                <span className="inline-flex items-center gap-2 text-sm font-medium text-[var(--color-text-muted)]">
-                  <CalendarDays className="size-4" />
-                  Ngày đăng
-                </span>
-                <span className="text-base font-semibold text-[var(--color-text-strong)]">
-                  {formatDate(room.postedAt)}
-                </span>
-              </div>
-            </div>
-          </div>
-
           <div className="motion-panel rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-card)] ring-1 ring-transparent hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px] sm:p-6">
             <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[var(--color-brand-700)]">
               Liên hệ nhanh

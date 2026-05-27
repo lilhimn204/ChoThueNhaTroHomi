@@ -48,7 +48,7 @@ CMS đã có route riêng và CRUD bài viết/danh mục/media/settings, nhưng
 
 ### Chưa có CI/CD hoàn chỉnh
 
-Dự án có lệnh test/build nhưng chưa thấy pipeline deploy chính thức. Khi deploy thật nên có môi trường staging/production, backup database, HTTPS và secret manager.
+Dự án có lệnh kiểm thử/build nhưng chưa thấy quy trình triển khai tự động chính thức. Khi triển khai thật nên có môi trường staging/production, backup database, HTTPS và quản lý secret.
 
 ## 3. Rủi ro cần chú ý khi sửa code
 
@@ -63,14 +63,14 @@ Dự án có lệnh test/build nhưng chưa thấy pipeline deploy chính thức
 
 | Tiêu chí | Đánh giá |
 |---|---|
-| Phân tích nghiệp vụ | Tốt, có nhiều actor và use case thực tế |
+| Phân tích nghiệp vụ | Tốt, có nhiều tác nhân và trường hợp sử dụng thực tế |
 | Thiết kế database | Tốt, có quan hệ rõ và nhiều bảng nghiệp vụ |
-| Backend API | Tốt, chia controller/service/repository |
-| Frontend UI | Khá tốt, có responsive, dark mode, nhiều trang |
+| API backend | Tốt, chia controller/service/repository |
+| UI frontend | Khá tốt, có responsive, dark mode, nhiều trang |
 | Auth/bảo mật | Tốt cho đồ án, có OTP, Google, JWT, HttpOnly cookie |
 | Admin/CMS | Mạnh hơn đồ án CRUD cơ bản |
-| Deploy | Cần hoàn thiện nếu muốn chạy production |
-| Test | Có nền tảng nhưng nên bổ sung test theo luồng nghiệp vụ |
+| Triển khai | Cần hoàn thiện nếu muốn chạy production |
+| Kiểm thử | Có nền tảng nhưng nên bổ sung test theo luồng nghiệp vụ |
 
 ## 5. Gợi ý nâng cấp tiếp
 
@@ -79,8 +79,8 @@ Nâng cấp ưu tiên cao:
 - Tách role `HOST`.
 - Thêm audit log admin.
 - Thêm rate limit cho auth/OTP/support.
-- Thêm test E2E cho auth, room CRUD, admin user.
-- Hoàn thiện deploy VPS/Vercel/Render tùy kiến trúc.
+- Thêm kiểm thử E2E cho auth, room CRUD, admin user.
+- Hoàn thiện triển khai VPS/Vercel/Render tùy kiến trúc.
 
 Nâng cấp trải nghiệm:
 

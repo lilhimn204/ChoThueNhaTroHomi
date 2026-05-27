@@ -14,7 +14,7 @@ ChoThuePhongTroHomi/
 └── README / cấu hình khác
 ```
 
-## 2. Backend
+## 2. Mã nguồn backend
 
 ```text
 backend/
@@ -61,7 +61,7 @@ backend/
 - `NewsArticleService`, `NewsCategoryService`.
 - `SupportTicketService`, `NotificationService`, `FileStorageService`, `ImageProcessingService`.
 
-## 3. Frontend
+## 3. Mã nguồn frontend
 
 ```text
 frontend/
@@ -91,9 +91,9 @@ frontend/
 └── next.config.*
 ```
 
-### Nhóm route frontend
+### Nhóm tuyến trang frontend
 
-Public:
+Công khai:
 
 - `/`, `/rooms`, `/rooms/[slug]`, `/news`, `/news/[slug]`.
 - `/support/*`, `/explore/*`.
@@ -103,11 +103,11 @@ User:
 
 - `/profile`, `/saved-rooms`, `/contact-history`.
 
-Host:
+Khu chủ trọ:
 
 - `/host/dashboard`, `/host/posts`, `/host/posts/create`, `/host/posts/[id]/edit`, `/host/customers`, `/host/profile`.
 
-Admin:
+Quản trị:
 
 - `/admin`, `/admin/rooms`, `/admin/news`, `/admin/users`, `/admin/contact-requests`, `/admin/room-reports`, `/admin/support-tickets`.
 
@@ -115,7 +115,7 @@ CMS:
 
 - `/cms`, `/cms/articles`, `/cms/articles/create`, `/cms/articles/[id]/edit`, `/cms/articles/[id]/preview`, `/cms/categories`, `/cms/media`, `/cms/settings`.
 
-## 4. Frontend API routes
+## 4. API route phía frontend
 
 ```text
 frontend/app/api/
@@ -136,7 +136,7 @@ frontend/app/api/
 
 Các route này giúp frontend quản lý cookie bảo mật và tránh lộ token ở client.
 
-## 5. Database
+## 5. Cơ sở dữ liệu
 
 ```text
 database/mysql/
@@ -150,7 +150,7 @@ database/mysql/
 
 Khi thêm field mới, nên tạo migration mới thay vì sửa dữ liệu thủ công, trừ khi đang cập nhật lại schema tổng hợp có chủ đích.
 
-## 6. Docs
+## 6. Tài liệu
 
 ```text
 docs/

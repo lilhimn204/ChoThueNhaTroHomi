@@ -1,4 +1,4 @@
-# 00. AI Context Homi
+# 00. Ngữ Cảnh AI Cho Homi
 
 Tài liệu này là bản ngữ cảnh nhanh cho AI hoặc lập trình viên mới đọc source Homi. Khi cần nhờ AI sửa code, nên đưa file này cùng yêu cầu để AI hiểu hệ thống hiện tại.
 
@@ -9,28 +9,28 @@ Homi là website tìm và quản lý phòng trọ tại Hà Nội. Người thu�
 ## 2. Kiến trúc hiện tại
 
 ```text
-Browser
-  -> Next.js frontend + BFF API routes
-  -> Spring Boot REST API
+Trình duyệt
+  -> Frontend Next.js + API route BFF
+  -> REST API Spring Boot
   -> MySQL rental_room_db
 ```
 
-- Frontend: Next.js App Router, React, TypeScript, Tailwind CSS.
-- Backend: Spring Boot, Spring Security JWT, Spring Data JPA, MySQL.
+- Frontend (giao diện): Next.js App Router, React, TypeScript, Tailwind CSS.
+- Backend (máy chủ): Spring Boot, Spring Security JWT, Spring Data JPA, MySQL.
 - Database: MySQL 8.x, schema trong `database/mysql`.
 - Auth: access token và refresh token được frontend lưu bằng HttpOnly cookie qua Next API route.
 - Upload: backend lưu file upload trong thư mục cấu hình bởi `UPLOAD_DIRECTORY`.
 
-## 3. Stack và phiên bản chính
+## 3. Công nghệ và phiên bản chính
 
-- Frontend: Next.js `16.2.4`, React `19.2.4`, Tailwind CSS 4, TypeScript 5.
-- Backend: Spring Boot `3.5.7`, Java 21, JJWT `0.12.7`.
+- Frontend (giao diện): Next.js `16.2.4`, React `19.2.4`, Tailwind CSS 4, TypeScript 5.
+- Backend (máy chủ): Spring Boot `3.5.7`, Java 21, JJWT `0.12.7`.
 - Database: MySQL 8.4 trong Docker hoặc MySQL local 8.x.
-- Test: backend dùng Spring Boot Test/H2; frontend có Vitest và smoke route script.
+- Kiểm thử: backend dùng Spring Boot Test/H2; frontend có Vitest và script kiểm tra nhanh tuyến trang.
 
-## 4. Routes frontend quan trọng
+## 4. Tuyến trang frontend quan trọng
 
-Public:
+Công khai:
 
 - `/` trang chủ.
 - `/rooms`, `/rooms/[slug]` danh sách và chi tiết phòng.
@@ -39,7 +39,7 @@ Public:
 - `/explore/kinh-nghiem-thue-phong`, `/explore/meo-tranh-lua-dao`, `/explore/khu-vuc-pho-bien`, `/explore/cam-nang-sinh-vien-nguoi-di-lam`, `/explore/checklist-truoc-khi-thue`.
 - `/login`, `/register`, `/forgot-password`.
 
-Authenticated:
+Cần đăng nhập:
 
 - `/profile` hồ sơ cá nhân, tách tab chỉnh sửa thông tin và cài đặt tài khoản.
 - `/saved-rooms` phòng đã lưu.
@@ -47,7 +47,7 @@ Authenticated:
 - `/dang-tin` điều hướng/entry đăng tin.
 - `/host/dashboard`, `/host/posts`, `/host/posts/create`, `/host/posts/[id]/edit`, `/host/customers`, `/host/profile`.
 
-Admin:
+Quản trị:
 
 - `/admin` tổng quan.
 - `/admin/rooms`, `/admin/news`, `/admin/users`, `/admin/contact-requests`, `/admin/room-reports`, `/admin/support-tickets`.
@@ -58,7 +58,7 @@ CMS:
 
 ## 5. API backend quan trọng
 
-Auth:
+Xác thực:
 
 - `POST /api/v1/auth/register`
 - `POST /api/v1/auth/verify-otp`
@@ -71,14 +71,14 @@ Auth:
 - `POST /api/v1/auth/resend-password-reset-otp`
 - `POST /api/v1/auth/reset-password`
 
-User/profile:
+Người dùng/hồ sơ:
 
 - `GET /api/v1/users/me`
 - `PUT /api/v1/users/me`
 - `PUT /api/v1/users/me/password`
 - `PUT /api/v1/users/me/password/setup`
 
-Rooms:
+Phòng:
 
 - `GET /api/v1/rooms`
 - `GET /api/v1/rooms/featured`
@@ -87,7 +87,7 @@ Rooms:
 - `GET /api/v1/districts`
 - `GET /api/v1/amenities`
 
-Host:
+Khu chủ trọ:
 
 - `GET /api/v1/host/dashboard`
 - CRUD `/api/v1/host/rooms`
@@ -95,7 +95,7 @@ Host:
 - `PATCH /api/v1/host/contact-requests/{requestId}/status`
 - `GET/PUT /api/v1/host/profile`
 
-Admin:
+Quản trị:
 
 - `/api/v1/admin/dashboard`
 - CRUD/status `/api/v1/admin/rooms`
@@ -106,7 +106,7 @@ Admin:
 - `/api/v1/admin/room-reports`
 - `/api/v1/admin/support-tickets`
 
-News/support:
+Tin tức/hỗ trợ:
 
 - `GET /api/v1/news`
 - `GET /api/v1/news/{slug}`
@@ -115,7 +115,7 @@ News/support:
 - `POST /api/v1/room-reports`
 - `POST /api/v1/contact-requests`
 
-Uploads:
+Tải ảnh:
 
 - `POST /api/v1/uploads/rooms`
 - `POST /api/v1/uploads/avatars`
@@ -137,7 +137,7 @@ Thông tin cần chú ý:
 - Sau khi tạo password, user Google có thể đăng nhập bằng cả Google và email/password.
 - Không lưu OTP plain text; backend dùng hash OTP.
 
-## 7. Role và quyền
+## 7. Vai trò và quyền
 
 Role chính:
 
@@ -169,7 +169,7 @@ Field quan trọng:
 
 ## 9. Loại phòng
 
-Frontend query:
+Query phía frontend:
 
 - `/rooms`
 - `/rooms?type=apartment`
@@ -177,7 +177,7 @@ Frontend query:
 - `/rooms?type=private-house`
 - `/rooms?type=boarding-room`
 
-Backend enum:
+Enum phía backend:
 
 - `APARTMENT`
 - `MINI_APARTMENT`
@@ -186,7 +186,7 @@ Backend enum:
 
 Dữ liệu cũ không có loại phòng được mặc định là `BOARDING_ROOM`.
 
-## 10. Frontend BFF
+## 10. BFF phía frontend
 
 Next.js có các API route:
 
@@ -224,14 +224,14 @@ Chạy cả MySQL Docker nếu cần:
 docker compose --profile docker-db up -d --build
 ```
 
-Backend test:
+Kiểm thử backend:
 
 ```powershell
 cd backend
 .\mvnw.cmd test
 ```
 
-Frontend:
+Chạy frontend:
 
 ```powershell
 cd frontend

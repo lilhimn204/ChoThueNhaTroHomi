@@ -1,6 +1,6 @@
 # 04. Phân Tích Chức Năng
 
-## 1. Nhóm chức năng public
+## 1. Nhóm chức năng công khai
 
 ### Trang chủ
 
@@ -114,7 +114,7 @@ Tab “Cài đặt tài khoản”:
 - Xem lịch sử liên hệ tại `/contact-history`.
 - Nhận thông báo chưa đọc qua API notifications.
 
-## 4. Khu host
+## 4. Khu chủ trọ
 
 Route chính:
 
@@ -135,7 +135,7 @@ Chức năng:
 - Xem khách liên hệ và cập nhật trạng thái xử lý.
 - Cập nhật hồ sơ cho thuê.
 
-## 5. Khu admin
+## 5. Khu quản trị admin
 
 Route chính:
 
@@ -179,7 +179,7 @@ Chức năng:
 - Quản lý ảnh/media.
 - Thiết lập nội dung và quy trình xuất bản.
 
-## 7. Upload và ảnh
+## 7. Tải ảnh và quản lý ảnh
 
 - Upload phòng: `POST /api/v1/uploads/rooms`.
 - Upload avatar: `POST /api/v1/uploads/avatars`.

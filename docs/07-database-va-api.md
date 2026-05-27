@@ -1,6 +1,6 @@
-# 07. Database Và API
+# 07. Cơ Sở Dữ Liệu Và API
 
-## 1. Tổng quan database
+## 1. Tổng quan cơ sở dữ liệu
 
 Database chính: `rental_room_db`.
 
@@ -118,7 +118,7 @@ Field đáng chú ý trong `news_articles`:
 
 ## 4. API auth
 
-Base path: `/api/v1/auth`.
+Đường dẫn gốc: `/api/v1/auth`.
 
 | Method | Endpoint | Mô tả |
 |---|---|---|
@@ -135,7 +135,7 @@ Base path: `/api/v1/auth`.
 
 ## 5. API user/profile
 
-Base path: `/api/v1/users`.
+Đường dẫn gốc: `/api/v1/users`.
 
 | Method | Endpoint | Mô tả |
 |---|---|---|
@@ -144,9 +144,9 @@ Base path: `/api/v1/users`.
 | PUT | `/me/password` | Đổi mật khẩu |
 | PUT | `/me/password/setup` | Tạo mật khẩu cho user Google chưa có password |
 
-## 6. API phòng public
+## 6. API phòng công khai
 
-Base path: `/api/v1/rooms`.
+Đường dẫn gốc: `/api/v1/rooms`.
 
 | Method | Endpoint | Mô tả |
 |---|---|---|
@@ -162,7 +162,7 @@ Lookup:
 
 ## 7. API host
 
-Base path: `/api/v1/host`.
+Đường dẫn gốc: `/api/v1/host`.
 
 | Method | Endpoint | Mô tả |
 |---|---|---|
@@ -180,7 +180,7 @@ Base path: `/api/v1/host`.
 
 ## 8. API admin
 
-| Base path | Chức năng |
+| Đường dẫn gốc | Chức năng |
 |---|---|
 | `/api/v1/admin/dashboard` | Tổng quan và biểu đồ |
 | `/api/v1/admin/rooms` | CRUD/trạng thái phòng |
@@ -193,7 +193,7 @@ Base path: `/api/v1/host`.
 
 ## 9. API news/support
 
-Tin tức public:
+Tin tức công khai:
 
 - `GET /api/v1/news`
 - `GET /api/v1/news/{slug}`
@@ -222,7 +222,7 @@ Notifications:
 
 ## 10. API upload
 
-Base path: `/api/v1/uploads`.
+Đường dẫn gốc: `/api/v1/uploads`.
 
 | Method | Endpoint | Mô tả |
 |---|---|---|
@@ -230,7 +230,7 @@ Base path: `/api/v1/uploads`.
 | POST | `/avatars` | Upload avatar |
 | POST | `/news` | Upload ảnh tin tức |
 
-## 11. Frontend proxy
+## 11. Proxy phía frontend
 
 Next.js API route:
 

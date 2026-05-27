@@ -111,7 +111,7 @@ Query loại phòng:
 - `type=private-house`
 - `type=boarding-room`
 
-Backend map sang enum:
+Backend ánh xạ sang enum:
 
 - `APARTMENT`
 - `MINI_APARTMENT`
@@ -187,7 +187,7 @@ Backend phải chặn thao tác nguy hiểm như tự khóa chính admin hiện 
 
 ## 13. Luồng tin tức/CMS
 
-Public:
+Công khai:
 
 ```text
 User mở /news
@@ -196,12 +196,12 @@ User mở /news
   -> Click bài -> /news/[slug] -> GET /api/v1/news/{slug}
 ```
 
-Admin/CMS:
+Quản trị/CMS:
 
 ```text
 Admin mở /cms/articles hoặc /admin/news
   -> GET /api/v1/admin/news
   -> Tạo/sửa/xóa/cập nhật trạng thái bài viết
   -> Upload ảnh bằng /api/v1/uploads/news
-  -> Public chỉ thấy bài đã xuất bản
+  -> Người dùng công khai chỉ thấy bài đã xuất bản
 ```

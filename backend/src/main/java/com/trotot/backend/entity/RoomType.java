@@ -39,6 +39,6 @@ public enum RoomType {
             }
         }
 
-        throw new IllegalArgumentException("Loai phong khong hop le: " + value);
+        throw new IllegalArgumentException("Loại phòng không hợp lệ: " + value);
     }
 }

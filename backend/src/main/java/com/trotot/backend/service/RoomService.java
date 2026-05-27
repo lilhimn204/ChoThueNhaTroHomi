@@ -275,7 +275,7 @@ public class RoomService {
         } while (roomRepository.existsByListingCode(code) && attempts < 25);
 
         if (roomRepository.existsByListingCode(code)) {
-            throw new BusinessException("Khong the tao ma tin duy nhat. Vui long thu lai.");
+            throw new BusinessException("Không thể tạo mã tin duy nhất. Vui lòng thử lại.");
         }
 
         return code;

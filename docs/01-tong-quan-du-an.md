@@ -19,9 +19,9 @@ Dự án được xây dựng theo kiến trúc full-stack tách riêng frontend
 - CMS cung cấp khu vực quản lý nội dung riêng, chuyên nghiệp hơn khu admin cơ bản.
 - Website hỗ trợ light mode/dark mode, responsive desktop/tablet/mobile.
 
-## 3. Actor chính
+## 3. Tác nhân chính
 
-| Actor | Vai trò |
+| Tác nhân | Vai trò |
 |---|---|
 | Khách chưa đăng nhập | Xem trang chủ, danh sách phòng, chi tiết phòng, tin tức, hỗ trợ |
 | Người dùng | Đăng nhập, lưu phòng, gửi liên hệ, xem lịch sử, chỉnh hồ sơ |

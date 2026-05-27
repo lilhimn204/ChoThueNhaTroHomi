@@ -1,15 +1,15 @@
 # 02. Công Nghệ Sử Dụng
 
-## 1. Tổng quan stack
+## 1. Tổng quan công nghệ
 
-Homi dùng kiến trúc frontend/backend/database tách biệt:
+Homi dùng kiến trúc giao diện/máy chủ/cơ sở dữ liệu tách biệt:
 
-- Frontend: Next.js, React, TypeScript, Tailwind CSS.
-- Backend: Spring Boot, Spring Security, Spring Data JPA.
+- Frontend (giao diện): Next.js, React, TypeScript, Tailwind CSS.
+- Backend (máy chủ): Spring Boot, Spring Security, Spring Data JPA.
 - Database: MySQL.
 - DevOps local: Docker Compose, Maven Wrapper, npm.
 
-## 2. Frontend
+## 2. Giao diện frontend
 
 Các package chính trong `frontend/package.json`:
 
@@ -22,7 +22,7 @@ Các package chính trong `frontend/package.json`:
 | lucide-react | Icon UI |
 | maplibre-gl | Bản đồ/khu vực nếu cần |
 | recharts | Biểu đồ dashboard |
-| vitest | Test frontend |
+| vitest | Kiểm thử frontend |
 
 Frontend dùng:
 
@@ -35,14 +35,14 @@ Frontend dùng:
 - `frontend/lib` cho API client, auth helpers, formatting.
 - `frontend/types` cho type dùng chung.
 
-## 3. Backend
+## 3. Máy chủ backend
 
 Các dependency chính trong `backend/pom.xml`:
 
 | Công nghệ | Vai trò |
 |---|---|
 | Spring Boot `3.5.7` | Nền tảng backend |
-| Java 21 | Runtime |
+| Java 21 | Môi trường chạy |
 | Spring Web | REST API |
 | Spring Data JPA | ORM với MySQL |
 | Spring Security | Xác thực, phân quyền |
@@ -54,7 +54,7 @@ Các dependency chính trong `backend/pom.xml`:
 | Lombok | Giảm boilerplate |
 | springdoc-openapi | Swagger/OpenAPI |
 | TwelveMonkeys WebP | Hỗ trợ xử lý ảnh |
-| H2 | Database test |
+| H2 | Database kiểm thử |
 
 Backend chia theo tầng:
 
@@ -68,7 +68,7 @@ Backend chia theo tầng:
 - `exception`: xử lý lỗi tập trung.
 - `util`: helper.
 
-## 4. Database
+## 4. Cơ sở dữ liệu
 
 Database chính là MySQL `rental_room_db`.
 
@@ -97,7 +97,7 @@ DB_URL=jdbc:mysql://host.docker.internal:3306/rental_room_db?...
 
 ## 6. Biến môi trường quan trọng
 
-Backend:
+Biến cho backend:
 
 - `DB_URL`, `DB_USERNAME`, `DB_PASSWORD`
 - `JWT_SECRET`, `JWT_EXPIRATION_MINUTES`, `JWT_REFRESH_EXPIRATION_MINUTES`
@@ -108,7 +108,7 @@ Backend:
 - `UPLOAD_DIRECTORY`
 - `CORS_ALLOWED_ORIGINS`
 
-Frontend:
+Biến cho frontend:
 
 - `BACKEND_URL`
 - `NEXT_PUBLIC_API_URL`
@@ -131,14 +131,14 @@ Chạy Docker kèm MySQL container:
 docker compose --profile docker-db up -d --build
 ```
 
-Backend test:
+Kiểm thử backend:
 
 ```powershell
 cd backend
 .\mvnw.cmd test
 ```
 
-Frontend dev/build:
+Chạy và build frontend:
 
 ```powershell
 cd frontend
