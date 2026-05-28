@@ -4,6 +4,21 @@ import { apiConfig } from "@/services/api-client";
 import type { NewsArticle, RoomSummary, PageResponse } from "@/types";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+const SITEMAP_FETCH_TIMEOUT_MS = 5000;
+
+async function fetchWithTimeout(input: RequestInfo | URL, init?: RequestInit) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), SITEMAP_FETCH_TIMEOUT_MS);
+
+  try {
+    return await fetch(input, {
+      ...init,
+      signal: controller.signal,
+    });
+  } finally {
+    clearTimeout(timeout);
+  }
+}
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Static pages
@@ -108,7 +123,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   let newsPages: MetadataRoute.Sitemap = [];
 
   try {
-    const response = await fetch(
+    const response = await fetchWithTimeout(
       `${apiConfig.baseUrl}/rooms?page=0&size=500&sort=newest`,
       { next: { revalidate: 3600 } },
     );
@@ -128,7 +143,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }
 
   try {
-    const response = await fetch(
+    const response = await fetchWithTimeout(
       `${apiConfig.baseUrl}/news?page=0&size=500`,
       { next: { revalidate: 3600 } },
     );
