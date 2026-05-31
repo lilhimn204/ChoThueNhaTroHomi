@@ -11,6 +11,7 @@ import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { AuthReveal, AuthStagger, AuthStaggerItem } from "@/components/forms/auth-motion";
+import { useTheme } from "@/components/providers/theme-provider";
 import { getSafeAuthRedirect } from "@/lib/safe-redirect";
 import type { UserProfile } from "@/types";
 
@@ -65,6 +66,7 @@ function GoogleAuthButton({
   const containerRef = useRef<HTMLDivElement | null>(null);
   const onCredentialRef = useRef(onCredential);
   const onErrorRef = useRef(onError);
+  const { resolvedTheme } = useTheme();
 
   useEffect(() => {
     onCredentialRef.current = onCredential;
@@ -91,6 +93,8 @@ function GoogleAuthButton({
         return;
       }
 
+      const width = Math.max(Math.floor(containerRef.current.getBoundingClientRect().width), 260);
+
       containerRef.current.replaceChildren();
       googleApi.accounts.id.initialize({
         client_id: GOOGLE_CLIENT_ID,
@@ -109,11 +113,11 @@ function GoogleAuthButton({
 
       googleApi.accounts.id.renderButton(containerRef.current, {
         type: "standard",
-        theme: "outline",
-        size: "medium",
+        theme: resolvedTheme === "dark" ? "filled_black" : "outline",
+        size: "large",
         text: "signin_with",
         shape: "rectangular",
-        width: Math.min(Math.max(containerRef.current.offsetWidth, 260), 520),
+        width,
         locale: "vi",
         logo_alignment: "left",
       });
@@ -147,12 +151,26 @@ function GoogleAuthButton({
     script.addEventListener("load", handleLoad);
     script.addEventListener("error", handleError);
 
+    const resizeObserver =
+      typeof ResizeObserver === "undefined"
+        ? null
+        : new ResizeObserver(() => {
+            if (!(window as Window & { google?: GoogleAccountsApi }).google) {
+              return;
+            }
+
+            window.requestAnimationFrame(renderGoogleButton);
+          });
+
+    resizeObserver?.observe(container);
+
     return () => {
       cancelled = true;
+      resizeObserver?.disconnect();
       script?.removeEventListener("load", handleLoad);
       script?.removeEventListener("error", handleError);
     };
-  }, [mode]);
+  }, [mode, resolvedTheme]);
 
   if (!GOOGLE_AUTH_ENABLED) {
     return null;
@@ -160,13 +178,19 @@ function GoogleAuthButton({
 
   return (
     <div
+      aria-disabled={disabled}
       className={
         disabled
-          ? "motion-soft pointer-events-none flex min-h-12 w-full items-center justify-center rounded-[16px] opacity-55 grayscale [&>div]:!w-full [&_iframe]:!mx-auto [&_iframe]:!w-full"
-          : "motion-soft flex min-h-12 w-full items-center justify-center rounded-[16px] hover:-translate-y-0.5 hover:shadow-sm [&>div]:!w-full [&_iframe]:!mx-auto [&_iframe]:!w-full"
+          ? "google-auth-button-frame motion-soft pointer-events-none flex min-h-12 w-full items-center rounded-[16px] border p-1 opacity-55 grayscale"
+          : "google-auth-button-frame motion-soft flex min-h-12 w-full items-center rounded-[16px] border p-1 hover:-translate-y-0.5 focus-within:ring-2 focus-within:ring-[var(--color-focus-ring)] active:translate-y-0 active:scale-[0.99]"
       }
-      ref={containerRef}
-    />
+      data-google-auth-button
+    >
+      <div
+        className="flex min-h-10 w-full items-center justify-center overflow-hidden rounded-[12px] [&>div]:!w-full [&_iframe]:!mx-auto [&_iframe]:!w-full"
+        ref={containerRef}
+      />
+    </div>
   );
 }
 

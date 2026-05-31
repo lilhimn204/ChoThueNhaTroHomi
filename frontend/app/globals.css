@@ -409,6 +409,28 @@ textarea:-webkit-autofill::first-line {
   font-family: var(--font-body), sans-serif;
 }
 
+.google-auth-button-frame {
+  background-color: var(--color-surface);
+  border-color: var(--color-border-strong);
+}
+
+.google-auth-button-frame:hover,
+.google-auth-button-frame:focus-within {
+  background-color: var(--color-surface-soft);
+  border-color: var(--color-brand-500);
+}
+
+[data-theme="dark"] .google-auth-button-frame {
+  background-color: #202124;
+  border-color: #3c4043;
+}
+
+[data-theme="dark"] .google-auth-button-frame:hover,
+[data-theme="dark"] .google-auth-button-frame:focus-within {
+  background-color: #25262a;
+  border-color: var(--color-brand-500);
+}
+
 /* option elements inside select need explicit dark bg */
 [data-theme="dark"] option {
   background-color: var(--color-surface);
