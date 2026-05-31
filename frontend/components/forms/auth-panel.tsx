@@ -81,8 +81,10 @@ function GoogleAuthButton({
     }
 
     let cancelled = false;
+    let animationFrame = 0;
+    let lastRenderedWidth = 0;
 
-    const renderGoogleButton = () => {
+    const renderGoogleButton = (force = false) => {
       if (cancelled || !containerRef.current) {
         return;
       }
@@ -94,7 +96,11 @@ function GoogleAuthButton({
       }
 
       const width = Math.max(Math.floor(containerRef.current.getBoundingClientRect().width), 260);
+      if (!force && Math.abs(width - lastRenderedWidth) < 2) {
+        return;
+      }
 
+      lastRenderedWidth = width;
       containerRef.current.replaceChildren();
       googleApi.accounts.id.initialize({
         client_id: GOOGLE_CLIENT_ID,
@@ -123,11 +129,24 @@ function GoogleAuthButton({
       });
     };
 
+    const scheduleRender = () => {
+      window.cancelAnimationFrame(animationFrame);
+      animationFrame = window.requestAnimationFrame(() => {
+        renderGoogleButton();
+      });
+    };
+
+    const cleanup = () => {
+      cancelled = true;
+      window.cancelAnimationFrame(animationFrame);
+      window.removeEventListener("resize", scheduleRender);
+    };
+
+    window.addEventListener("resize", scheduleRender);
+
     if ((window as Window & { google?: GoogleAccountsApi }).google) {
-      renderGoogleButton();
-      return () => {
-        cancelled = true;
-      };
+      renderGoogleButton(true);
+      return cleanup;
     }
 
     let script = document.getElementById(GOOGLE_SCRIPT_ID) as HTMLScriptElement | null;
@@ -141,7 +160,7 @@ function GoogleAuthButton({
     }
 
     const handleLoad = () => {
-      renderGoogleButton();
+      renderGoogleButton(true);
     };
 
     const handleError = () => {
@@ -151,22 +170,8 @@ function GoogleAuthButton({
     script.addEventListener("load", handleLoad);
     script.addEventListener("error", handleError);
 
-    const resizeObserver =
-      typeof ResizeObserver === "undefined"
-        ? null
-        : new ResizeObserver(() => {
-            if (!(window as Window & { google?: GoogleAccountsApi }).google) {
-              return;
-            }
-
-            window.requestAnimationFrame(renderGoogleButton);
-          });
-
-    resizeObserver?.observe(container);
-
     return () => {
-      cancelled = true;
-      resizeObserver?.disconnect();
+      cleanup();
       script?.removeEventListener("load", handleLoad);
       script?.removeEventListener("error", handleError);
     };
