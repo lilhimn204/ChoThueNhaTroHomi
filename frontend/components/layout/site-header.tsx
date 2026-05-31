@@ -205,7 +205,7 @@ function MobileNavLink({
     <Link
       href={item.href}
       className={cn(
-        "motion-soft block rounded-2xl px-4 py-3 text-left text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-500)]",
+        "motion-soft block min-h-11 rounded-2xl px-4 py-3 text-left text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-500)]",
         active
           ? "bg-[var(--color-brand-50)] text-[var(--color-brand-800)] shadow-sm"
           : "text-[var(--color-text-muted)] hover:translate-x-1 hover:bg-[var(--color-surface-soft)] hover:text-[var(--color-text-strong)]",
@@ -247,11 +247,11 @@ function MobileAccordionGroup({
   children: ReactNode;
 }) {
   return (
-    <section className="rounded-[22px] border border-[var(--color-border-soft)] bg-[var(--color-surface)] shadow-sm">
+    <section className="overflow-hidden rounded-[22px] border border-[var(--color-border-soft)] bg-[var(--color-surface)] shadow-sm">
       <button
         type="button"
         className={cn(
-          "motion-pressable flex w-full items-center justify-between gap-3 rounded-[22px] px-4 py-3 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-500)]",
+          "motion-pressable flex min-h-11 w-full items-center justify-between gap-3 rounded-[22px] px-4 py-3 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-500)]",
           active || open
             ? "text-[var(--color-brand-800)]"
             : "text-[var(--color-text-strong)]",
@@ -295,6 +295,7 @@ export function SiteHeader() {
     Record<string, boolean>
   >({
     "Tìm phòng": true,
+    "Tài khoản": true,
   });
   const { present: mobileMenuPresent, leaving: mobileMenuLeaving } =
     useDelayedPresence(mobileOpen);
@@ -319,14 +320,38 @@ export function SiteHeader() {
   const isNavItemActive = (item: HeaderNavigationItem) =>
     isActive(item.href) || Boolean(item.children?.some((child) => isActive(child.href)));
 
-  const mobilePrimaryLinks = headerNavigation.filter((item) => !item.children?.length);
-  const mobileGroupedLinks = headerNavigation.filter((item) => item.children?.length);
-
   const isAuthenticated = status === "authenticated" && user;
   const isAdmin = user?.roles.includes("ADMIN");
   const hostHref = isAuthenticated
     ? "/host/dashboard"
     : "/login?redirect=%2Fhost%2Fdashboard";
+  const mobileMenuId = "site-mobile-navigation";
+  const authenticatedAccountLinks: NavigationLink[] = [
+    {
+      label: "Hồ sơ",
+      href: "/profile",
+      description: "Cập nhật thông tin cá nhân và ảnh đại diện.",
+    },
+    {
+      label: "Phòng đã lưu",
+      href: "/saved-rooms",
+      description: "Xem lại các phòng bạn đã lưu để so sánh sau.",
+    },
+    {
+      label: "Lịch sử liên hệ",
+      href: "/contact-history",
+      description: "Theo dõi yêu cầu liên hệ và lịch hẹn xem phòng đã gửi.",
+    },
+    ...(isAdmin
+      ? [
+          {
+            label: "Khu quản trị",
+            href: "/admin",
+            description: "Quản lý phòng, báo cáo và người dùng.",
+          },
+        ]
+      : []),
+  ];
 
   const closeMobileMenu = () => {
     setMobileOpen(false);
@@ -355,10 +380,18 @@ export function SiteHeader() {
     }
 
     const previousOverflow = document.body.style.overflow;
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setMobileOpen(false);
+      }
+    };
+
     document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", handleKeyDown);
 
     return () => {
       document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", handleKeyDown);
     };
   }, [mobileMenuPresent]);
 
@@ -373,7 +406,8 @@ export function SiteHeader() {
   }, []);
 
   return (
-    <header
+    <>
+      <header
       className={cn(
         "sticky top-0 z-50 border-b border-[var(--color-header-border)] bg-[var(--color-header-bg)] pt-[env(safe-area-inset-top)] backdrop-blur-xl transition-[box-shadow,background-color] duration-300",
         scrolled ? "shadow-[var(--shadow-card)]" : "shadow-sm",
@@ -472,8 +506,9 @@ export function SiteHeader() {
 
         <button
           type="button"
-          aria-label="Mở menu"
+          aria-label={mobileOpen ? "Đóng menu" : "Mở menu"}
           aria-expanded={mobileOpen}
+          aria-controls={mobileMenuId}
           className="motion-pressable inline-flex size-11 items-center justify-center rounded-2xl border border-[var(--color-border-soft)] bg-[var(--color-surface)] text-[var(--color-text-strong)] shadow-sm hover:-translate-y-0.5 hover:border-[var(--color-brand-500)] hover:shadow-[var(--shadow-card)] active:scale-[0.98] xl:hidden"
           onClick={() => setMobileOpen((current) => !current)}
         >
@@ -484,21 +519,28 @@ export function SiteHeader() {
           )}
         </button>
       </div>
+      </header>
 
       {mobileMenuPresent ? (
         <div
           className={cn(
-            "fixed inset-0 z-50 bg-[rgba(8,24,32,0.52)] backdrop-blur-sm xl:hidden",
+            "fixed inset-0 z-[80] bg-[rgba(8,24,32,0.52)] backdrop-blur-sm xl:hidden",
             mobileMenuLeaving
               ? "pointer-events-none animate-overlay-out"
               : "animate-overlay-in",
           )}
+          onClick={closeMobileMenu}
         >
           <div
+            id={mobileMenuId}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Menu điều hướng Homi"
             className={cn(
-              "absolute inset-y-0 right-0 flex w-full max-w-md flex-col overflow-hidden bg-[var(--color-background)] shadow-2xl",
+              "absolute inset-y-0 right-0 flex h-[100dvh] w-full max-w-md flex-col overflow-hidden border-l border-[var(--color-border-soft)] bg-[var(--color-background)] shadow-2xl",
               mobileMenuLeaving ? "animate-drawer-right-out" : "animate-drawer-right-in",
             )}
+            onClick={(event) => event.stopPropagation()}
           >
             <div className="flex shrink-0 items-center justify-between gap-3 border-b border-[var(--color-border-soft)] px-4 py-3 pt-[calc(0.75rem_+_env(safe-area-inset-top))]">
               <div className="flex min-w-0 items-center gap-3">
@@ -524,7 +566,7 @@ export function SiteHeader() {
               </button>
             </div>
 
-            <div className="min-h-0 flex-1 overflow-y-auto px-4 pb-28 pt-4">
+            <div className="min-h-0 flex-1 space-y-4 overflow-y-auto overscroll-contain px-4 pb-4 pt-4">
             <div className="flex items-center justify-between">
               <p className="text-sm font-medium text-[var(--color-text-muted)]">Giao diện</p>
               <div className="flex items-center gap-2">
@@ -539,41 +581,41 @@ export function SiteHeader() {
               </Button>
             </Link>
 
-            <div className="grid gap-1">
-              {mobilePrimaryLinks.map((item) => (
-                <MobileNavLink
-                  key={item.label}
-                  item={item}
-                  active={isActive(item.href)}
-                  onNavigate={closeMobileMenu}
-                  onPlaceholderClick={handlePlaceholderClick}
-                />
-              ))}
-            </div>
+            <nav aria-label="Menu chính" className="motion-stagger grid gap-2">
+              {headerNavigation.map((item, index) =>
+                item.children?.length ? (
+                  <MobileAccordionGroup
+                    key={item.label}
+                    id={`mobile-nav-group-${index}`}
+                    label={item.label}
+                    description={item.description}
+                    open={Boolean(mobileExpandedSections[item.label])}
+                    active={isNavItemActive(item)}
+                    onToggle={() => toggleMobileSection(item.label)}
+                  >
+                    {item.children.map((child) => (
+                      <MobileNavLink
+                        key={`${item.label}-${child.label}`}
+                        item={child}
+                        active={isActive(child.href)}
+                        onNavigate={closeMobileMenu}
+                        onPlaceholderClick={handlePlaceholderClick}
+                      />
+                    ))}
+                  </MobileAccordionGroup>
+                ) : (
+                  <MobileNavLink
+                    key={item.label}
+                    item={item}
+                    active={isActive(item.href)}
+                    onNavigate={closeMobileMenu}
+                    onPlaceholderClick={handlePlaceholderClick}
+                  />
+                ),
+              )}
+            </nav>
 
             <div className="grid gap-2">
-              {mobileGroupedLinks.map((item, index) => (
-                <MobileAccordionGroup
-                  key={item.label}
-                  id={`mobile-nav-group-${index}`}
-                  label={item.label}
-                  description={item.description}
-                  open={Boolean(mobileExpandedSections[item.label])}
-                  active={isNavItemActive(item)}
-                  onToggle={() => toggleMobileSection(item.label)}
-                >
-                  {item.children?.map((child) => (
-                    <MobileNavLink
-                      key={`${item.label}-${child.label}`}
-                      item={child}
-                      active={isActive(child.href)}
-                      onNavigate={closeMobileMenu}
-                      onPlaceholderClick={handlePlaceholderClick}
-                    />
-                  ))}
-                </MobileAccordionGroup>
-              ))}
-
               <MobileAccordionGroup
                 id="mobile-nav-account"
                 label="Tài khoản"
@@ -583,33 +625,25 @@ export function SiteHeader() {
                     : "Đăng nhập hoặc tạo tài khoản Homi."
                 }
                 open={Boolean(mobileExpandedSections["Tài khoản"])}
-                active={isActive("/profile") || isActive("/admin")}
+                active={
+                  isActive("/profile") ||
+                  isActive("/saved-rooms") ||
+                  isActive("/contact-history") ||
+                  isActive("/admin")
+                }
                 onToggle={() => toggleMobileSection("Tài khoản")}
               >
                 {isAuthenticated ? (
                   <>
-                    <MobileNavLink
-                      item={{
-                        label: "Hồ sơ",
-                        href: "/profile",
-                        description: "Cập nhật thông tin cá nhân và ảnh đại diện.",
-                      }}
-                      active={isActive("/profile")}
-                      onNavigate={closeMobileMenu}
-                      onPlaceholderClick={handlePlaceholderClick}
-                    />
-                    {isAdmin ? (
+                    {authenticatedAccountLinks.map((item) => (
                       <MobileNavLink
-                        item={{
-                          label: "Khu quản trị",
-                          href: "/admin",
-                          description: "Quản lý phòng, báo cáo và người dùng.",
-                        }}
-                        active={isActive("/admin")}
+                        key={item.href}
+                        item={item}
+                        active={isActive(item.href)}
                         onNavigate={closeMobileMenu}
                         onPlaceholderClick={handlePlaceholderClick}
                       />
-                    ) : null}
+                    ))}
                     <button
                       type="button"
                       className="motion-soft rounded-2xl px-4 py-3 text-left text-sm font-semibold text-[var(--color-text-muted)] hover:translate-x-1 hover:bg-[var(--color-surface-soft)] hover:text-[var(--color-text-strong)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-500)]"
@@ -639,7 +673,7 @@ export function SiteHeader() {
             </div>
             </div>
 
-            <div className="fixed bottom-0 right-0 w-full max-w-md border-t border-[var(--color-border-soft)] bg-[var(--color-surface)]/95 px-4 pb-[calc(1rem_+_env(safe-area-inset-bottom))] pt-3 backdrop-blur">
+            <div className="shrink-0 border-t border-[var(--color-border-soft)] bg-[var(--color-surface)]/95 px-4 pb-[calc(1rem_+_env(safe-area-inset-bottom))] pt-3 backdrop-blur">
               {isAuthenticated ? (
                 <div className="grid grid-cols-2 gap-3">
                   <Link href="/profile" onClick={closeMobileMenu}>
@@ -669,6 +703,6 @@ export function SiteHeader() {
           </div>
         </div>
       ) : null}
-    </header>
+    </>
   );
 }
