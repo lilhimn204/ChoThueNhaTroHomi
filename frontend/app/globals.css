@@ -108,6 +108,25 @@
   --selection-bg: rgba(31, 122, 140, 0.18);
   --pattern-grid-color: rgba(99, 125, 152, 0.08);
 
+  /* Auth intro panel */
+  --auth-intro-bg: #fbfcfb;
+  --auth-intro-border: #dfe9ec;
+  --auth-intro-shadow: 0 18px 48px rgba(16, 42, 67, 0.08);
+  --auth-intro-logo-bg: #ffffff;
+  --auth-intro-logo-border: #e4edf0;
+  --auth-intro-logo-shadow: 0 8px 20px rgba(16, 42, 67, 0.07);
+  --auth-intro-title: #102a43;
+  --auth-intro-description: #58758e;
+  --auth-intro-eyebrow: #0f6070;
+  --auth-intro-benefit-bg: #f1f6f7;
+  --auth-intro-benefit-border: #dde9ec;
+  --auth-intro-benefit-text: #45677f;
+  --auth-intro-benefit-icon: #0f6070;
+  --auth-intro-highlight-bg: #eaf3f3;
+  --auth-intro-highlight-border: #d4e5e5;
+  --auth-intro-highlight-text: #4b6a7d;
+  --auth-intro-highlight-icon: #c98620;
+
   /* Skeleton */
   --skeleton-from: var(--color-surface-soft);
   --skeleton-via: #f8fbff;
@@ -213,6 +232,25 @@
   --selection-bg: rgba(52, 160, 180, 0.28);
   --pattern-grid-color: rgba(139, 164, 190, 0.05);
 
+  /* Auth intro panel */
+  --auth-intro-bg: #101a28;
+  --auth-intro-border: #26374a;
+  --auth-intro-shadow: 0 18px 48px rgba(0, 0, 0, 0.24);
+  --auth-intro-logo-bg: #f8faf9;
+  --auth-intro-logo-border: rgba(255, 255, 255, 0.12);
+  --auth-intro-logo-shadow: 0 8px 20px rgba(0, 0, 0, 0.22);
+  --auth-intro-title: #edf4f7;
+  --auth-intro-description: #a8bed0;
+  --auth-intro-eyebrow: #6cc7d5;
+  --auth-intro-benefit-bg: rgba(255, 255, 255, 0.035);
+  --auth-intro-benefit-border: #2c3e51;
+  --auth-intro-benefit-text: #bfd0dc;
+  --auth-intro-benefit-icon: #6cc7d5;
+  --auth-intro-highlight-bg: #162536;
+  --auth-intro-highlight-border: #304559;
+  --auth-intro-highlight-text: #afc3d2;
+  --auth-intro-highlight-icon: #f0b04a;
+
   /* Skeleton */
   --skeleton-from: #1a2435;
   --skeleton-via: #1e2a3c;
@@ -310,6 +348,66 @@ canvas {
     linear-gradient(var(--pattern-grid-color) 1px, transparent 1px),
     linear-gradient(90deg, var(--pattern-grid-color) 1px, transparent 1px);
   background-size: 28px 28px;
+}
+
+.auth-intro-panel {
+  background-color: var(--auth-intro-bg);
+  border-color: var(--auth-intro-border);
+  box-shadow: var(--auth-intro-shadow);
+}
+
+.auth-intro-logo {
+  background-color: var(--auth-intro-logo-bg);
+  border-color: var(--auth-intro-logo-border);
+  box-shadow: var(--auth-intro-logo-shadow);
+}
+
+.auth-intro-title {
+  color: var(--auth-intro-title);
+}
+
+.auth-intro-description {
+  color: var(--auth-intro-description);
+}
+
+.auth-intro-eyebrow {
+  color: var(--auth-intro-eyebrow);
+}
+
+.auth-intro-benefit {
+  background-color: var(--auth-intro-benefit-bg);
+  border-color: var(--auth-intro-benefit-border);
+  color: var(--auth-intro-benefit-text);
+}
+
+.auth-intro-benefit-icon {
+  color: var(--auth-intro-benefit-icon);
+}
+
+.auth-intro-highlight {
+  background-color: var(--auth-intro-highlight-bg);
+  border-color: var(--auth-intro-highlight-border);
+}
+
+.auth-intro-highlight-description {
+  color: var(--auth-intro-highlight-text);
+}
+
+.auth-intro-highlight-icon {
+  color: var(--auth-intro-highlight-icon);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .auth-intro-benefit:hover {
+    transform: translateY(-2px);
+  }
+}
+
+@media (min-width: 1024px) and (max-height: 820px) {
+  .auth-page-shell {
+    padding-bottom: 0.5rem !important;
+    padding-top: 0.5rem !important;
+  }
 }
 
 .text-balance {
