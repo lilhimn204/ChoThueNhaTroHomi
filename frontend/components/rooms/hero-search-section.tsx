@@ -1,16 +1,53 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, MapPin, ShieldCheck, Sparkles } from "lucide-react";
+import {
+  ArrowRight,
+  CheckCircle2,
+  MapPin,
+  Search,
+  ShieldCheck,
+} from "lucide-react";
+import { MotionConfig, motion, type Variants } from "motion/react";
 
 import { AnimatedCounter } from "@/components/shared/animated-counter";
 import { Button } from "@/components/ui/button";
-import { getRoomStats } from "@/services/room-service";
-import type { RoomStats } from "@/types";
+import { normalizeUploadImageSrc } from "@/lib/images";
+import { getFeaturedRooms, getRoomStats } from "@/services/room-service";
+import type { RoomStats, RoomSummary } from "@/types";
+
+const fallbackHeroImage =
+  "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1400&q=86";
+
+const easeOut = [0.16, 1, 0.3, 1] as const;
+
+const heroVariants: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.62,
+      ease: easeOut,
+      staggerChildren: 0.08,
+    },
+  },
+};
+
+const heroItemVariants: Variants = {
+  hidden: { opacity: 0, y: 14 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, ease: easeOut },
+  },
+};
 
 export function HeroSearchSection() {
   const [stats, setStats] = useState<RoomStats | null>(null);
+  const [featuredRoom, setFeaturedRoom] = useState<RoomSummary | null>(null);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -23,122 +60,136 @@ export function HeroSearchSection() {
         }
       });
 
+    void getFeaturedRooms(controller.signal)
+      .then((rooms) => setFeaturedRoom(rooms.at(0) ?? null))
+      .catch(() => {
+        if (!controller.signal.aborted) {
+          setFeaturedRoom(null);
+        }
+      });
+
     return () => controller.abort();
   }, []);
 
-  return (
-    <section className="container-shell pt-8 sm:pt-12">
-      <div className="relative overflow-hidden rounded-[32px] border border-[var(--color-border-card)] bg-[linear-gradient(135deg,var(--color-surface),var(--color-brand-50),var(--color-surface-soft),var(--color-surface))] p-4 shadow-[var(--shadow-card)] animate-ambient-gradient sm:rounded-[40px] sm:p-6 lg:p-8">
-        <div className="pattern-grid pointer-events-none absolute inset-0 opacity-70" />
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[var(--color-brand-500)] to-transparent opacity-70" />
-      <div className="relative grid gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
-        <div className="animate-content-rise space-y-6">
-          <p className="motion-soft inline-flex items-center gap-2 rounded-full border border-white/35 bg-[var(--badge-brand-bg)] px-4 py-2 text-sm font-semibold text-[var(--badge-brand-text)] shadow-sm backdrop-blur-sm hover:-translate-y-0.5 hover:shadow-[var(--shadow-card)]">
-            <Sparkles className="size-4" />
-            Homi - tìm phòng trọ quanh các trường đại học Hà Nội
-          </p>
-          <div className="space-y-4">
-            <h1 className="max-w-3xl text-balance text-4xl font-semibold tracking-tight text-[var(--color-text-strong)] sm:text-5xl lg:text-6xl">
-              Tìm phòng trọ Hà Nội phù hợp với ngân sách và khu vực của bạn.
-            </h1>
-            <p className="max-w-2xl text-lg leading-8 text-[var(--color-text-muted)]">
-              Lọc nhanh theo quận, mức giá, diện tích và tiện ích. Mỗi bài đăng
-              hiển thị rõ giá thuê, địa chỉ, trạng thái còn phòng và thông tin liên hệ
-              để bạn chủ động hẹn xem.
-            </p>
-            <p className="typing-line text-sm font-semibold text-[var(--color-brand-700)] sm:text-base">
-              Ưu tiên phòng rõ giá, rõ vị trí, dễ liên hệ.
-            </p>
-          </div>
+  const heroImage = normalizeUploadImageSrc(featuredRoom?.thumbnail ?? fallbackHeroImage);
 
-          <div className="motion-panel surface-panel pattern-grid shine-surface rounded-[32px] border border-white/80 p-4 shadow-[var(--shadow-card)] hover:-translate-y-0.5 hover:border-[var(--color-brand-500)] hover:shadow-[var(--shadow-card-hover)] sm:p-5">
-            <div className="motion-stagger grid gap-3 md:grid-cols-[1.2fr_0.9fr_0.9fr_auto]">
-              <label className="motion-soft space-y-2 rounded-[24px] bg-[var(--color-surface-elevated)] px-4 py-3 shadow-sm hover:-translate-y-0.5 hover:shadow-[var(--shadow-card)]">
-                <span className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--color-text-muted)]">
-                  Khu vực
-                </span>
-                <p className="text-sm font-semibold text-[var(--color-text-strong)]">
-                  Cầu Giấy, Thanh Xuân, Hà Đông
-                </p>
-              </label>
-              <label className="motion-soft space-y-2 rounded-[24px] bg-[var(--color-surface-elevated)] px-4 py-3 shadow-sm hover:-translate-y-0.5 hover:shadow-[var(--shadow-card)]">
-                <span className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--color-text-muted)]">
-                  Ngân sách
-                </span>
-                <p className="text-sm font-semibold text-[var(--color-text-strong)]">
-                  3 - 6 triệu / tháng
-                </p>
-              </label>
-              <label className="motion-soft space-y-2 rounded-[24px] bg-[var(--color-surface-elevated)] px-4 py-3 shadow-sm hover:-translate-y-0.5 hover:shadow-[var(--shadow-card)]">
-                <span className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--color-text-muted)]">
-                  Nhu cầu
-                </span>
-                <p className="text-sm font-semibold text-[var(--color-text-strong)]">
-                  Studio, có ban công
-                </p>
-              </label>
-              <Link href="/rooms" className="self-stretch">
+  return (
+    <MotionConfig reducedMotion="user">
+      <section className="container-shell pt-4 sm:pt-8">
+        <div className="relative overflow-hidden rounded-[28px] border border-[var(--color-border-card)] bg-[var(--color-surface)] shadow-[var(--shadow-card)] sm:rounded-[36px]">
+          <div className="pattern-grid pointer-events-none absolute inset-0 opacity-45" />
+          <div className="relative grid lg:min-h-[39rem] lg:grid-cols-[1.05fr_0.95fr]">
+            <motion.div
+              className="flex flex-col justify-center px-5 py-6 sm:px-8 sm:py-10 lg:px-10 lg:py-12 xl:px-12"
+              initial="hidden"
+              animate="visible"
+              variants={heroVariants}
+            >
+            <motion.p
+              className="text-sm font-semibold text-[var(--color-brand-700)]"
+              variants={heroItemVariants}
+            >
+              Phòng trọ Hà Nội cho sinh viên và người đi làm
+            </motion.p>
+
+            <motion.h1
+              className="mt-3 max-w-3xl text-balance text-[2.45rem] font-semibold leading-[1.04] tracking-[-0.055em] text-[var(--color-text-strong)] sm:text-5xl lg:text-[4.25rem]"
+              variants={heroItemVariants}
+            >
+              Tìm phòng trọ vừa túi tiền, đúng khu vực bạn cần.
+            </motion.h1>
+
+            <motion.p
+              className="mt-4 max-w-xl text-base leading-7 text-[var(--color-text-muted)] sm:text-lg sm:leading-8"
+              variants={heroItemVariants}
+            >
+              Lọc theo quận, giá và tiện ích. Xem thông tin rõ ràng trước khi hẹn phòng.
+            </motion.p>
+
+            <motion.div
+              className="mt-5 rounded-[22px] border border-[var(--color-border-strong)] bg-[var(--color-surface-elevated)] p-2.5 shadow-[var(--shadow-card)] sm:mt-7 sm:flex sm:items-center sm:gap-3 sm:rounded-[24px]"
+              variants={heroItemVariants}
+            >
+              <div className="flex min-w-0 flex-1 items-center gap-3 px-2 py-2 sm:px-3">
+                <Search className="size-5 shrink-0 text-[var(--color-brand-700)]" />
+                <div className="min-w-0">
+                  <p className="text-xs font-semibold text-[var(--color-text-muted)]">
+                    Tìm quanh khu vực của bạn
+                  </p>
+                  <p className="truncate text-sm font-semibold text-[var(--color-text-strong)] sm:text-base">
+                    Cầu Giấy, Thanh Xuân, Hà Đông...
+                  </p>
+                </div>
+              </div>
+              <Link href="/rooms" className="block sm:shrink-0">
                 <Button
-                  className="h-full w-full"
+                  className="w-full"
                   size="lg"
                   trailingIcon={<ArrowRight className="size-4" />}
                 >
-                  Xem danh sách phòng
+                  Xem phòng
                 </Button>
               </Link>
-            </div>
-          </div>
+            </motion.div>
 
-          <div className="flex flex-wrap gap-3 text-sm text-[var(--color-text-muted)]">
-            <p className="motion-soft inline-flex items-center gap-2 rounded-full bg-[var(--color-surface)] px-4 py-2 shadow-[var(--shadow-card)] hover:-translate-y-0.5 hover:shadow-[var(--shadow-card-hover)]">
-              <MapPin className="size-4 text-[var(--color-brand-700)]" />
-              Lọc theo quận/huyện để xem nhanh
-            </p>
-            <p className="motion-soft inline-flex items-center gap-2 rounded-full bg-[var(--color-surface)] px-4 py-2 shadow-[var(--shadow-card)] hover:-translate-y-0.5 hover:shadow-[var(--shadow-card-hover)]">
-              <ShieldCheck className="size-4 text-[var(--color-brand-700)]" />
-              Biết ngay phòng còn trống hay đã hết
-            </p>
+            <motion.div
+              className="mt-5 grid gap-2 text-sm text-[var(--color-text-muted)] sm:mt-6 sm:grid-cols-2"
+              variants={heroItemVariants}
+            >
+              <p className="flex items-center gap-2">
+                <CheckCircle2 className="size-4 shrink-0 text-[var(--color-brand-700)]" />
+                Giá và diện tích hiển thị rõ
+              </p>
+              <p className="flex items-center gap-2">
+                <ShieldCheck className="size-4 shrink-0 text-[var(--color-brand-700)]" />
+                Biết trạng thái phòng trước khi gọi
+              </p>
+            </motion.div>
+            </motion.div>
+
+            <motion.div
+              className="relative min-h-[15rem] overflow-hidden sm:min-h-[22rem] lg:min-h-full"
+              initial={{ opacity: 0, scale: 1.025 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.7, ease: easeOut, delay: 0.08 }}
+            >
+            <Image
+              src={heroImage}
+              alt={
+                featuredRoom
+                  ? `Không gian phòng trọ ${featuredRoom.title} tại ${featuredRoom.districtName}`
+                  : "Không gian phòng trọ sáng, gọn gàng tại Hà Nội"
+              }
+              fill
+              priority
+              className="object-cover"
+              sizes="(max-width: 1024px) 100vw, 48vw"
+            />
+            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(4,24,32,0.04),rgba(4,24,32,0.18)_55%,rgba(4,24,32,0.78))]" />
+
+            <div className="absolute inset-x-0 bottom-0 p-5 text-white sm:p-7">
+              <div className="flex flex-wrap items-end justify-between gap-3">
+                <div className="max-w-md">
+                  <p className="flex items-center gap-2 text-xs font-semibold text-white/78">
+                    <MapPin className="size-3.5" />
+                    {featuredRoom?.districtName ?? "Khu vực nội thành Hà Nội"}
+                  </p>
+                  <p className="mt-2 text-lg font-semibold sm:text-xl">
+                    {featuredRoom?.title ?? "Phòng sáng, thông tin rõ ràng, dễ so sánh"}
+                  </p>
+                </div>
+                <div className="rounded-2xl border border-white/16 bg-[rgba(4,24,32,0.58)] px-4 py-3 backdrop-blur-md">
+                  <p className="text-xs font-semibold text-white/70">Phòng còn trống</p>
+                  <p className="mt-1 text-2xl font-semibold text-[var(--color-accent-500)]">
+                    {stats ? <AnimatedCounter value={stats.availableRooms} /> : "..."}
+                  </p>
+                </div>
+              </div>
+            </div>
+            </motion.div>
           </div>
         </div>
-
-        <div className="group relative animate-content-rise">
-          <div className="motion-soft absolute inset-0 -rotate-4 rounded-[36px] bg-[linear-gradient(135deg,rgba(15,76,92,0.18),rgba(229,159,58,0.18))] group-hover:-rotate-3 group-hover:scale-[1.01]" />
-          <div className="motion-panel relative overflow-hidden rounded-[36px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-card-hover)] hover:-translate-y-1 hover:shadow-[var(--shadow-card-hover)]">
-            <div className="motion-stagger grid gap-4 sm:grid-cols-2">
-              <div className="motion-soft rounded-[28px] bg-[var(--color-brand-700)] p-5 text-white shadow-[var(--shadow-button)] hover:-translate-y-0.5">
-                <p className="text-sm font-medium text-white/75">Phòng đang hiển thị</p>
-                <p className="mt-3 text-4xl font-semibold" aria-live="polite">
-                  {stats ? <AnimatedCounter value={stats.visibleRooms} /> : "..."}
-                </p>
-                <p className="mt-3 text-sm leading-6 text-white/80">
-                  Tính theo số bài đăng đang được hiển thị công khai.
-                </p>
-              </div>
-              <div className="motion-soft rounded-[28px] bg-[var(--color-surface-soft)] p-5 shadow-sm hover:-translate-y-0.5 hover:shadow-[var(--shadow-card)]">
-                <p className="text-sm font-medium text-[var(--color-text-muted)]">Tỷ lệ phòng còn trống</p>
-                <p className="mt-3 text-4xl font-semibold text-[var(--color-text-strong)]">
-                  {stats ? <AnimatedCounter value={stats.availableRate} suffix="%" /> : "..."}
-                </p>
-                <p className="mt-3 text-sm leading-6 text-[var(--color-text-muted)]">
-                  Dựa trên tỷ lệ phòng còn trống trong danh sách đang hiển thị.
-                </p>
-              </div>
-              <div className="motion-soft rounded-[28px] border border-[var(--color-border-soft)] p-5 hover:border-[var(--color-brand-500)] hover:shadow-[var(--shadow-card)] sm:col-span-2">
-                <p className="text-sm font-medium text-[var(--color-text-muted)]">
-                  Thông tin cần quan tâm
-                </p>
-                <ul className="mt-3 grid gap-3 text-sm text-[var(--color-text-strong)] sm:grid-cols-2">
-                  <li>Giá thuê và diện tích rõ ràng</li>
-                  <li>Khu vực gần trường, gần nơi làm</li>
-                  <li>Trạng thái còn phòng dễ nhận biết</li>
-                  <li>Gửi yêu cầu xem phòng nhanh</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      </div>
-    </section>
+      </section>
+    </MotionConfig>
   );
 }

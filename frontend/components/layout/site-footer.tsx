@@ -111,7 +111,7 @@ export function SiteFooter() {
               <input
                 type="email"
                 placeholder="email@example.com"
-                className="h-11 rounded-2xl border border-[var(--color-border-strong)] bg-[var(--color-input-bg)] px-3 text-sm outline-none focus:border-[var(--color-brand-500)] focus:ring-2 focus:ring-[var(--color-focus-ring)]"
+                className="h-11 min-w-0 rounded-2xl border border-[var(--color-border-strong)] bg-[var(--color-input-bg)] px-3 text-sm outline-none focus:border-[var(--color-brand-500)] focus:ring-2 focus:ring-[var(--color-focus-ring)]"
               />
               <Button type="submit" size="sm" aria-label="Đăng ký nhận tin" leadingIcon={<Send className="size-4" />}>
                 Gửi

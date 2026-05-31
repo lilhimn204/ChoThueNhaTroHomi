@@ -2,18 +2,28 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight } from "lucide-react";
+import { MotionConfig, motion } from "motion/react";
 
-import { RoomCard } from "@/components/rooms/room-card";
-import { RoomsGridSkeleton } from "@/components/rooms/rooms-page-client";
-import { AnimateOnScroll } from "@/components/shared/animate-on-scroll";
+import { LandingFeaturedRoomTile } from "@/components/landing/landing-featured-room-tile";
 import { EmptyState } from "@/components/shared/empty-state";
-import { SectionHeading } from "@/components/shared/section-heading";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { getErrorMessage } from "@/services/api-client";
 import { getFeaturedRooms } from "@/services/room-service";
 import type { RoomSummary } from "@/types";
+
+const easeOut = [0.16, 1, 0.3, 1] as const;
+
+function FeaturedRoomsSkeleton() {
+  return (
+    <div className="grid gap-4 lg:grid-cols-[1.12fr_0.88fr] lg:grid-rows-2">
+      <div className="animate-shimmer min-h-[24rem] rounded-[26px] bg-[linear-gradient(90deg,var(--skeleton-from),var(--skeleton-via),var(--skeleton-to))] bg-[length:200%_100%] sm:rounded-[32px] lg:row-span-2 lg:min-h-[36rem]" />
+      <div className="animate-shimmer min-h-[18rem] rounded-[26px] bg-[linear-gradient(90deg,var(--skeleton-from),var(--skeleton-via),var(--skeleton-to))] bg-[length:200%_100%] sm:rounded-[32px] lg:min-h-0" />
+      <div className="animate-shimmer min-h-[18rem] rounded-[26px] bg-[linear-gradient(90deg,var(--skeleton-from),var(--skeleton-via),var(--skeleton-to))] bg-[length:200%_100%] sm:rounded-[32px] lg:min-h-0" />
+    </div>
+  );
+}
 
 export function FeaturedRoomsSection() {
   const [rooms, setRooms] = useState<RoomSummary[]>([]);
@@ -29,11 +39,9 @@ export function FeaturedRoomsSection() {
         setErrorMessage("");
       })
       .catch((error) => {
-        if (controller.signal.aborted) {
-          return;
+        if (!controller.signal.aborted) {
+          setErrorMessage(getErrorMessage(error));
         }
-
-        setErrorMessage(getErrorMessage(error));
       })
       .finally(() => {
         if (!controller.signal.aborted) {
@@ -45,30 +53,39 @@ export function FeaturedRoomsSection() {
   }, []);
 
   return (
-    <AnimateOnScroll as="section" className="container-shell mt-20 space-y-8">
-      <div className="motion-panel animate-content-rise rounded-[34px] border border-[var(--color-border-card)] bg-[var(--color-surface)]/80 p-5 shadow-[var(--shadow-card)] backdrop-blur-sm hover:-translate-y-0.5 hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] sm:p-6">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-        <div className="relative">
-          <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-[var(--badge-brand-bg)] px-3 py-1 text-sm font-semibold text-[var(--badge-brand-text)]">
-            <Sparkles className="size-4" />
-            Gợi ý đang nổi bật
-          </div>
-          <SectionHeading
-            eyebrow="Phòng nổi bật"
-            title="Phòng trọ Hà Nội đang được quan tâm"
-            description="Một số phòng phù hợp sinh viên và người đi làm, ưu tiên khu vực gần trường đại học, giao thông thuận tiện và thông tin rõ ràng."
-          />
+    <MotionConfig reducedMotion="user">
+      <motion.section
+        className="container-shell mt-14 space-y-6 sm:mt-20 sm:space-y-8"
+        initial={{ opacity: 0, y: 22 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.08 }}
+        transition={{ duration: 0.56, ease: easeOut }}
+      >
+      <div className="grid gap-4 lg:grid-cols-[1fr_auto] lg:items-end">
+        <div className="max-w-3xl">
+          <p className="text-sm font-semibold text-[var(--color-brand-700)]">
+            Phòng đang được quan tâm
+          </p>
+          <h2 className="mt-2 text-balance text-3xl font-semibold tracking-[-0.04em] text-[var(--color-text-strong)] sm:text-4xl">
+            Bắt đầu từ những phòng có hình ảnh và thông tin dễ kiểm tra.
+          </h2>
+          <p className="mt-3 max-w-2xl text-base leading-7 text-[var(--color-text-muted)]">
+            So sánh nhanh giá thuê, diện tích và khu vực trước khi mở chi tiết hoặc xem vị trí.
+          </p>
         </div>
         <Link href="/rooms">
-          <Button trailingIcon={<ArrowRight className="size-4" />}>
-            Xem toàn bộ danh sách
+          <Button
+            variant="outline"
+            className="w-full sm:w-auto"
+            trailingIcon={<ArrowRight className="size-4" />}
+          >
+            Xem tất cả phòng
           </Button>
         </Link>
-        </div>
       </div>
 
       {loading ? (
-        <RoomsGridSkeleton />
+        <FeaturedRoomsSkeleton />
       ) : errorMessage ? (
         <Alert
           tone="warning"
@@ -76,17 +93,20 @@ export function FeaturedRoomsSection() {
           description={errorMessage}
         />
       ) : rooms.length ? (
-        <div className="motion-stagger grid gap-5 lg:grid-cols-3">
-          {rooms.map((room) => (
-            <RoomCard key={room.id} room={room} />
+        <div className="grid gap-4 lg:grid-cols-[1.12fr_0.88fr] lg:grid-rows-2">
+          {rooms.map((room, index) => (
+            <div key={room.id} className={index === 0 ? "lg:row-span-2" : ""}>
+              <LandingFeaturedRoomTile room={room} prominent={index === 0} />
+            </div>
           ))}
         </div>
       ) : (
         <EmptyState
           title="Chưa có phòng nổi bật"
-          description="Khi admin đánh dấu nổi bật, khu vực này sẽ hiển thị các bài đăng được ưu tiên."
+          description="Khi có phòng được ưu tiên hiển thị, khu vực này sẽ cập nhật tự động."
         />
       )}
-    </AnimateOnScroll>
+      </motion.section>
+    </MotionConfig>
   );
 }

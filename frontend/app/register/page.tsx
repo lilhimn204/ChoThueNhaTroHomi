@@ -1,13 +1,21 @@
 import type { Metadata } from "next";
-import { CheckCircle2, ShieldCheck, Sparkles } from "lucide-react";
+import Image from "next/image";
+import { BookmarkCheck, CheckCircle2, MailCheck, ShieldCheck } from "lucide-react";
 
 import { GuestOnly } from "@/components/auth/guest-only";
 import { AuthPanel } from "@/components/forms/auth-panel";
+import { AuthMotionRoot, AuthReveal } from "@/components/forms/auth-motion";
 
 export const metadata: Metadata = {
   title: "Đăng ký tài khoản",
   description: "Tạo tài khoản Homi để gửi yêu cầu xem phòng, lưu phòng quan tâm và theo dõi trạng thái liên hệ với chủ trọ.",
 };
+
+const registerNotes = [
+  { icon: MailCheck, label: "Xác minh email bằng OTP trước khi kích hoạt." },
+  { icon: BookmarkCheck, label: "Lưu phòng quan tâm và quay lại khi cần so sánh." },
+  { icon: ShieldCheck, label: "Chỉ giữ các trường cần thiết cho tài khoản Homi." },
+];
 
 export default async function RegisterPage({
   searchParams,
@@ -18,41 +26,77 @@ export default async function RegisterPage({
 
   return (
     <GuestOnly redirectTo={redirect}>
-      <div className="container-shell grid gap-5 py-8 sm:gap-8 sm:py-12 lg:grid-cols-[0.85fr_1.15fr]">
-        <div className="motion-panel animate-content-rise rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-5 shadow-[var(--shadow-card)] ring-1 ring-transparent hover:-translate-y-1 hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px] sm:p-8">
-          <div className="inline-flex items-center gap-2 rounded-full bg-[var(--badge-brand-bg)] px-3 py-1.5 text-sm font-semibold text-[var(--badge-brand-text)]">
-            <Sparkles className="size-4" />
-            Đăng ký Homi
-          </div>
-          <h1 className="mt-4 text-3xl font-semibold tracking-tight text-[var(--color-text-strong)] sm:text-4xl">
-            Đăng ký để lưu phòng và theo dõi lịch sử liên hệ.
-          </h1>
-          <p className="mt-4 text-sm leading-7 text-[var(--color-text-muted)] sm:text-base sm:leading-8">
-            Form đăng ký chỉ giữ những trường cần thiết. Cách trình bày này giúp
-            người dùng nhập thông tin nhanh, dễ hiểu và ít bỏ ngang.
-          </p>
-          <div className="motion-stagger mt-6 grid gap-3">
-            {[
-              "Xác minh email bằng OTP để bảo vệ tài khoản.",
-              "Lưu phòng quan tâm và quay lại so sánh sau.",
-              "Theo dõi yêu cầu liên hệ trong tài khoản cá nhân.",
-            ].map((item) => (
-              <div
-                key={item}
-                className="motion-panel flex items-center gap-3 rounded-2xl bg-[var(--color-surface-soft)] px-4 py-3 text-sm text-[var(--color-text-muted)] hover:-translate-y-0.5 hover:bg-[var(--color-border-soft)]"
-              >
-                <ShieldCheck className="size-4 text-[var(--color-brand-700)]" />
-                <span>{item}</span>
+      <AuthMotionRoot>
+        <main className="container-shell min-h-[100dvh] py-4 sm:py-8 lg:py-10">
+          <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(430px,540px)] lg:items-center lg:gap-10">
+            <AuthReveal
+              className="order-2 relative overflow-hidden rounded-[28px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[0_20px_60px_rgba(16,42,67,0.10)] ring-1 ring-[var(--color-border-soft)] sm:p-6 lg:order-1 lg:min-h-[650px] lg:p-8"
+              hover
+            >
+              <div className="pointer-events-none absolute -left-24 top-10 size-64 rounded-full bg-[var(--color-brand-500)]/10 blur-3xl" />
+              <div className="pointer-events-none absolute -right-20 -top-20 size-56 rounded-full bg-[var(--color-accent-500)]/14 blur-3xl" />
+              <div className="relative z-10 flex h-full flex-col">
+                <div className="flex items-center gap-3">
+                  <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-[var(--color-brand-950)] p-2.5 shadow-[0_16px_34px_rgba(4,24,32,0.16)]">
+                    <Image
+                      src="/logo.png"
+                      alt="Logo Homi"
+                      width={40}
+                      height={40}
+                      className="h-auto w-full object-contain"
+                      priority
+                    />
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[var(--color-brand-700)]">
+                      Đăng ký Homi
+                    </p>
+                    <p className="text-sm font-semibold text-[var(--color-text-strong)]">
+                      Một hồ sơ cho quá trình tìm phòng
+                    </p>
+                  </div>
+                </div>
+
+                <h1 className="mt-4 max-w-2xl text-3xl font-semibold leading-[1.04] tracking-tight text-[var(--color-text-strong)] sm:text-4xl lg:mt-8 lg:text-6xl">
+                  Tạo tài khoản để lưu phòng tốt.
+                </h1>
+                <p className="mt-3 max-w-xl text-sm leading-6 text-[var(--color-text-muted)] sm:text-base sm:leading-7 lg:mt-5">
+                  Đăng ký gọn, xác minh bằng OTP và tiếp tục gửi yêu cầu xem phòng trên cùng
+                  một hồ sơ.
+                </p>
+
+                <div className="mt-5 grid gap-2 text-sm text-[var(--color-text-muted)] sm:grid-cols-3 lg:mt-8 lg:grid-cols-1">
+                  {registerNotes.map((note) => (
+                    <div
+                      className="flex items-start gap-3 rounded-2xl border border-[var(--color-border-soft)] bg-[var(--color-surface-soft)] px-3 py-2.5"
+                      key={note.label}
+                    >
+                      <note.icon className="mt-0.5 size-4 shrink-0 text-[var(--color-brand-700)]" />
+                      <span className="leading-5">{note.label}</span>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-6 hidden rounded-[24px] border border-[var(--color-border-soft)] bg-[var(--color-brand-950)] p-5 text-white lg:mt-auto lg:block">
+                  <div className="flex items-start gap-4">
+                    <CheckCircle2 className="mt-1 size-5 shrink-0 text-[var(--color-accent-500)]" />
+                    <div>
+                      <p className="text-sm font-semibold">Không đổi logic đăng ký</p>
+                      <p className="mt-2 text-sm leading-6 text-white/64">
+                        Payload, OTP, Google login và điều hướng sau xác thực vẫn chạy qua
+                        luồng hiện tại.
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </div>
-            ))}
+            </AuthReveal>
+            <div className="order-1 lg:order-2">
+              <AuthPanel mode="register" redirectTo={redirect} />
+            </div>
           </div>
-          <div className="mt-6 inline-flex items-center gap-2 rounded-2xl bg-[var(--badge-success-bg)] px-4 py-3 text-sm font-semibold text-[var(--badge-success-text)]">
-            <CheckCircle2 className="size-4" />
-            Không đổi logic xác thực hiện tại
-          </div>
-        </div>
-        <AuthPanel mode="register" redirectTo={redirect} />
-      </div>
+        </main>
+      </AuthMotionRoot>
     </GuestOnly>
   );
 }

@@ -10,6 +10,7 @@ import { ApiError, getErrorMessage } from "@/services/api-client";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { AuthReveal, AuthStagger, AuthStaggerItem } from "@/components/forms/auth-motion";
 import { getSafeAuthRedirect } from "@/lib/safe-redirect";
 import type { UserProfile } from "@/types";
 
@@ -161,8 +162,8 @@ function GoogleAuthButton({
     <div
       className={
         disabled
-          ? "motion-soft pointer-events-none min-h-10 w-full rounded-2xl opacity-50 grayscale [&>div]:!w-full [&_iframe]:!w-full"
-          : "motion-soft min-h-10 w-full rounded-2xl hover:-translate-y-0.5 hover:shadow-sm [&>div]:!w-full [&_iframe]:!w-full"
+          ? "motion-soft pointer-events-none flex min-h-12 w-full items-center justify-center rounded-[16px] opacity-55 grayscale [&>div]:!w-full [&_iframe]:!mx-auto [&_iframe]:!w-full"
+          : "motion-soft flex min-h-12 w-full items-center justify-center rounded-[16px] hover:-translate-y-0.5 hover:shadow-sm [&>div]:!w-full [&_iframe]:!mx-auto [&_iframe]:!w-full"
       }
       ref={containerRef}
     />
@@ -209,10 +210,10 @@ export function AuthPanel({
     () =>
       mode === "login"
         ? {
-            title: "Đăng nhập để quản lý yêu cầu và hồ sơ",
+            title: "Tiếp tục hành trình tìm phòng",
             description: GOOGLE_AUTH_ENABLED
-              ? "Dùng email, mật khẩu hoặc Google để tiếp tục quản lý hồ sơ Homi."
-              : "Dùng email và mật khẩu để tiếp tục quản lý hồ sơ Homi.",
+              ? "Đăng nhập bằng email, mật khẩu hoặc Google để theo dõi phòng đã quan tâm."
+              : "Đăng nhập bằng email và mật khẩu để theo dõi phòng đã quan tâm.",
             cta: "Đăng nhập",
             secondaryLabel: "Chưa có tài khoản?",
             secondaryHref: "/register",
@@ -224,7 +225,7 @@ export function AuthPanel({
               step === "otp"
                 ? "Nhập mã 6 chữ số đã được gửi đến Gmail để kích hoạt tài khoản."
                 : GOOGLE_AUTH_ENABLED
-                  ? "Đăng ký bằng email và xác minh OTP, hoặc tiếp tục nhanh bằng Google."
+                  ? "Đăng ký bằng email, xác minh OTP hoặc tiếp tục nhanh bằng Google."
                   : "Đăng ký bằng email và xác minh OTP để kích hoạt tài khoản.",
             cta: step === "otp" ? "Xác minh OTP" : "Tạo tài khoản",
             secondaryLabel: "Đã có tài khoản?",
@@ -262,7 +263,7 @@ export function AuthPanel({
       type="button"
       aria-label={label}
       onClick={onToggle}
-      className="motion-pressable flex size-9 items-center justify-center rounded-xl text-[var(--color-text-muted)] hover:bg-[var(--color-surface-soft)] hover:text-[var(--color-brand-700)]"
+      className="motion-pressable flex size-11 items-center justify-center rounded-[14px] text-[var(--color-text-muted)] hover:bg-[var(--color-surface-soft)] hover:text-[var(--color-brand-700)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus-ring)]"
     >
       {visible ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
     </button>
@@ -365,187 +366,249 @@ export function AuthPanel({
   };
 
   return (
-    <div className="motion-panel animate-content-rise rounded-[24px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-5 shadow-[var(--shadow-card)] ring-1 ring-transparent hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-card-hover)] hover:ring-[var(--color-border-soft)] sm:rounded-[32px] sm:p-8">
-      <div className="space-y-3">
+    <AuthReveal
+      className="w-full rounded-[28px] border border-[var(--color-border-card)] bg-[var(--color-surface)] p-4 shadow-[0_18px_55px_rgba(16,42,67,0.10)] ring-1 ring-[var(--color-border-soft)] sm:p-6 lg:p-7"
+      delay={0.08}
+      hover
+    >
+      <div className="space-y-2">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-brand-700)]">
+          {step === "otp" ? "Xác minh bảo mật" : mode === "login" ? "Đăng nhập Homi" : "Đăng ký Homi"}
+        </p>
         <h1 className="text-2xl font-semibold tracking-tight text-[var(--color-text-strong)] sm:text-3xl">
           {content.title}
         </h1>
-        <p className="text-sm leading-7 text-[var(--color-text-muted)] sm:text-base">
+        <p className="text-sm leading-6 text-[var(--color-text-muted)] sm:text-base sm:leading-7">
           {content.description}
         </p>
       </div>
 
-      <div className="mt-6 space-y-4 sm:mt-8">
+      <div className="mt-5 space-y-4 sm:mt-6">
         {step === "credentials" && GOOGLE_AUTH_ENABLED ? (
-          <>
-            <GoogleAuthButton
-              mode={mode}
-              disabled={submitting || googleSubmitting}
-              onCredential={(idToken) => {
-                void handleGoogleCredential(idToken);
-              }}
-              onError={setErrorMessage}
-            />
+          <AuthStagger className="space-y-4" delay={0.04}>
+            <AuthStaggerItem>
+              <GoogleAuthButton
+                mode={mode}
+                disabled={submitting || googleSubmitting}
+                onCredential={(idToken) => {
+                  void handleGoogleCredential(idToken);
+                }}
+                onError={setErrorMessage}
+              />
+            </AuthStaggerItem>
 
-            <div className="motion-soft flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.16em] text-[var(--color-text-muted)]">
+            <AuthStaggerItem className="motion-soft flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.16em] text-[var(--color-text-muted)]">
               <span className="h-px flex-1 bg-[var(--color-border-soft)]" />
               <span>Hoặc</span>
               <span className="h-px flex-1 bg-[var(--color-border-soft)]" />
-            </div>
-          </>
+            </AuthStaggerItem>
+          </AuthStagger>
         ) : null}
 
-        <form className="motion-stagger space-y-5" onSubmit={handleSubmit}>
-          {successMessage ? (
-            <div className="animate-scale-in">
-              <Alert
-                tone="success"
-                title="Thao tác thành công"
-                description={successMessage}
-              />
-            </div>
-          ) : null}
-
-          {errorMessage ? (
-            <Alert tone="warning" title="Không thể tiếp tục" description={errorMessage} />
-          ) : null}
-
-          {step === "otp" ? (
-            <>
-              <Alert
-                tone="info"
-                title="Kiểm tra Gmail"
-                description={`Mã OTP được gửi đến ${pendingEmail || formData.email}. Mã có hiệu lực trong ${otpExpiresInMinutes} phút. Kiểm tra mục "Thư rác" nếu chưa thấy email trong Hộp thư đến.`}
-              />
-              <Input
-                label="Mã OTP"
-                name="otp"
-                floatingLabel
-                inputMode="numeric"
-                autoComplete="one-time-code"
-                maxLength={6}
-                placeholder="123456"
-                hint="Nhập đủ 6 chữ số trong email xác nhận."
-                value={formData.otp}
-                onChange={(event) =>
-                  handleChange("otp", event.target.value.replace(/\D/g, "").slice(0, 6))
-                }
-                error={fieldErrors.otp}
-              />
-            </>
-          ) : (
-            <>
-              {mode === "register" ? (
-                <Input
-                  label="Họ tên"
-                  name="fullName"
-                  floatingLabel
-                  placeholder="Nguyễn Thị An"
-                  hint="Tên này sẽ hiển thị trong hồ sơ và lịch sử yêu cầu."
-                  value={formData.fullName}
-                  onChange={(event) => handleChange("fullName", event.target.value)}
-                  error={fieldErrors.fullName}
+        <form className="space-y-4" onSubmit={handleSubmit}>
+          <AuthStagger className="space-y-4">
+            {successMessage ? (
+              <AuthStaggerItem>
+                <Alert
+                  tone="success"
+                  title="Thao tác thành công"
+                  description={successMessage}
                 />
-              ) : null}
+              </AuthStaggerItem>
+            ) : null}
 
-              <Input
-                label="Email"
-                name="email"
-                floatingLabel
-                type="email"
-                placeholder="an.nguyen@example.com"
-                hint="Email sẽ được dùng để đăng nhập."
-                value={formData.email}
-                onChange={(event) => handleChange("email", event.target.value)}
-                error={fieldErrors.email}
-              />
+            {errorMessage ? (
+              <AuthStaggerItem>
+                <Alert tone="warning" title="Không thể tiếp tục" description={errorMessage} />
+              </AuthStaggerItem>
+            ) : null}
 
-              {mode === "register" ? (
-                <Input
-                  label="Số điện thoại"
-                  name="phone"
-                  floatingLabel
-                  placeholder="0911222333"
-                  hint="Dùng cho việc liên hệ khi cần xem phòng."
-                  value={formData.phone}
-                  onChange={(event) => handleChange("phone", event.target.value)}
-                  error={fieldErrors.phone}
-                />
-              ) : null}
+            {step === "otp" ? (
+              <>
+                <AuthStaggerItem>
+                  <Alert
+                    tone="info"
+                    title="Kiểm tra Gmail"
+                    description={`Mã OTP được gửi đến ${pendingEmail || formData.email}. Mã có hiệu lực trong ${otpExpiresInMinutes} phút. Kiểm tra mục "Thư rác" nếu chưa thấy email trong Hộp thư đến.`}
+                  />
+                </AuthStaggerItem>
+                <AuthStaggerItem>
+                  <Input
+                    label="Mã OTP"
+                    name="otp"
+                    floatingLabel
+                    inputMode="numeric"
+                    autoComplete="one-time-code"
+                    maxLength={6}
+                    placeholder="123456"
+                    hint="Nhập đủ 6 chữ số trong email xác nhận."
+                    value={formData.otp}
+                    onChange={(event) =>
+                      handleChange("otp", event.target.value.replace(/\D/g, "").slice(0, 6))
+                    }
+                    error={fieldErrors.otp}
+                  />
+                </AuthStaggerItem>
+              </>
+            ) : (
+              <>
+                {mode === "register" ? (
+                  <>
+                    <AuthStaggerItem className="grid gap-4 sm:grid-cols-2">
+                      <Input
+                        label="Họ tên"
+                        name="fullName"
+                        floatingLabel
+                        autoComplete="name"
+                        placeholder="Nguyễn Thị An"
+                        value={formData.fullName}
+                        onChange={(event) => handleChange("fullName", event.target.value)}
+                        error={fieldErrors.fullName}
+                      />
+                      <Input
+                        label="Email"
+                        name="email"
+                        floatingLabel
+                        type="email"
+                        autoComplete="email"
+                        placeholder="an.nguyen@example.com"
+                        value={formData.email}
+                        onChange={(event) => handleChange("email", event.target.value)}
+                        error={fieldErrors.email}
+                      />
+                    </AuthStaggerItem>
 
-              <Input
-                label="Mật khẩu"
-                name="password"
-                floatingLabel
-                type={showPassword ? "text" : "password"}
-                placeholder="********"
-                hint={mode === "register" ? "Tối thiểu 6 ký tự." : "Nhập mật khẩu đã đăng ký."}
-                value={formData.password}
-                onChange={(event) => handleChange("password", event.target.value)}
-                error={fieldErrors.password}
-                trailingIcon={passwordToggle(
-                  showPassword,
-                  () => setShowPassword((current) => !current),
-                  showPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu",
+                    <AuthStaggerItem className="grid gap-4 sm:grid-cols-2">
+                      <Input
+                        label="Số điện thoại"
+                        name="phone"
+                        floatingLabel
+                        type="tel"
+                        autoComplete="tel"
+                        placeholder="0911222333"
+                        value={formData.phone}
+                        onChange={(event) => handleChange("phone", event.target.value)}
+                        error={fieldErrors.phone}
+                      />
+                      <Input
+                        label="Mật khẩu"
+                        name="password"
+                        floatingLabel
+                        type={showPassword ? "text" : "password"}
+                        autoComplete="new-password"
+                        placeholder="********"
+                        value={formData.password}
+                        onChange={(event) => handleChange("password", event.target.value)}
+                        error={fieldErrors.password}
+                        trailingIcon={passwordToggle(
+                          showPassword,
+                          () => setShowPassword((current) => !current),
+                          showPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu",
+                        )}
+                      />
+                    </AuthStaggerItem>
+
+                    <AuthStaggerItem>
+                      <Input
+                        label="Xác nhận mật khẩu"
+                        name="confirmPassword"
+                        floatingLabel
+                        type={showConfirmPassword ? "text" : "password"}
+                        autoComplete="new-password"
+                        placeholder="********"
+                        value={formData.confirmPassword}
+                        onChange={(event) => handleChange("confirmPassword", event.target.value)}
+                        error={fieldErrors.confirmPassword}
+                        trailingIcon={passwordToggle(
+                          showConfirmPassword,
+                          () => setShowConfirmPassword((current) => !current),
+                          showConfirmPassword ? "Ẩn mật khẩu xác nhận" : "Hiện mật khẩu xác nhận",
+                        )}
+                      />
+                    </AuthStaggerItem>
+                  </>
+                ) : (
+                  <>
+                    <AuthStaggerItem>
+                      <Input
+                        label="Email"
+                        name="email"
+                        floatingLabel
+                        type="email"
+                        autoComplete="email"
+                        placeholder="an.nguyen@example.com"
+                        value={formData.email}
+                        onChange={(event) => handleChange("email", event.target.value)}
+                        error={fieldErrors.email}
+                      />
+                    </AuthStaggerItem>
+
+                    <AuthStaggerItem>
+                      <Input
+                        label="Mật khẩu"
+                        name="password"
+                        floatingLabel
+                        type={showPassword ? "text" : "password"}
+                        autoComplete="current-password"
+                        placeholder="********"
+                        value={formData.password}
+                        onChange={(event) => handleChange("password", event.target.value)}
+                        error={fieldErrors.password}
+                        trailingIcon={passwordToggle(
+                          showPassword,
+                          () => setShowPassword((current) => !current),
+                          showPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu",
+                        )}
+                      />
+                    </AuthStaggerItem>
+
+                    <AuthStaggerItem className="-mt-1 flex justify-end">
+                      <Link
+                        href="/forgot-password"
+                        className="motion-soft rounded-xl px-1 py-1 text-sm font-semibold text-[var(--color-brand-700)] hover:text-[var(--color-brand-800)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus-ring)]"
+                      >
+                        Quên mật khẩu?
+                      </Link>
+                    </AuthStaggerItem>
+                  </>
                 )}
-              />
+              </>
+            )}
 
-              {mode === "login" ? (
-                <div className="-mt-2 flex justify-end">
-                  <Link
-                    href="/forgot-password"
-                    className="motion-soft rounded-xl px-1 text-sm font-semibold text-[var(--color-brand-700)] hover:text-[var(--color-brand-800)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus-ring)]"
-                  >
-                    Quên mật khẩu?
-                  </Link>
-                </div>
-              ) : null}
-
-              {mode === "register" ? (
-                <Input
-                  label="Xác nhận mật khẩu"
-                  name="confirmPassword"
-                  floatingLabel
-                  type={showConfirmPassword ? "text" : "password"}
-                  placeholder="********"
-                  value={formData.confirmPassword}
-                  onChange={(event) => handleChange("confirmPassword", event.target.value)}
-                  error={fieldErrors.confirmPassword}
-                  trailingIcon={passwordToggle(
-                    showConfirmPassword,
-                    () => setShowConfirmPassword((current) => !current),
-                    showConfirmPassword ? "Ẩn mật khẩu xác nhận" : "Hiện mật khẩu xác nhận",
-                  )}
-                />
-              ) : null}
-            </>
-          )}
-
-          <Button
-            className="w-full"
-            size="lg"
-            type="submit"
-            disabled={submitting || googleSubmitting}
-            leadingIcon={submitting ? <Loader2 className="size-4 animate-spin" /> : successMessage ? <CheckCircle2 className="size-4" /> : undefined}
-          >
-            {submitting ? "Đang xử lý..." : content.cta}
-          </Button>
-
-          {step === "otp" ? (
-            <div className="flex flex-col gap-3 text-sm text-[var(--color-text-muted)] sm:flex-row sm:items-center sm:justify-between">
-              <button
-                className="motion-pressable inline-flex rounded-xl px-1 font-semibold text-[var(--color-brand-700)] hover:-translate-y-0.5 hover:text-[var(--color-brand-800)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus-ring)] disabled:cursor-not-allowed disabled:opacity-60"
-                type="button"
-                disabled={resending || submitting}
-                onClick={() => {
-                  void handleResendOtp();
-                }}
+            <AuthStaggerItem>
+              <Button
+                className="w-full"
+                size="lg"
+                type="submit"
+                disabled={submitting || googleSubmitting}
+                leadingIcon={
+                  submitting ? (
+                    <Loader2 className="size-4 animate-spin" />
+                  ) : successMessage ? (
+                    <CheckCircle2 className="size-4" />
+                  ) : undefined
+                }
               >
-                {resending ? "Đang gửi lại..." : "Gửi lại OTP"}
-              </button>
-              <span>Chờ khoảng {resendCooldownSeconds} giây giữa các lần gửi.</span>
-            </div>
-          ) : null}
+                {submitting ? "Đang xử lý..." : content.cta}
+              </Button>
+            </AuthStaggerItem>
+
+            {step === "otp" ? (
+              <AuthStaggerItem className="flex flex-col gap-3 text-sm text-[var(--color-text-muted)] sm:flex-row sm:items-center sm:justify-between">
+                <button
+                  className="motion-pressable inline-flex min-h-11 items-center rounded-xl px-1 font-semibold text-[var(--color-brand-700)] hover:-translate-y-0.5 hover:text-[var(--color-brand-800)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus-ring)] disabled:cursor-not-allowed disabled:opacity-60"
+                  type="button"
+                  disabled={resending || submitting}
+                  onClick={() => {
+                    void handleResendOtp();
+                  }}
+                >
+                  {resending ? "Đang gửi lại..." : "Gửi lại OTP"}
+                </button>
+                <span>Chờ khoảng {resendCooldownSeconds} giây giữa các lần gửi.</span>
+              </AuthStaggerItem>
+            ) : null}
+          </AuthStagger>
         </form>
       </div>
 
@@ -558,6 +621,6 @@ export function AuthPanel({
           {content.secondaryAction}
         </Link>
       </p>
-    </div>
+    </AuthReveal>
   );
 }
