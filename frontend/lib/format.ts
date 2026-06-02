@@ -9,7 +9,7 @@ export function formatCurrency(value: number) {
 export function formatCompactCurrency(value: number) {
   return `${new Intl.NumberFormat("vi-VN", {
     maximumFractionDigits: 1,
-  }).format(value / 1_000_000)} tr/thang`;
+  }).format(value / 1_000_000)} tr/tháng`;
 }
 
 export function formatArea(value: number) {

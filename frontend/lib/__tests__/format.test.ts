@@ -17,14 +17,14 @@ describe("formatCurrency", () => {
 });
 
 describe("formatCompactCurrency", () => {
-  it("converts amount to millions with tr/thang suffix", () => {
+  it("converts amount to millions with tr/tháng suffix", () => {
     const result = formatCompactCurrency(3500000);
-    expect(result).toBe("3,5 tr/thang");
+    expect(result).toBe("3,5 tr/tháng");
   });
 
   it("handles exact millions", () => {
     const result = formatCompactCurrency(5000000);
-    expect(result).toBe("5 tr/thang");
+    expect(result).toBe("5 tr/tháng");
   });
 });
 
