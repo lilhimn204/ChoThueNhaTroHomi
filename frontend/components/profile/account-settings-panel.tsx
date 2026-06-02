@@ -9,7 +9,7 @@ import type { UserProfile } from "@/types";
 
 function GoogleIcon() {
   return (
-    <span className="flex size-10 items-center justify-center rounded-2xl border border-[var(--color-border-soft)] bg-white text-lg font-bold shadow-sm">
+    <span className="flex size-10 items-center justify-center rounded-2xl border border-[var(--color-border-soft)] bg-[var(--color-inverse-surface)] text-lg font-bold shadow-sm">
       <span className="text-[#4285F4]">G</span>
     </span>
   );

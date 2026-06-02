@@ -227,7 +227,7 @@ export function RoomsPageClient() {
                     onClick={() => setViewMode("grid")}
                     className={cn(
                       "motion-pressable flex h-10 items-center justify-center rounded-xl text-[var(--color-text-muted)]",
-                      viewMode === "grid" && "bg-[var(--color-surface)] text-[var(--color-brand-800)] shadow-sm",
+                      viewMode === "grid" && "bg-[var(--color-surface-elevated)] text-[var(--color-brand-800)] shadow-sm",
                     )}
                   >
                     <Grid2X2 className="size-4" />
@@ -238,7 +238,7 @@ export function RoomsPageClient() {
                     onClick={() => setViewMode("list")}
                     className={cn(
                       "motion-pressable flex h-10 items-center justify-center rounded-xl text-[var(--color-text-muted)]",
-                      viewMode === "list" && "bg-[var(--color-surface)] text-[var(--color-brand-800)] shadow-sm",
+                      viewMode === "list" && "bg-[var(--color-surface-elevated)] text-[var(--color-brand-800)] shadow-sm",
                     )}
                   >
                     <List className="size-4" />

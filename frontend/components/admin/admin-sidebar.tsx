@@ -115,7 +115,7 @@ export function AdminSidebar() {
           href="https://thuenhahomi.id.vn/cms"
           target="_blank"
           rel="noopener noreferrer"
-          className="motion-pressable group flex items-center justify-between gap-3 rounded-[18px] bg-white px-3.5 py-3 text-sm font-semibold text-[var(--color-brand-900)] shadow-sm hover:-translate-y-0.5 hover:bg-[var(--color-brand-50)] hover:shadow-[var(--shadow-button-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/45 active:scale-[0.99]"
+          className="motion-pressable group flex items-center justify-between gap-3 rounded-[18px] bg-[var(--color-inverse-surface)] px-3.5 py-3 text-sm font-semibold text-[var(--color-inverse-text)] shadow-sm hover:-translate-y-0.5 hover:bg-[var(--color-inverse-surface-hover)] hover:shadow-[var(--shadow-button-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/45 active:scale-[0.99]"
         >
           <span className="flex items-center gap-3">
             <Newspaper className="motion-soft size-4 group-hover:scale-110" />

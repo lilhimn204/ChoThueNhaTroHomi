@@ -524,7 +524,7 @@ export function SiteHeader() {
       {mobileMenuPresent ? (
         <div
           className={cn(
-            "fixed inset-0 z-[80] bg-[rgba(8,24,32,0.52)] backdrop-blur-sm xl:hidden",
+            "fixed inset-0 z-[80] bg-[var(--color-overlay-bg)] backdrop-blur-sm xl:hidden",
             mobileMenuLeaving
               ? "pointer-events-none animate-overlay-out"
               : "animate-overlay-in",
@@ -537,7 +537,7 @@ export function SiteHeader() {
             aria-modal="true"
             aria-label="Menu điều hướng Homi"
             className={cn(
-              "absolute inset-y-0 right-0 flex h-[100dvh] w-full max-w-md flex-col overflow-hidden border-l border-[var(--color-border-soft)] bg-[var(--color-background)] shadow-2xl",
+              "absolute inset-y-0 right-0 flex h-[100dvh] w-full max-w-md flex-col overflow-hidden border-l border-[var(--color-border-soft)] bg-[var(--color-background)] shadow-[var(--shadow-drawer)]",
               mobileMenuLeaving ? "animate-drawer-right-out" : "animate-drawer-right-in",
             )}
             onClick={(event) => event.stopPropagation()}

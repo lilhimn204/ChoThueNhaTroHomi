@@ -578,7 +578,7 @@ function UserDetailDialog({
   }
 
   return (
-    <div className="fixed inset-0 z-[9998] flex items-center justify-center bg-black/55 p-4 backdrop-blur-sm">
+    <div className="fixed inset-0 z-[9998] flex items-center justify-center bg-[var(--color-overlay-bg)] p-4 backdrop-blur-sm">
       <div className="motion-panel max-h-[90dvh] w-full max-w-3xl overflow-y-auto rounded-3xl border border-[var(--color-border-soft)] bg-[var(--color-surface)] p-5 shadow-[var(--shadow-card-hover)] sm:p-6">
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0">
@@ -668,7 +668,7 @@ function LockUserDialog({
   const isLocking = user.status !== "LOCKED";
 
   return (
-    <div className="fixed inset-0 z-[9998] flex items-center justify-center bg-black/55 p-4 backdrop-blur-sm">
+    <div className="fixed inset-0 z-[9998] flex items-center justify-center bg-[var(--color-overlay-bg)] p-4 backdrop-blur-sm">
       <div className="motion-panel w-full max-w-lg rounded-3xl border border-[var(--color-border-soft)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-card-hover)]">
         <div className="flex gap-4">
           <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-[var(--alert-warning-bg)] text-[var(--alert-warning-text)]">
@@ -732,7 +732,7 @@ function RoleDialog({
   }
 
   return (
-    <div className="fixed inset-0 z-[9998] flex items-center justify-center bg-black/55 p-4 backdrop-blur-sm">
+    <div className="fixed inset-0 z-[9998] flex items-center justify-center bg-[var(--color-overlay-bg)] p-4 backdrop-blur-sm">
       <div className="motion-panel w-full max-w-lg rounded-3xl border border-[var(--color-border-soft)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-card-hover)]">
         <div className="flex gap-4">
           <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-[var(--badge-brand-bg)] text-[var(--badge-brand-text)]">

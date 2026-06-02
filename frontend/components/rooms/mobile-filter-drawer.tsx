@@ -53,7 +53,7 @@ export function MobileFilterDrawer({
   return (
     <div
       className={cn(
-        "fixed inset-0 z-50 bg-[rgba(8,24,32,0.52)] backdrop-blur-sm lg:hidden",
+        "fixed inset-0 z-50 bg-[var(--color-overlay-bg)] backdrop-blur-sm lg:hidden",
         drawerLeaving
           ? "pointer-events-none animate-overlay-out"
           : "animate-overlay-in",
@@ -61,7 +61,7 @@ export function MobileFilterDrawer({
     >
       <div
         className={cn(
-          "absolute inset-y-0 right-0 flex w-full max-w-md flex-col overflow-hidden bg-[var(--color-background)] p-3 pt-[calc(0.75rem_+_env(safe-area-inset-top))] shadow-2xl sm:p-4",
+          "absolute inset-y-0 right-0 flex w-full max-w-md flex-col overflow-hidden bg-[var(--color-background)] p-3 pt-[calc(0.75rem_+_env(safe-area-inset-top))] shadow-[var(--shadow-drawer)] sm:p-4",
           drawerLeaving ? "animate-drawer-right-out" : "animate-drawer-right-in",
         )}
       >

@@ -99,7 +99,7 @@ function CmsSidebar({ pathname }: { pathname: string | null }) {
     <div className="motion-panel sticky top-24 rounded-[30px] border border-white/10 bg-[var(--color-brand-950)] p-4 text-white shadow-[var(--shadow-card)] ring-1 ring-white/10 hover:-translate-y-0.5 hover:border-white/20 hover:shadow-[var(--shadow-card-hover)]">
       <div className="rounded-[24px] bg-white/10 p-4 ring-1 ring-white/10">
         <div className="flex items-center gap-3">
-          <div className="flex size-11 items-center justify-center rounded-2xl bg-white text-[var(--color-brand-800)] shadow-sm">
+          <div className="flex size-11 items-center justify-center rounded-2xl bg-[var(--color-inverse-surface)] text-[var(--color-inverse-text)] shadow-sm">
             <Archive className="size-5" />
           </div>
           <div className="min-w-0">

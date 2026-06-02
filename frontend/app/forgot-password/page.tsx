@@ -52,7 +52,7 @@ export default function ForgotPasswordPage() {
                   </p>
                   <p className="mt-2 text-lg font-semibold">Kiểm tra cả mục Thư rác</p>
                 </div>
-                <div className="motion-soft flex size-20 shrink-0 items-center justify-center rounded-3xl bg-white p-3 shadow-[0_18px_42px_rgba(0,0,0,0.18)] hover:scale-[1.03] sm:size-24 sm:p-4">
+                <div className="motion-soft flex size-20 shrink-0 items-center justify-center rounded-3xl bg-[var(--color-inverse-surface)] p-3 shadow-[0_18px_42px_rgba(0,0,0,0.18)] hover:scale-[1.03] sm:size-24 sm:p-4">
                   <Image
                     src="/logo.png"
                     alt="Logo Homi"

@@ -81,7 +81,7 @@ export function ConfirmDialog({
   return (
     <div
       ref={overlayRef}
-      className="fixed inset-0 z-[9998] flex items-center justify-center bg-black/55 p-4 backdrop-blur-sm animate-fade-in"
+      className="fixed inset-0 z-[9998] flex items-center justify-center bg-[var(--color-overlay-bg)] p-4 backdrop-blur-sm animate-fade-in"
       onClick={handleOverlayClick}
     >
       <div className="motion-panel w-full max-w-md animate-dialog-in rounded-3xl border border-[var(--color-border-soft)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-card-hover)] ring-1 ring-white/10">

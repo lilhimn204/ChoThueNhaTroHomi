@@ -27,7 +27,7 @@ export function Badge({
   return (
     <span
       className={cn(
-        "motion-soft inline-flex items-center rounded-full border border-white/35 px-3 py-1 text-xs font-semibold tracking-wide shadow-sm backdrop-blur-md hover:-translate-y-0.5 hover:scale-[1.02] hover:shadow-[var(--shadow-card)]",
+        "motion-soft inline-flex items-center rounded-full border border-[var(--badge-border)] px-3 py-1 text-xs font-semibold tracking-wide shadow-[var(--badge-shadow)] backdrop-blur-md hover:-translate-y-0.5 hover:scale-[1.02] hover:shadow-[var(--shadow-card)]",
         badgeStyles[tone],
         className,
       )}

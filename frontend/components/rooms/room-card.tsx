@@ -99,7 +99,7 @@ export function RoomCard({
           </div>
         </div>
         <div className="absolute inset-x-0 bottom-0 p-3 sm:p-4">
-          <p className="motion-soft w-fit rounded-full bg-white px-3 py-1.5 text-sm font-semibold text-[var(--color-brand-950)] shadow-lg group-hover:-translate-y-0.5">
+          <p className="room-price-badge motion-soft w-fit rounded-full border border-[var(--room-price-badge-border)] bg-[var(--room-price-badge-bg)] px-3 py-1.5 text-sm font-semibold text-[var(--room-price-badge-text)] shadow-[var(--room-price-badge-shadow)] group-hover:-translate-y-0.5">
             {formatCompactCurrency(room.price)}
           </p>
           {carouselImages.length > 1 ? (
@@ -137,7 +137,7 @@ export function RoomCard({
             <h3 className="motion-soft line-clamp-2 min-w-0 text-lg font-semibold leading-snug text-[var(--color-text-strong)] group-hover:text-[var(--color-brand-800)] sm:text-xl">
               {room.title}
             </h3>
-            <div className="grid grid-cols-3 overflow-hidden rounded-2xl border border-[var(--color-border-soft)] bg-[var(--color-surface-soft)] text-center text-[11px] font-semibold text-[var(--color-text-muted)]">
+            <div className="grid grid-cols-3 overflow-hidden rounded-2xl border border-[var(--color-border-soft)] bg-[var(--color-surface-elevated)] text-center text-[11px] font-semibold text-[var(--color-text-muted)]">
               <span className="truncate border-r border-[var(--color-border-soft)] px-2 py-2 text-[var(--color-brand-800)]">
                 {formatCompactCurrency(room.price)}
               </span>

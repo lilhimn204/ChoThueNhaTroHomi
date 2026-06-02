@@ -101,7 +101,7 @@ function RangeControl({
         step={step}
         value={value}
         onChange={(event) => onChange(Number(event.target.value))}
-        className="h-2 w-full cursor-pointer appearance-none rounded-full bg-[var(--color-border-soft)] accent-[var(--color-brand-700)]"
+        className="room-filter-range w-full cursor-pointer appearance-none"
       />
     </label>
   );
@@ -169,7 +169,7 @@ export function FilterSidebar({
         <button
           type="button"
           onClick={onReset}
-          className="motion-soft rounded-xl text-sm font-medium text-[var(--color-brand-700)] hover:text-[var(--color-brand-800)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus-ring)]"
+          className="motion-soft min-h-11 rounded-xl px-2 text-sm font-medium text-[var(--color-brand-700)] hover:text-[var(--color-brand-800)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus-ring)]"
         >
           Đặt lại
         </button>
