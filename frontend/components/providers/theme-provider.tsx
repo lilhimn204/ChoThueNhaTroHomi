@@ -10,7 +10,7 @@ import {
   type ReactNode,
 } from "react";
 
-export type Theme = "light" | "dark" | "system";
+export type Theme = "light" | "dark";
 
 interface ThemeContextValue {
   theme: Theme;
@@ -23,31 +23,23 @@ const ThemeContext = createContext<ThemeContextValue | null>(null);
 
 const STORAGE_KEY = "homi-theme";
 const THEME_CHANGE_EVENT = "homi-theme-change";
-const SERVER_THEME_SNAPSHOT = "system:light";
-
-function getSystemTheme(): "light" | "dark" {
-  if (typeof window === "undefined") return "light";
-  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-}
-
-function resolveTheme(theme: Theme): "light" | "dark" {
-  return theme === "system" ? getSystemTheme() : theme;
-}
+const DEFAULT_THEME: Theme = "light";
+const SERVER_THEME_SNAPSHOT = `${DEFAULT_THEME}:${DEFAULT_THEME}`;
 
 function isTheme(value: string | null): value is Theme {
-  return value === "light" || value === "dark" || value === "system";
+  return value === "light" || value === "dark";
 }
 
 function getStoredTheme(): Theme {
-  if (typeof window === "undefined") return "system";
+  if (typeof window === "undefined") return DEFAULT_THEME;
 
   const stored = localStorage.getItem(STORAGE_KEY);
-  return isTheme(stored) ? stored : "system";
+  return isTheme(stored) ? stored : DEFAULT_THEME;
 }
 
 function getThemeSnapshot() {
   const theme = getStoredTheme();
-  return `${theme}:${resolveTheme(theme)}`;
+  return `${theme}:${theme}`;
 }
 
 function getServerThemeSnapshot() {
@@ -59,17 +51,14 @@ function subscribeToThemeChanges(onStoreChange: () => void) {
     return () => {};
   }
 
-  const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
   const notify = () => onStoreChange();
 
   window.addEventListener("storage", notify);
   window.addEventListener(THEME_CHANGE_EVENT, notify);
-  mediaQuery.addEventListener("change", notify);
 
   return () => {
     window.removeEventListener("storage", notify);
     window.removeEventListener(THEME_CHANGE_EVENT, notify);
-    mediaQuery.removeEventListener("change", notify);
   };
 }
 
@@ -78,7 +67,7 @@ function parseThemeSnapshot(snapshot: string): {
   resolvedTheme: "light" | "dark";
 } {
   const [themeValue, resolvedThemeValue] = snapshot.split(":");
-  const theme = isTheme(themeValue) ? themeValue : "system";
+  const theme = isTheme(themeValue) ? themeValue : DEFAULT_THEME;
   const resolvedTheme = resolvedThemeValue === "dark" ? "dark" : "light";
 
   return { theme, resolvedTheme };

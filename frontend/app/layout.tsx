@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Plus_Jakarta_Sans } from "next/font/google";
+import Script from "next/script";
 
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
@@ -17,6 +18,15 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 });
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://thuenhahomi.id.vn";
+
+const themeInitScript = `
+try {
+  var storedTheme = localStorage.getItem("homi-theme");
+  document.documentElement.setAttribute("data-theme", storedTheme === "dark" ? "dark" : "light");
+} catch {
+  document.documentElement.setAttribute("data-theme", "light");
+}
+`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -76,12 +86,18 @@ export default function RootLayout({
     <html
       lang="vi"
       className={`${inter.variable} ${plusJakartaSans.variable} h-full antialiased`}
+      data-theme="light"
       data-scroll-behavior="smooth"
     >
       <body
         className="min-h-full bg-[var(--color-background)] text-[var(--color-text-strong)]"
         suppressHydrationWarning
       >
+        <Script
+          id="homi-theme-init"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{ __html: themeInitScript }}
+        />
         <AppProviders>
           <div className="relative flex min-h-screen flex-col overflow-x-hidden">
             <div className="pointer-events-none absolute inset-x-0 top-0 h-[34rem] bg-[radial-gradient(circle_at_top_left,_var(--gradient-hero-1),_transparent_45%),radial-gradient(circle_at_top_right,_var(--gradient-hero-2),_transparent_35%)]" />
