@@ -114,7 +114,7 @@ export async function apiRequest<T>(
     method,
     headers: requestHeaders,
     body: requestBody,
-    cache: "no-store",
+    cache: method.toUpperCase() === "GET" ? "default" : "no-store",
     signal,
   });
 

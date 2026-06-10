@@ -33,11 +33,31 @@ describe("api-client", () => {
     });
 
     const requestedUrl = new URL(fetchMock.mock.calls[0][0] as string);
+    const requestOptions = fetchMock.mock.calls[0][1] as RequestInit;
     expect(requestedUrl.pathname).toBe("/api/v1/rooms");
     expect(requestedUrl.searchParams.get("keyword")).toBe("can ho");
     expect(requestedUrl.searchParams.getAll("amenityIds")).toEqual(["1", "2"]);
     expect(requestedUrl.searchParams.get("empty")).toBeNull();
     expect(requestedUrl.searchParams.get("page")).toBe("0");
+    expect(requestOptions.cache).toBe("default");
+  });
+
+  it("does not cache public mutations", async () => {
+    const fetchMock = vi.fn().mockResolvedValue(
+      new Response(JSON.stringify({ ok: true }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }),
+    );
+    vi.stubGlobal("fetch", fetchMock);
+
+    await apiRequest("support-tickets", {
+      method: "POST",
+      body: { subject: "Can ho tro" },
+    });
+
+    const requestOptions = fetchMock.mock.calls[0][1] as RequestInit;
+    expect(requestOptions.cache).toBe("no-store");
   });
 
   it("throws ApiError with backend field errors", async () => {

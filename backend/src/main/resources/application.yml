@@ -13,6 +13,7 @@ spring:
     properties:
       hibernate:
         format_sql: true
+        default_batch_fetch_size: 50
     show-sql: false
   jackson:
     default-property-inclusion: non_null

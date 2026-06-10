@@ -32,7 +32,6 @@ export function RoomsPageClient() {
     showMobileFilters,
     districts,
     amenities,
-    lookupsLoading,
     roomsLoading,
     errorMessage,
     rooms,
@@ -148,21 +147,6 @@ export function RoomsPageClient() {
 
     return chips;
   }, [activeFilters, amenities, districts, query, setActiveFilters, setQuery]);
-
-  if (lookupsLoading && !districts.length && !amenities.length) {
-    return (
-      <section className="container-shell py-6 sm:py-8">
-        <div className="grid gap-4 sm:gap-6 xl:grid-cols-[300px_minmax(0,1fr)]">
-          <LoadingSkeleton className="hidden h-[32rem] rounded-[30px] xl:block" />
-          <div className="space-y-4 sm:space-y-6">
-            <LoadingSkeleton className="h-20 rounded-[28px]" />
-            <LoadingSkeleton className="h-24 rounded-[28px]" />
-            <RoomsGridSkeleton />
-          </div>
-        </div>
-      </section>
-    );
-  }
 
   return (
     <>
