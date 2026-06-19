@@ -18,8 +18,7 @@ import {
   LandingStagger,
   LandingStaggerItem,
 } from "@/components/landing/landing-motion";
-import { FeaturedRoomsSection } from "@/components/rooms/featured-rooms-section";
-import { HeroSearchSection } from "@/components/rooms/hero-search-section";
+import { HomeRoomSections } from "@/components/rooms/home-room-sections";
 import { Button } from "@/components/ui/button";
 
 const reasons = [
@@ -64,8 +63,7 @@ const steps = [
 export default function Home() {
   return (
     <div className="pb-6 sm:pb-12">
-      <HeroSearchSection />
-      <FeaturedRoomsSection />
+      <HomeRoomSections />
 
       <LandingReveal className="container-shell mt-16 sm:mt-24">
         <section className="grid gap-8 lg:grid-cols-[0.82fr_1.18fr] lg:gap-14">

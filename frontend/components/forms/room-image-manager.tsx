@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { normalizeUploadImageSrc } from "@/lib/images";
 import { getErrorMessage } from "@/services/api-client";
-import { uploadRoomImage } from "@/services/upload-service";
+import { uploadRoomImages } from "@/services/upload-service";
 import type { RoomImageInput } from "@/services/room-service";
 
 const MAX_IMAGES = 8;
@@ -37,10 +37,12 @@ export function RoomImageManager({
   images,
   roomTitle,
   onChange,
+  onUploadingChange,
 }: {
   images: RoomImageInput[];
   roomTitle: string;
   onChange: (images: RoomImageInput[]) => void;
+  onUploadingChange?: (uploading: boolean) => void;
 }) {
   const [manualUrl, setManualUrl] = useState("");
   const [uploading, setUploading] = useState(false);
@@ -86,10 +88,11 @@ export function RoomImageManager({
     }
 
     setUploading(true);
+    onUploadingChange?.(true);
     setErrorMessage("");
 
     try {
-      const uploadedImages = await Promise.all(files.map((file) => uploadRoomImage(file)));
+      const uploadedImages = await uploadRoomImages(files);
       addImages(
         uploadedImages.map((image, index) => ({
           imageUrl: image.url,
@@ -102,6 +105,7 @@ export function RoomImageManager({
       setErrorMessage(getErrorMessage(error));
     } finally {
       setUploading(false);
+      onUploadingChange?.(false);
     }
   };
 

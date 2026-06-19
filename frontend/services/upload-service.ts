@@ -1,4 +1,5 @@
 import { normalizeUploadImageSrc } from "@/lib/images";
+import { prepareImageForUpload } from "@/lib/image-upload";
 import { ApiError, proxyRequest } from "@/services/api-client";
 
 interface UploadResponse {
@@ -8,8 +9,28 @@ interface UploadResponse {
   size: number;
 }
 
-export function uploadRoomImage(file: File) {
-  return uploadImage(file, "uploads/rooms");
+const ROOM_UPLOAD_CONCURRENCY = 2;
+
+export async function uploadRoomImage(file: File) {
+  const preparedFile = await prepareImageForUpload(file);
+  return uploadImage(preparedFile, "uploads/rooms");
+}
+
+export async function uploadRoomImages(files: File[]) {
+  const results = new Array<Awaited<ReturnType<typeof uploadRoomImage>>>(files.length);
+  let nextIndex = 0;
+
+  async function worker() {
+    while (nextIndex < files.length) {
+      const currentIndex = nextIndex;
+      nextIndex += 1;
+      results[currentIndex] = await uploadRoomImage(files[currentIndex]);
+    }
+  }
+
+  const workerCount = Math.min(ROOM_UPLOAD_CONCURRENCY, files.length);
+  await Promise.all(Array.from({ length: workerCount }, () => worker()));
+  return results;
 }
 
 export function uploadNewsImage(file: File) {

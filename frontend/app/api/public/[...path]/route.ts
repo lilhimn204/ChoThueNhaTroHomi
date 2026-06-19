@@ -1,11 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { fetchBackend } from "@/lib/backend-fetch";
+import {
+  isPublicRoomPath,
+  PUBLIC_ROOMS_CACHE_TAG,
+} from "@/lib/public-cache";
 
 const BACKEND_URL = process.env.BACKEND_URL ?? "http://localhost:8080";
 const FORBIDDEN_PATH_PATTERN = /\.\.|\\|\/\//;
 const PUBLIC_CACHE_SECONDS = 60;
 const PUBLIC_STALE_SECONDS = 86_400;
+const ROOM_CDN_CACHE_SECONDS = 5;
 
 export const preferredRegion = "sin1";
 
@@ -32,13 +37,19 @@ async function publicProxyHandler(
   const contentType = request.headers.get("Content-Type");
   const body = await buildBody(request, contentType);
   const isCacheableGet = request.method === "GET";
+  const isRoomGet = isCacheableGet && isPublicRoomPath(joinedPath);
   const backendResponse = await fetchBackend(url, {
     method: request.method,
     headers: buildHeaders(contentType),
     body,
     cache: isCacheableGet ? "force-cache" : "no-store",
     ...(isCacheableGet
-      ? { next: { revalidate: PUBLIC_CACHE_SECONDS } }
+      ? {
+          next: {
+            revalidate: PUBLIC_CACHE_SECONDS,
+            ...(isRoomGet ? { tags: [PUBLIC_ROOMS_CACHE_TAG] } : {}),
+          },
+        }
       : {}),
   });
 
@@ -53,10 +64,17 @@ async function publicProxyHandler(
 
   if (isCacheableGet && backendResponse.ok) {
     headers.set("Cache-Control", "public, max-age=0, must-revalidate");
-    headers.set(
-      "Vercel-CDN-Cache-Control",
-      `public, max-age=${PUBLIC_CACHE_SECONDS}, stale-while-revalidate=${PUBLIC_STALE_SECONDS}, stale-if-error=${PUBLIC_STALE_SECONDS}`,
-    );
+    if (isRoomGet) {
+      headers.set(
+        "Vercel-CDN-Cache-Control",
+        `public, max-age=${ROOM_CDN_CACHE_SECONDS}, stale-if-error=${PUBLIC_STALE_SECONDS}`,
+      );
+    } else {
+      headers.set(
+        "Vercel-CDN-Cache-Control",
+        `public, max-age=${PUBLIC_CACHE_SECONDS}, stale-while-revalidate=${PUBLIC_STALE_SECONDS}, stale-if-error=${PUBLIC_STALE_SECONDS}`,
+      );
+    }
   }
 
   return new NextResponse(data, {

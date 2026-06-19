@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -15,7 +14,6 @@ import { MotionConfig, motion, type Variants } from "motion/react";
 import { AnimatedCounter } from "@/components/shared/animated-counter";
 import { Button } from "@/components/ui/button";
 import { normalizeUploadImageSrc } from "@/lib/images";
-import { getFeaturedRooms, getRoomStats } from "@/services/room-service";
 import type { RoomStats, RoomSummary } from "@/types";
 
 const fallbackHeroImage =
@@ -45,32 +43,13 @@ const heroItemVariants: Variants = {
   },
 };
 
-export function HeroSearchSection() {
-  const [stats, setStats] = useState<RoomStats | null>(null);
-  const [featuredRoom, setFeaturedRoom] = useState<RoomSummary | null>(null);
-
-  useEffect(() => {
-    const controller = new AbortController();
-
-    void getRoomStats(controller.signal)
-      .then(setStats)
-      .catch(() => {
-        if (!controller.signal.aborted) {
-          setStats({ visibleRooms: 0, availableRooms: 0, availableRate: 0 });
-        }
-      });
-
-    void getFeaturedRooms(controller.signal)
-      .then((rooms) => setFeaturedRoom(rooms.at(0) ?? null))
-      .catch(() => {
-        if (!controller.signal.aborted) {
-          setFeaturedRoom(null);
-        }
-      });
-
-    return () => controller.abort();
-  }, []);
-
+export function HeroSearchSection({
+  stats,
+  featuredRoom,
+}: {
+  stats: RoomStats | null;
+  featuredRoom: RoomSummary | null;
+}) {
   const heroImage = normalizeUploadImageSrc(featuredRoom?.thumbnail ?? fallbackHeroImage);
 
   return (

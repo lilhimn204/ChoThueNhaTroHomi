@@ -1,4 +1,5 @@
 import { cookies } from "next/headers";
+import { revalidateTag } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 
 import {
@@ -7,6 +8,10 @@ import {
   refreshAccessToken,
 } from "@/lib/server-auth";
 import { fetchBackend } from "@/lib/backend-fetch";
+import {
+  isRoomMutation,
+  PUBLIC_ROOMS_CACHE_TAG,
+} from "@/lib/public-cache";
 
 const BACKEND_URL = process.env.BACKEND_URL ?? "http://localhost:8080";
 
@@ -67,6 +72,10 @@ async function proxyHandler(
 
   if (backendResponse.status === 401) {
     clearAuthCookies(cookieStore);
+  }
+
+  if (backendResponse.ok && isRoomMutation(request.method, joinedPath)) {
+    revalidateTag(PUBLIC_ROOMS_CACHE_TAG, { expire: 0 });
   }
 
   if (backendResponse.status === 204) {

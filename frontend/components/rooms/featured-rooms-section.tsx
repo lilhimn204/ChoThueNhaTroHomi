@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { MotionConfig, motion } from "motion/react";
@@ -9,8 +8,6 @@ import { LandingFeaturedRoomTile } from "@/components/landing/landing-featured-r
 import { EmptyState } from "@/components/shared/empty-state";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { getErrorMessage } from "@/services/api-client";
-import { getFeaturedRooms } from "@/services/room-service";
 import type { RoomSummary } from "@/types";
 
 const easeOut = [0.16, 1, 0.3, 1] as const;
@@ -25,33 +22,15 @@ function FeaturedRoomsSkeleton() {
   );
 }
 
-export function FeaturedRoomsSection() {
-  const [rooms, setRooms] = useState<RoomSummary[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [errorMessage, setErrorMessage] = useState("");
-
-  useEffect(() => {
-    const controller = new AbortController();
-
-    void getFeaturedRooms(controller.signal)
-      .then((response) => {
-        setRooms(response.slice(0, 3));
-        setErrorMessage("");
-      })
-      .catch((error) => {
-        if (!controller.signal.aborted) {
-          setErrorMessage(getErrorMessage(error));
-        }
-      })
-      .finally(() => {
-        if (!controller.signal.aborted) {
-          setLoading(false);
-        }
-      });
-
-    return () => controller.abort();
-  }, []);
-
+export function FeaturedRoomsSection({
+  rooms,
+  loading,
+  errorMessage,
+}: {
+  rooms: RoomSummary[];
+  loading: boolean;
+  errorMessage: string;
+}) {
   return (
     <MotionConfig reducedMotion="user">
       <motion.section

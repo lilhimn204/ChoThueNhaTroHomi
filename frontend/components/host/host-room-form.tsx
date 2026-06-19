@@ -98,6 +98,7 @@ export function HostRoomForm({
   const [amenities, setAmenities] = useState<Amenity[]>([]);
   const [loading, setLoading] = useState(mode === "edit");
   const [submitting, setSubmitting] = useState(false);
+  const [uploadingImages, setUploadingImages] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
@@ -194,6 +195,11 @@ export function HostRoomForm({
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
+    if (uploadingImages) {
+      setErrorMessage("Vui lòng chờ ảnh tải xong trước khi lưu bài đăng.");
+      return;
+    }
+
     setSubmitting(true);
     setErrorMessage("");
     setSuccessMessage("");
@@ -256,8 +262,12 @@ export function HostRoomForm({
               Cập nhật thông tin phòng, tiện ích và thư viện ảnh để người thuê đánh giá nhanh hơn.
             </p>
           </div>
-          <Button className="w-full lg:w-auto" type="submit" disabled={submitting} trailingIcon={<Save className="size-4" />}>
-            {mode === "create" ? "Lưu bài đăng" : "Cập nhật bài đăng"}
+          <Button className="w-full lg:w-auto" type="submit" disabled={submitting || uploadingImages} trailingIcon={<Save className="size-4" />}>
+            {uploadingImages
+              ? "Đang tải ảnh..."
+              : mode === "create"
+                ? "Lưu bài đăng"
+                : "Cập nhật bài đăng"}
           </Button>
         </div>
 
@@ -369,6 +379,7 @@ export function HostRoomForm({
                 images={galleryImages}
                 roomTitle={form.title}
                 onChange={setGalleryImages}
+                onUploadingChange={setUploadingImages}
               />
             </div>
           </div>
