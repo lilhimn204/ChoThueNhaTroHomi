@@ -11,10 +11,14 @@ import { Pagination } from "@/components/shared/pagination";
 import { Alert } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { contactRequestStatusMeta, contactRequestTypeLabel } from "@/constants/status";
 import { formatDate } from "@/lib/format";
 import { getErrorMessage } from "@/services/api-client";
-import { getMyContactRequests } from "@/services/contact-request-service";
+import {
+  cancelMyContactRequest,
+  getMyContactRequests,
+} from "@/services/contact-request-service";
 import type { ContactRequest, PageResponse } from "@/types";
 
 const PAGE_SIZE = 5;
@@ -26,6 +30,10 @@ export function ContactHistoryPageClient() {
   const [response, setResponse] = useState<PageResponse<ContactRequest> | null>(null);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
+  const [actionErrorMessage, setActionErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+  const [cancelCandidate, setCancelCandidate] = useState<ContactRequest | null>(null);
+  const [cancelling, setCancelling] = useState(false);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -53,6 +61,37 @@ export function ContactHistoryPageClient() {
 
   const requests = response?.content ?? [];
 
+  const handleCancelRequest = async () => {
+    if (!cancelCandidate) {
+      return;
+    }
+
+    setCancelling(true);
+    setActionErrorMessage("");
+    setSuccessMessage("");
+
+    try {
+      const updatedRequest = await cancelMyContactRequest(cancelCandidate.id);
+      setResponse((current) =>
+        current
+          ? {
+              ...current,
+              content: current.content.map((request) =>
+                request.id === updatedRequest.id ? updatedRequest : request,
+              ),
+            }
+          : current,
+      );
+      setCancelCandidate(null);
+      setSuccessMessage("Đã hủy yêu cầu liên hệ thành công.");
+    } catch (error) {
+      setCancelCandidate(null);
+      setActionErrorMessage(getErrorMessage(error));
+    } finally {
+      setCancelling(false);
+    }
+  };
+
   return (
     <RequireAuth>
       <div className="container-shell py-8 sm:py-12">
@@ -75,6 +114,26 @@ export function ContactHistoryPageClient() {
         </div>
 
         <div className="mt-8">
+          {successMessage ? (
+            <div className="mb-4">
+              <Alert
+                tone="success"
+                title="Hủy yêu cầu thành công"
+                description={successMessage}
+              />
+            </div>
+          ) : null}
+
+          {actionErrorMessage ? (
+            <div className="mb-4">
+              <Alert
+                tone="warning"
+                title="Không thể hủy yêu cầu"
+                description={actionErrorMessage}
+              />
+            </div>
+          ) : null}
+
           {errorMessage ? (
             <Alert
               tone="warning"
@@ -129,9 +188,26 @@ export function ContactHistoryPageClient() {
                           </div>
                         ) : null}
                       </div>
-                      <Link href={`/rooms/${request.roomSlug}`} className="block w-full sm:w-auto">
-                        <Button className="w-full sm:w-auto" variant="outline">Xem lại phòng</Button>
-                      </Link>
+                      <div className="grid w-full gap-2 sm:w-auto">
+                        <Link href={`/rooms/${request.roomSlug}`} className="block w-full sm:w-auto">
+                          <Button className="w-full sm:w-auto" variant="outline">
+                            Xem lại phòng
+                          </Button>
+                        </Link>
+                        {request.status === "PENDING" || request.status === "IN_PROGRESS" ? (
+                          <Button
+                            className="w-full sm:w-auto"
+                            variant="outline"
+                            onClick={() => {
+                              setActionErrorMessage("");
+                              setSuccessMessage("");
+                              setCancelCandidate(request);
+                            }}
+                          >
+                            Hủy yêu cầu
+                          </Button>
+                        ) : null}
+                      </div>
                     </div>
                   </article>
                 ))}
@@ -157,6 +233,26 @@ export function ContactHistoryPageClient() {
           )}
         </div>
       </div>
+
+      <ConfirmDialog
+        open={Boolean(cancelCandidate)}
+        title="Hủy yêu cầu liên hệ?"
+        description={
+          cancelCandidate
+            ? `Yêu cầu liên hệ cho “${cancelCandidate.roomTitle}” sẽ được chuyển sang trạng thái đã hủy. Chủ phòng sẽ thấy thay đổi này.`
+            : ""
+        }
+        confirmLabel="Hủy yêu cầu"
+        cancelLabel="Giữ yêu cầu"
+        tone="danger"
+        loading={cancelling}
+        onConfirm={() => void handleCancelRequest()}
+        onCancel={() => {
+          if (!cancelling) {
+            setCancelCandidate(null);
+          }
+        }}
+      />
     </RequireAuth>
   );
 }

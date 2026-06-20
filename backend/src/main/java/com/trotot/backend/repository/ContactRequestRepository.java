@@ -17,6 +17,9 @@ public interface ContactRequestRepository extends JpaRepository<ContactRequest, 
 
     Page<ContactRequest> findByUserIdOrderByCreatedAtDesc(Long userId, Pageable pageable);
 
+    @EntityGraph(attributePaths = {"room"})
+    Optional<ContactRequest> findByIdAndUserId(Long requestId, Long userId);
+
     @EntityGraph(attributePaths = {"room", "user", "handledBy"})
     Page<ContactRequest> findByRoomCreatedByIdOrderByCreatedAtDesc(Long ownerId, Pageable pageable);
 

@@ -85,6 +85,24 @@ public class ContactRequestService {
         return PageResponse.from(requests, this::toContactRequestResponse);
     }
 
+    @Transactional
+    public ContactRequestResponse cancelMyRequest(UserPrincipal principal, Long requestId) {
+        ContactRequest contactRequest = contactRequestRepository.findByIdAndUserId(requestId, principal.getId())
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Không tìm thấy yêu cầu liên hệ thuộc tài khoản của bạn với id = " + requestId));
+
+        if (contactRequest.getStatus() == ContactRequestStatus.CANCELLED) {
+            return toContactRequestResponse(contactRequest);
+        }
+
+        if (contactRequest.getStatus() == ContactRequestStatus.RESOLVED) {
+            throw new BusinessException("Yêu cầu đã được xử lý và không thể hủy.");
+        }
+
+        contactRequest.setStatus(ContactRequestStatus.CANCELLED);
+        return toContactRequestResponse(contactRequestRepository.save(contactRequest));
+    }
+
     @Transactional(readOnly = true)
     public PageResponse<AdminContactRequestResponse> searchAdminRequests(
             ContactRequestStatus status,

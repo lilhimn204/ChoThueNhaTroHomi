@@ -90,6 +90,12 @@ export function createContactRequest(
   }).then(toContactRequest);
 }
 
+export function cancelMyContactRequest(requestId: number) {
+  return proxyRequest<ContactRequestResponse>(`contact-requests/${requestId}/cancel`, {
+    method: "PATCH",
+  }).then(toContactRequest);
+}
+
 export function searchAdminContactRequests(
   params: AdminSearchContactRequestsParams,
   signal?: AbortSignal,

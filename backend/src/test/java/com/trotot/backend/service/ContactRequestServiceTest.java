@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -22,6 +23,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.trotot.backend.dto.contact.ContactRequestResponse;
 import com.trotot.backend.dto.contact.CreateContactRequestRequest;
 import com.trotot.backend.entity.ContactRequest;
+import com.trotot.backend.entity.ContactRequestStatus;
 import com.trotot.backend.entity.ContactRequestType;
 import com.trotot.backend.entity.District;
 import com.trotot.backend.entity.Room;
@@ -35,7 +37,7 @@ import com.trotot.backend.security.UserPrincipal;
 
 @SuppressWarnings("null")
 @ExtendWith(MockitoExtension.class)
-@DisplayName("ContactRequestService — contact request creation and validation")
+@DisplayName("ContactRequestService — creation, validation and cancellation")
 class ContactRequestServiceTest {
 
     @Mock
@@ -185,5 +187,86 @@ class ContactRequestServiceTest {
                 () -> contactRequestService.createContactRequest(principal, request));
 
         assertEquals("Bạn không thể gửi yêu cầu xem phòng cho bài đăng của chính mình.", exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("cancelMyRequest cancels a PENDING request owned by the current user")
+    void cancelMyRequest_pendingOwnedRequest_succeeds() {
+        ContactRequest contactRequest = createExistingContactRequest(ContactRequestStatus.PENDING);
+
+        when(contactRequestRepository.findByIdAndUserId(100L, 1L)).thenReturn(Optional.of(contactRequest));
+        when(contactRequestRepository.save(contactRequest)).thenReturn(contactRequest);
+
+        ContactRequestResponse response = contactRequestService.cancelMyRequest(principal, 100L);
+
+        assertEquals(ContactRequestStatus.CANCELLED, response.status());
+        assertEquals(ContactRequestStatus.CANCELLED, contactRequest.getStatus());
+        verify(contactRequestRepository).save(contactRequest);
+    }
+
+    @Test
+    @DisplayName("cancelMyRequest cancels an IN_PROGRESS request owned by the current user")
+    void cancelMyRequest_inProgressOwnedRequest_succeeds() {
+        ContactRequest contactRequest = createExistingContactRequest(ContactRequestStatus.IN_PROGRESS);
+
+        when(contactRequestRepository.findByIdAndUserId(100L, 1L)).thenReturn(Optional.of(contactRequest));
+        when(contactRequestRepository.save(contactRequest)).thenReturn(contactRequest);
+
+        ContactRequestResponse response = contactRequestService.cancelMyRequest(principal, 100L);
+
+        assertEquals(ContactRequestStatus.CANCELLED, response.status());
+        verify(contactRequestRepository).save(contactRequest);
+    }
+
+    @Test
+    @DisplayName("cancelMyRequest is idempotent for an already cancelled request")
+    void cancelMyRequest_alreadyCancelled_returnsCurrentRequest() {
+        ContactRequest contactRequest = createExistingContactRequest(ContactRequestStatus.CANCELLED);
+
+        when(contactRequestRepository.findByIdAndUserId(100L, 1L)).thenReturn(Optional.of(contactRequest));
+
+        ContactRequestResponse response = contactRequestService.cancelMyRequest(principal, 100L);
+
+        assertEquals(ContactRequestStatus.CANCELLED, response.status());
+        verify(contactRequestRepository, never()).save(any(ContactRequest.class));
+    }
+
+    @Test
+    @DisplayName("cancelMyRequest rejects a RESOLVED request")
+    void cancelMyRequest_resolvedRequest_throwsBusinessException() {
+        ContactRequest contactRequest = createExistingContactRequest(ContactRequestStatus.RESOLVED);
+
+        when(contactRequestRepository.findByIdAndUserId(100L, 1L)).thenReturn(Optional.of(contactRequest));
+
+        BusinessException exception = assertThrows(BusinessException.class,
+                () -> contactRequestService.cancelMyRequest(principal, 100L));
+
+        assertEquals("Yêu cầu đã được xử lý và không thể hủy.", exception.getMessage());
+        verify(contactRequestRepository, never()).save(any(ContactRequest.class));
+    }
+
+    @Test
+    @DisplayName("cancelMyRequest hides requests not owned by the current user")
+    void cancelMyRequest_requestNotOwned_throwsResourceNotFoundException() {
+        when(contactRequestRepository.findByIdAndUserId(100L, 1L)).thenReturn(Optional.empty());
+
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class,
+                () -> contactRequestService.cancelMyRequest(principal, 100L));
+
+        assertEquals("Không tìm thấy yêu cầu liên hệ thuộc tài khoản của bạn với id = 100", exception.getMessage());
+        verify(contactRequestRepository, never()).save(any(ContactRequest.class));
+    }
+
+    private ContactRequest createExistingContactRequest(ContactRequestStatus status) {
+        ContactRequest contactRequest = new ContactRequest();
+        contactRequest.setId(100L);
+        contactRequest.setRoom(sampleRoom);
+        contactRequest.setUser(sampleUser);
+        contactRequest.setRequestType(ContactRequestType.VIEWING);
+        contactRequest.setFullName(sampleUser.getFullName());
+        contactRequest.setEmail(sampleUser.getEmail());
+        contactRequest.setPhone("0912345678");
+        contactRequest.setStatus(status);
+        return contactRequest;
     }
 }
